@@ -1823,7 +1823,7 @@
 
   <header>
     <div class="header-container">
-      <a href="#" class="brand">
+      <a href="#" class="brand" onclick="resetApp(event)">
         <div class="brand-icon">₿</div>
         <div>
           <div class="brand-title">Hybrid's Bitcoin Entropy Tools</div>
@@ -3116,6 +3116,16 @@
       // Activate selected
       document.getElementById('aboutVTab-' + tabId).classList.add('active');
       document.getElementById('aboutVTabBtn-' + tabId).classList.add('active');
+    }
+
+    function resetApp(e) {
+      if (e) e.preventDefault();
+      switchTab('entropyTab');
+      selectDice('mouse');
+      const mainDisclaimer = document.getElementById('mainDisclaimer');
+      if (mainDisclaimer) {
+        mainDisclaimer.style.display = 'flex';
+      }
     }
 
     function selectDice(type) {
