@@ -192,6 +192,12 @@
       display: flex;
       gap: 0.5rem;
       overflow-x: auto;
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+
+    nav::-webkit-scrollbar {
+      display: none; /* Chrome, Safari and Opera */
     }
 
     .nav-tab {
@@ -1658,19 +1664,147 @@
       .load-half .serial-number {
         color: #047857 !important;
       }
+
+      #printSingleSimulatedWarning,
+      #printSeedSimulatedWarning {
+        background: #fee2e2 !important;
+        border: 2px solid #ef4444 !important;
+        color: #b91c1c !important;
+        padding: 6px !important;
+        text-align: center !important;
+        justify-content: center !important;
+        font-family: -apple-system, sans-serif !important;
+        font-weight: bold !important;
+        border-radius: 4px !important;
+      }
     }
 
+    /* Warning / Info Callout styles */
+    .warning-banner {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      line-height: 1.4;
+    }
+    
+    .warning-banner.warning-yellow {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: #fbbf24;
+    }
 
+    .warning-banner .warning-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
 
+    .print-simulated-indicator {
+      display: none;
+      color: #dc2626 !important;
+      font-size: 0.7rem;
+      font-weight: bold;
+      text-align: center;
+      border: 1px solid #dc2626;
+      padding: 2px;
+      margin-top: 4px;
+      border-radius: 3px;
+      font-family: sans-serif;
+    }
 
     @media (max-width: 640px) {
       .header-container {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
+        text-align: center;
+        padding: 0.5rem 0.75rem;
+        gap: 0.35rem;
+      }
+
+      .brand {
+        gap: 0.5rem;
+      }
+
+      .brand-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 1.1rem;
+      }
+
+      .brand-title {
+        font-size: 1.05rem;
+      }
+
+      .brand-subtitle {
+        display: none;
+      }
+
+      .header-container > div:last-child {
+        gap: 0.5rem !important;
+        margin-top: 0.15rem;
+      }
+
+      .github-link {
+        font-size: 0.75rem;
+      }
+
+      .offline-badge {
+        padding: 0.25rem 0.6rem;
+        font-size: 0.72rem;
+      }
+
+      nav {
+        padding: 0.4rem 0.75rem 0;
+        gap: 0.25rem;
+      }
+
+      .nav-tab {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+      }
+
+      main {
+        padding: 0.75rem;
+      }
+
+      .card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .warning-banner {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.78rem;
+        margin-bottom: 0.75rem;
       }
 
       .dice-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 0.3rem;
+        margin-bottom: 1rem;
+      }
+      
+      .dice-option {
+        padding: 0.4rem 0.2rem;
+      }
+      
+      .dice-icon {
+        font-size: 1.1rem;
+        margin-bottom: 0.1rem;
+      }
+      
+      .dice-name {
+        font-size: 0.7rem;
+      }
+      
+      .dice-bits {
+        font-size: 0.58rem;
       }
     }
   </style>
@@ -1721,6 +1855,15 @@
   </header>
 
   <main>
+    <!-- Permanent Informational Banner -->
+    <div class="warning-banner warning-yellow" id="mainDisclaimer" style="margin-bottom: 1.5rem; position: relative; padding-right: 2.5rem;">
+      <span class="warning-icon">⚠️</span>
+      <div>
+        <strong>Educational & Testing Tool Only:</strong> Not a suitable replacement for a secure Bitcoin wallet. Do not use keys generated here to secure real funds.
+      </div>
+      <button onclick="document.getElementById('mainDisclaimer').style.display='none'" style="position: absolute; top: 0.5rem; right: 0.75rem; background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; line-height: 1; transition: var(--transition);" onmouseover="this.style.color='var(--btc-gold)'" onmouseout="this.style.color='var(--text-muted)'">✕</button>
+    </div>
+
     <!-- TAB 1: ENTROPY KEY GENERATOR -->
     <div id="entropyTab" class="tab-content active">
 
@@ -1781,6 +1924,13 @@
 
         <!-- Mouse Movement Capture Zone -->
         <div id="mouseCaptureContainer" class="mouse-capture-container">
+          <!-- Mouse Entropy Secondary Warning -->
+          <div class="warning-banner warning-yellow" style="width: 100%; margin-bottom: 1rem; border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.04); color: #fbbf24; box-sizing: border-box; text-align: left;">
+            <span class="warning-icon">⚠️</span>
+            <div>
+              <strong>Mouse Movement Entropy Note:</strong> Convenient for testing, but mouse movements do not provide the same standard of true physical randomness as physical coin flips or dice rolls.
+            </div>
+          </div>
           <div class="mouse-canvas-wrapper" id="mouseCanvasWrapper" onmouseenter="startMouseCapture()"
             onmouseleave="handleMouseLeave()" onmousemove="handleMouseMove(event)"
             onpointermove="handleMouseMove(event)">
@@ -1812,8 +1962,6 @@
         </div>
 
         <div class="controls-bar" id="controlsBar">
-          <button class="btn" id="btnAddOne" onclick="addRandomRoll(1)">+1 Simulated Roll</button>
-          <button class="btn" id="btnFillMin" onclick="addRandomToMin()">+256 Simulated Rolls</button>
           <button class="btn" onclick="undoRoll()">↩️ Undo Last</button>
           <button class="btn btn-danger" onclick="clearEntropy()">🗑️ Clear All</button>
         </div>
@@ -1822,6 +1970,14 @@
           <textarea id="entropyInput"
             placeholder="Raw entropy sequence will appear here. You can also paste existing sequence directly (e.g. H T H T or 1 5 3 2 6 4)..."
             oninput="onTextInput()"></textarea>
+        </div>
+
+        <!-- Simulated Entropy Warning Banner -->
+        <div class="warning-banner" id="simulatedWarning" style="display: none; background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #f87171; margin-bottom: 1.25rem;">
+          <span class="warning-icon">⚠️</span>
+          <div>
+            <strong>Simulated Entropy Active:</strong> You have used computer-simulated rolls or flips. This is suitable <strong>only for testing and learning</strong>. The simulated inputs are generated by the browser's pseudorandom number generator (Math.random) and are <strong>not cryptographically secure</strong>. Do not use keys generated from simulated entropy for storing real funds!
+          </div>
         </div>
 
         <!-- Metrics Dashboard -->
@@ -1887,6 +2043,14 @@
           <span>🔑 Generated Bitcoin Keys & Addresses</span>
           <div style="display: flex; gap: 0.5rem;">
             <button class="btn" onclick="printSingleWallet()">🖨️ Print Paper Wallet</button>
+          </div>
+        </div>
+
+        <!-- Simulated Entropy Warning in Results -->
+        <div class="warning-banner" id="resultsSimulatedWarning" style="display: none; background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #f87171; margin-bottom: 1.25rem;">
+          <span class="warning-icon">⚠️</span>
+          <div>
+            <strong>Warning: Simulated Entropy Used!</strong> The keys below were generated using simulated (PRNG) inputs. They are <strong>not secure</strong> and should be used <strong>only for testing and learning</strong>. Never send real Bitcoin to these addresses!
           </div>
         </div>
 
@@ -2045,6 +2209,14 @@
         <span>🌱 BIP-39 Seed Phrase & HD Wallet (m/84'/0'/0'/0/i)</span>
         <div style="display: flex; gap: 0.5rem;">
           <button class="btn" onclick="printSeedWallet()">🖨️ Print Seed Wallet</button>
+        </div>
+      </div>
+
+      <!-- Simulated Entropy Warning in Seed Results -->
+      <div class="warning-banner" id="seedResultsSimulatedWarning" style="display: none; background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #f87171; margin-bottom: 1.25rem;">
+        <span class="warning-icon">⚠️</span>
+        <div>
+          <strong>Warning: Simulated Entropy Used!</strong> This seed phrase and its derived addresses were generated using simulated (PRNG) inputs. They are <strong>not secure</strong> and should be used <strong>only for testing and learning</strong>. Never send real Bitcoin to this seed or addresses!
         </div>
       </div>
 
@@ -2314,9 +2486,13 @@
     <!-- CUTOUT GUIDE WRAPPER -->
     <div class="wallet-cutout-wrapper">
       <div class="cutout-scissors-top">✂--------------------- Cut along dashed line ---------------------✂</div>
+      <div id="printSingleSimulatedWarning" class="warning-banner" style="display: none; width: 8.5in; box-sizing: border-box; margin-bottom: 10px;">
+        ⚠️ WARNING: SIMULATED ENTROPY - FOR TESTING/LEARNING ONLY. DO NOT USE FOR REAL FUNDS.
+      </div>
       <div class="wallet-bill">
         <!-- LEFT: DEPOSIT / PUBLIC SIDE -->
         <div class="wallet-half load-half">
+          <div class="watermark">₿</div>
           <!-- Ornate frame border -->
           <div class="ornate-frame">
             <!-- Corner values -->
@@ -2329,6 +2505,9 @@
             <div class="wallet-header">
               <h2>Bitcoin Deposit Note</h2>
               <span class="sub-header-text" id="printAddrTitle">Native SegWit Address</span>
+              <div class="print-simulated-indicator" id="printSingleSimulatedLabelPublic">
+                ⚠️ TESTING ONLY - SIMULATED ENTROPY
+              </div>
             </div>
 
             <div class="wallet-content">
@@ -2355,6 +2534,7 @@
 
         <!-- RIGHT: SPEND / SECRET SIDE -->
         <div class="wallet-half secret-half">
+          <div class="watermark secret-watermark">🔑</div>
           <!-- Ornate frame border -->
           <div class="ornate-frame">
             <!-- Corner values -->
@@ -2366,6 +2546,9 @@
             <div class="wallet-header">
               <h2>Bitcoin Spend Note</h2>
               <span class="sub-header-text" id="printWifTitle">Private Key (WIF Compressed)</span>
+              <div class="print-simulated-indicator" id="printSingleSimulatedLabelSecret">
+                ⚠️ TESTING ONLY - SIMULATED ENTROPY
+              </div>
             </div>
 
             <div class="wallet-content">
@@ -2393,9 +2576,13 @@
     <!-- CUTOUT GUIDE WRAPPER -->
     <div class="wallet-cutout-wrapper">
       <div class="cutout-scissors-top">✂--------------------- Cut along dashed line ---------------------✂</div>
+      <div id="printSeedSimulatedWarning" class="warning-banner" style="display: none; width: 8.5in; box-sizing: border-box; margin-bottom: 10px;">
+        ⚠️ WARNING: SIMULATED ENTROPY - FOR TESTING/LEARNING ONLY. DO NOT USE FOR REAL FUNDS.
+      </div>
       <div class="seed-bill">
         <!-- LEFT: SECRET BACKUP -->
         <div class="seed-half secret-half">
+          <div class="watermark secret-watermark">🔑</div>
           <!-- Ornate frame border -->
           <div class="ornate-frame">
             <!-- Corner values -->
@@ -2407,6 +2594,9 @@
             <div class="wallet-header">
               <h2>Mnemonic Backup Seed</h2>
               <span class="sub-header-text" id="printSeedTypeTitle">12-Word Mnemonic Phrase</span>
+              <div class="print-simulated-indicator" id="printSeedSimulatedLabelSecret">
+                ⚠️ TESTING ONLY - SIMULATED ENTROPY
+              </div>
             </div>
 
             <div class="wallet-content">
@@ -2451,6 +2641,9 @@
             <div class="wallet-header">
               <h2>Public Deposit Addresses</h2>
               <span class="sub-header-text" id="printSeedAddressTypeTitle">Native SegWit (m/84'/0'/0'/0)</span>
+              <div class="print-simulated-indicator" id="printSeedSimulatedLabelPublic">
+                ⚠️ TESTING ONLY - SIMULATED ENTROPY
+              </div>
             </div>
 
             <div class="wallet-content">
@@ -2839,7 +3032,8 @@
       currentMnemonic: "",
       hdMasterSeed: null,
       currentDerivationIndex: 0,
-      activeDerivationPurpose: 84
+      activeDerivationPurpose: 84,
+      hasSimulatedEntropy: false
     };
 
     // UI helper for word count toggle
@@ -2932,6 +3126,7 @@
       STATE.lastMouseY = null;
       STATE.mouseCompleted = false;
       STATE.mouseMoveCount = 0;
+      STATE.hasSimulatedEntropy = false;
       document.querySelectorAll('.dice-option').forEach(el => el.classList.remove('selected'));
       document.getElementById(`opt-${type}`).classList.add('selected');
       renderInteractivePad();
@@ -3198,6 +3393,7 @@
     }
 
     function addRandomRoll(count) {
+      STATE.hasSimulatedEntropy = true;
       const cfg = DICE_CONFIG[STATE.diceType];
       for (let i = 0; i < count; i++) {
         if (STATE.diceType === 'd16') {
@@ -3239,6 +3435,7 @@
       STATE.lastMouseY = null;
       STATE.mouseCompleted = false;
       STATE.mouseMoveCount = 0;
+      STATE.hasSimulatedEntropy = false;
       renderInteractivePad();
       updateTextareaFromState();
       updateMetrics();
@@ -3282,6 +3479,9 @@
 
     function onTextInput() {
       const raw = document.getElementById('entropyInput').value;
+      if (raw.trim() === '') {
+        STATE.hasSimulatedEntropy = false;
+      }
 
       if (STATE.diceType === 'd16') {
         const rawUpper = raw.toUpperCase();
@@ -3325,10 +3525,8 @@
 
       const rat = document.getElementById('valSecurityRating');
       const btn = document.getElementById('btnGenerate');
-      const fillBtn = document.getElementById('btnFillMin');
-      const addOneBtn = document.getElementById('btnAddOne');
 
-      // Determine the correct terminology for the buttons
+      // Determine the correct terminology for the labels
       const isCoin = STATE.diceType === 'coin';
       const isMouse = STATE.diceType === 'mouse';
       const termSingle = isCoin ? 'Flip' : (isMouse ? 'Sample' : 'Roll');
@@ -3340,22 +3538,7 @@
         metricLabelRoll.textContent = termPlural;
       }
 
-      // Update the +1 button text
-      if (addOneBtn) {
-        addOneBtn.textContent = `+1 Simulated ${termSingle}`;
-      }
-
-      // Update fill button label to show how many more are needed
       const needed = Math.max(0, cfg.minRolls - count);
-      if (fillBtn) {
-        if (needed === 0) {
-          fillBtn.textContent = `✅ Minimum Met (${cfg.minRolls} ${termPlural.toLowerCase()})`;
-          fillBtn.disabled = true;
-        } else {
-          fillBtn.textContent = `+${needed} Simulated ${termPlural} (fill to ${cfg.minRolls})`;
-          fillBtn.disabled = false;
-        }
-      }
 
       // Require at least the minimum roll count — no partial generation allowed
       if (count >= cfg.minRolls) {
@@ -3375,6 +3558,10 @@
 
       document.getElementById('btnGenerateSeed').disabled = btn.disabled;
 
+      const simWarning = document.getElementById('simulatedWarning');
+      if (simWarning) {
+        simWarning.style.display = STATE.hasSimulatedEntropy ? 'flex' : 'none';
+      }
     }
 
     /* ==========================================================================
@@ -3472,6 +3659,10 @@
       renderQRCode('qrWifUncomp', wifUncomp);
 
       // Show results (without auto-scrolling or blurring)
+      const resultsSimWarning = document.getElementById('resultsSimulatedWarning');
+      if (resultsSimWarning) {
+        resultsSimWarning.style.display = STATE.hasSimulatedEntropy ? 'flex' : 'none';
+      }
       document.getElementById('resultsCard').style.display = 'block';
       // Setup paper wallet print views
       const isSegwitActive = document.getElementById('btnTabSegWit').classList.contains('active');
@@ -3696,6 +3887,10 @@
       await deriveFromMnemonic();
 
       // Reveal Results (No auto-scrolling)
+      const seedResultsSimWarning = document.getElementById('seedResultsSimulatedWarning');
+      if (seedResultsSimWarning) {
+        seedResultsSimWarning.style.display = STATE.hasSimulatedEntropy ? 'flex' : 'none';
+      }
       document.getElementById('seedResultsCard').style.display = 'block';
     }
 
@@ -4009,6 +4204,27 @@
       updatePrintWalletAddress(isSegwitActive ? 'segwit' : 'legacy');
       updatePrintWalletWif(isWifCompActive ? 'comp' : 'uncomp');
 
+      // Update simulated labels and watermark
+      const isSimulated = STATE.hasSimulatedEntropy;
+      document.getElementById('printSingleSimulatedLabelPublic').style.display = isSimulated ? 'block' : 'none';
+      document.getElementById('printSingleSimulatedLabelSecret').style.display = isSimulated ? 'block' : 'none';
+      
+      const printSingleWarning = document.getElementById('printSingleSimulatedWarning');
+      if (printSingleWarning) {
+        printSingleWarning.style.display = isSimulated ? 'flex' : 'none';
+      }
+
+      const watermarks = document.querySelectorAll('#paperWalletPrint .watermark, #seedWalletPrint .watermark');
+      watermarks.forEach(wm => {
+        if (isSimulated) {
+          wm.textContent = 'TEST';
+          wm.style.fontSize = '8rem';
+        } else {
+          wm.textContent = wm.classList.contains('secret-watermark') ? '🔑' : '₿';
+          wm.style.fontSize = '11rem';
+        }
+      });
+
       window.print();
     }
 
@@ -4049,6 +4265,29 @@
 
     async function updatePrintSeedWallet() {
       if (!STATE.currentMnemonic || !STATE.hdMasterSeed) return;
+
+      // Update simulated labels and watermark
+      const isSimulated = STATE.hasSimulatedEntropy;
+      const seedSimPublic = document.getElementById('printSeedSimulatedLabelPublic');
+      const seedSimSecret = document.getElementById('printSeedSimulatedLabelSecret');
+      if (seedSimPublic) seedSimPublic.style.display = isSimulated ? 'block' : 'none';
+      if (seedSimSecret) seedSimSecret.style.display = isSimulated ? 'block' : 'none';
+
+      const printSeedWarning = document.getElementById('printSeedSimulatedWarning');
+      if (printSeedWarning) {
+        printSeedWarning.style.display = isSimulated ? 'flex' : 'none';
+      }
+
+      const watermarks = document.querySelectorAll('#paperWalletPrint .watermark, #seedWalletPrint .watermark');
+      watermarks.forEach(wm => {
+        if (isSimulated) {
+          wm.textContent = 'TEST';
+          wm.style.fontSize = '8rem';
+        } else {
+          wm.textContent = wm.classList.contains('secret-watermark') ? '🔑' : '₿';
+          wm.style.fontSize = '11rem';
+        }
+      });
 
       // 1. Generate unique serial number based on master seed
       const masterSeedHexStr = bytesToHex(STATE.hdMasterSeed);
