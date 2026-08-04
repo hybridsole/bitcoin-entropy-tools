@@ -942,6 +942,8 @@
       width: 90%;
       text-align: center;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      max-height: 85vh;
+      overflow-y: auto;
     }
 
     /* Verification Modal & Page Tabs */
@@ -1246,6 +1248,12 @@
 
     /* Print View Styles - Dedicated Paper Wallet */
     @media print {
+
+
+      .modal-overlay {
+        display: none !important;
+      }
+
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -2027,7 +2035,7 @@
             style="width: 100%; margin-bottom: 1rem; border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.04); color: #fbbf24; box-sizing: border-box; text-align: left;">
             <span class="warning-icon">⚠️</span>
             <div>
-              <strong>Note:</strong> Touch/mouse movements are convenient for testing, but are less secure than physical
+              <strong>Note:</strong> Touch/mouse movements are less random than physical
               dice/coin flips.
             </div>
           </div>
@@ -2120,15 +2128,12 @@
               style="margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
               <span class="output-title"
                 style="font-size: 0.85rem; font-weight: 700; color: var(--btc-gold); text-transform: uppercase; letter-spacing: 0.05em; display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0.4rem;">
-                SHA-256 Entropy Digest (256-bit Private Key Hex)
+                SHA-256 Entropy (256-bit Hex)
                 <a href="#" onclick="showVerificationModal(event)"
                   style="color: var(--accent-cyan); text-transform: none; font-size: 0.75rem; text-decoration: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center;">
                   (How to verify?)
                 </a>
               </span>
-              <span class="output-tag"
-                style="font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(255, 255, 255, 0.08); color: var(--text-muted);">Real-time
-                Secret</span>
             </div>
             <div class="value-box">
               <span id="outRealtimeHexKey"
@@ -2160,7 +2165,7 @@
       <!-- RESULTS SECTION (SINGLE KEY PAIRING) -->
       <div class="card" id="resultsCard" style="display: none;">
         <div class="card-title">
-          <span>🔑 Generated Bitcoin Keys & Addresses</span>
+          <span>🔑 Generated Bitcoin Address</span>
           <div style="display: flex; gap: 0.5rem;">
             <button class="btn" onclick="printSingleWallet()">🖨️ Print Paper Wallet</button>
           </div>
@@ -2236,14 +2241,14 @@
               </div>
               <div class="qr-svg-wrapper" id="qrWifComp"></div>
               <div class="wallet-col-value" id="outWifComp">L...</div>
-              <button class="btn btn-danger" onclick="copyText('outWifComp')" style="width: 100%;">📋 Copy Secret
+              <button class="btn btn-danger" onclick="copyText('outWifComp')" style="width: 100%;">📋 Copy Private
                 Key</button>
             </div>
 
             <!-- Uncompressed WIF Content -->
             <div id="contentTabWifUncomp" class="wallet-tab-content">
               <div class="wallet-col-title" style="color: var(--accent-red); margin-top: 0.25rem;">
-                Private Key (WIF Uncompressed)
+                Private Key (Uncompressed)
                 <span class="tooltip-icon"
                   data-tooltip="Starts with 5. Legacy private key format mapping to uncompressed public keys. Rarely used today unless recovering very old wallets.">?</span>
               </div>
@@ -2315,7 +2320,7 @@
     <!-- SEED RESULTS SECTION -->
     <div class="card" id="seedResultsCard" style="display: none;">
       <div class="card-title">
-        <span>🌱 BIP-39 Seed Phrase & HD Wallet (m/84'/0'/0'/0/i)</span>
+        <span>🌱 BIP-39 Seed Phrase</span>
         <div style="display: flex; gap: 0.5rem; align-items: center;">
           <button class="btn" onclick="showPrintSeedPopup()">🖨️ Print Seed Wallet</button>
         </div>
@@ -2352,7 +2357,7 @@
         <div class="output-group" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);">
           <div class="output-header">
             <span class="output-title" style="color: var(--accent-red);">
-              Top Secret Mnemonic Seed Phrase
+              Secret Mnemonic Seed Phrase
               <span class="tooltip-icon"
                 data-tooltip="The human-readable backup of your entire wallet. Whoever has this can steal all your funds. NEVER SHARE THIS!">?</span>
             </span>
@@ -2527,7 +2532,7 @@
           in the entropy box (e.g., <code>A1B2...</code>). <br><br>
           <strong>Step 1: Check the Hash</strong><br>
           We take the <em>exact literal text</em> from that box and run a standard SHA-256 hash on it. Copy all the text
-          from the entropy box and hash it using a trusted offline tool to prove it matches our "SHA-256 Entropy Digest"
+          from the entropy box and hash it using a trusted offline tool to prove it matches our "SHA-256 Entropy"
           output exactly.
         </div>
 
@@ -2539,7 +2544,7 @@
           We do not manipulate these letters; we simply take the <em>exact literal text string</em> you generated and
           run
           a standard SHA-256 cryptographic hash on it. Copy the string from the entropy box and hash it offline to prove
-          it matches our "SHA-256 Entropy Digest" output exactly.
+          it matches our "SHA-256 Entropy" output exactly.
         </div>
 
         <div id="aboutVTab-dice" class="about-verify-tab-content">
@@ -2550,7 +2555,7 @@
           We do not mathematically alter these numbers; we simply take the <em>exact literal text string</em> you typed
           and run a standard SHA-256 cryptographic hash on it. Copy the string from the entropy box and hash it offline
           to
-          prove it matches our "SHA-256 Entropy Digest" output exactly.
+          prove it matches our "SHA-256 Entropy" output exactly.
         </div>
 
         <div id="aboutVTab-cards" class="about-verify-tab-content">
@@ -2560,7 +2565,7 @@
           <strong>Step 1: Check the Hash</strong><br>
           We do not mathematically alter these symbols; we simply take the <em>exact literal text string</em> you typed
           and run a standard SHA-256 cryptographic hash on it. Copy the string from the entropy box and hash it offline
-          to prove it matches our "SHA-256 Entropy Digest" output exactly.
+          to prove it matches our "SHA-256 Entropy" output exactly.
         </div>
 
         <!-- Universal Verification Steps -->
@@ -3366,7 +3371,7 @@
     function startMouseCapture() {
       if (!STATE.mouseEngaged) return;
       STATE.mouseCapturing = true;
-      updateMouseBadge('active', '⚡ Capturing Active Entropy', 'Harvesting physical motion & micro-timing vectors');
+      updateMouseBadge('active', '⚡ Capturing Active Entropy', 'Harvesting motion & timing vectors');
     }
 
     function handleMouseLeave() {
@@ -3568,7 +3573,7 @@
           const successBox = document.getElementById('mouseSuccessBox');
           if (successBox) successBox.style.display = 'none';
           if (titleEl) titleEl.textContent = '2. Swipe / Move Inside Capture Box';
-          setTimeout(initMouseCanvas, 50);
+          setTimeout(initMouseCanvas, 650);
         }
       } else {
         if (pad) pad.style.display = 'flex';
@@ -5097,7 +5102,7 @@
         in the entropy box (e.g., <code>A1B2...</code>). <br><br>
         <strong>Step 1: Check the Hash</strong><br>
         We take the <em>exact literal text</em> from that box and run a standard SHA-256 hash on it. Copy all the text
-        from the entropy box and hash it using a trusted offline tool to prove it matches our "SHA-256 Entropy Digest"
+        from the entropy box and hash it using a trusted offline tool to prove it matches our "SHA-256 Entropy"
         output exactly.
       </div>
 
@@ -5108,7 +5113,7 @@
         <strong>Step 1: Check the Hash</strong><br>
         We do not manipulate these letters; we simply take the <em>exact literal text string</em> you generated and run
         a standard SHA-256 cryptographic hash on it. Copy the string from the entropy box and hash it offline to prove
-        it matches our "SHA-256 Entropy Digest" output exactly.
+        it matches our "SHA-256 Entropy" output exactly.
       </div>
 
       <div id="vTab-dice" class="verify-tab-content">
@@ -5118,7 +5123,7 @@
         <strong>Step 1: Check the Hash</strong><br>
         We do not mathematically alter these numbers; we simply take the <em>exact literal text string</em> you typed
         and run a standard SHA-256 cryptographic hash on it. Copy the string from the entropy box and hash it offline to
-        prove it matches our "SHA-256 Entropy Digest" output exactly.
+        prove it matches our "SHA-256 Entropy" output exactly.
       </div>
 
       <!-- Universal Verification Steps -->
