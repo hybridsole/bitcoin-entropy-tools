@@ -400,6 +400,14 @@
       font-size: 1.1rem;
     }
 
+    .card-btn {
+      min-width: 44px;
+      height: 48px;
+      font-size: 0.95rem;
+      padding: 0.2rem;
+      border-radius: 6px;
+    }
+
     /* D16 Mode Toggle */
     .d16-toggle-row {
       display: flex;
@@ -512,7 +520,7 @@
 
     textarea {
       width: 100%;
-      height: 100px;
+      height: 60px;
       background: rgba(15, 23, 42, 0.8);
       border: 1px solid var(--card-border);
       border-radius: 8px;
@@ -642,7 +650,7 @@
     .mouse-canvas-wrapper {
       position: relative;
       width: 100%;
-      height: 440px;
+      height: 220px;
       background: rgba(15, 23, 42, 0.9);
       border: 2px dashed rgba(247, 147, 26, 0.4);
       border-radius: var(--radius);
@@ -1358,21 +1366,15 @@
       /* Specific colors for public vs private halves */
       .load-half {
         background-color: #f0fdf4 !important;
-        background-image:
-          repeating-linear-gradient(45deg, rgba(16, 185, 129, 0.03) 0px, rgba(16, 185, 129, 0.03) 1px, transparent 1px, transparent 8px),
-          repeating-linear-gradient(-45deg, rgba(16, 185, 129, 0.03) 0px, rgba(16, 185, 129, 0.03) 1px, transparent 1px, transparent 8px) !important;
         border-right: 1px dashed rgba(0, 0, 0, 0.15);
       }
 
       .secret-half {
         background-color: #fffaf0 !important;
-        /* soft warm tint */
-        background-image:
-          repeating-linear-gradient(45deg, rgba(217, 119, 6, 0.03) 0px, rgba(217, 119, 6, 0.03) 1px, transparent 1px, transparent 8px),
-          repeating-linear-gradient(-45deg, rgba(217, 119, 6, 0.03) 0px, rgba(217, 119, 6, 0.03) 1px, transparent 1px, transparent 8px) !important;
       }
 
       .watermark {
+        display: none !important;
         position: absolute;
         top: 50%;
         left: 50%;
@@ -1831,6 +1833,11 @@
         margin-bottom: 1rem;
       }
 
+      .card-title {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
       .warning-banner {
         padding: 0.5rem 0.75rem;
         font-size: 0.78rem;
@@ -1958,7 +1965,7 @@
         <div class="dice-grid">
           <div class="dice-option selected" id="opt-mouse" onclick="selectDice('mouse')">
             <span class="dice-icon">🖱️</span>
-            <span class="dice-name">Mouse Movement</span>
+            <span class="dice-name">Touch / Mouse</span>
             <span class="dice-bits">2.0 bits/sample (128 samples)</span>
           </div>
           <div class="dice-option" id="opt-coin" onclick="selectDice('coin')">
@@ -1973,8 +1980,8 @@
           </div>
           <div class="dice-option" id="btnMoreDice" onclick="toggleMoreDice()">
             <span class="dice-icon">🎲</span>
-            <span class="dice-name">Other Dice <span class="arrow-indicator">▼</span></span>
-            <span class="dice-bits">D10, D12, D16, D20</span>
+            <span class="dice-name">Other Methods <span class="arrow-indicator">▼</span></span>
+            <span class="dice-bits">D10, D12, D16, D20, Cards</span>
           </div>
           <div class="dice-option more-dice-option" id="opt-d10" onclick="selectDice('d10')" style="display: none;">
             <span class="dice-icon">🎲</span>
@@ -1996,6 +2003,11 @@
             <span class="dice-name">20-Sided (D20)</span>
             <span class="dice-bits">4.322 bits/roll (60 rolls)</span>
           </div>
+          <div class="dice-option more-dice-option" id="opt-cards" onclick="selectDice('cards')" style="display: none;">
+            <span class="dice-icon">🃏</span>
+            <span class="dice-name">Deck of Cards</span>
+            <span class="dice-bits">5.700 bits/draw (45 draws)</span>
+          </div>
         </div>
 
         <div class="card-title" style="margin-top: 1.5rem;">
@@ -2015,8 +2027,8 @@
             style="width: 100%; margin-bottom: 1rem; border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.04); color: #fbbf24; box-sizing: border-box; text-align: left;">
             <span class="warning-icon">⚠️</span>
             <div>
-              <strong>Mouse Movement Entropy Note:</strong> Convenient for testing, but mouse movements do not provide
-              the same standard of randomness as physical coin flips or dice rolls.
+              <strong>Note:</strong> Touch/mouse movements are convenient for testing, but are less secure than physical
+              dice/coin flips.
             </div>
           </div>
           <div class="mouse-canvas-wrapper" id="mouseCanvasWrapper" onmouseenter="startMouseCapture()"
@@ -2025,12 +2037,12 @@
             <canvas id="mouseCanvas" class="mouse-canvas"></canvas>
             <div class="mouse-overlay-text" id="mouseOverlayText">
               <span class="mouse-status-badge mouse-status-paused" id="mouseStatusBadge">⏸️ Tracking Paused</span>
-              <span id="mouseStatusSubtext">Move mouse dynamically inside this box to harvest entropy vectors</span>
+              <span id="mouseStatusSubtext">Touch / move dynamically inside this box to harvest entropy</span>
             </div>
           </div>
           <div class="mouse-controls-row">
-            <button class="btn" id="btnToggleMouse" onclick="toggleMouseTracking()">⏸️ Pause Mouse Tracking</button>
-            <button class="btn btn-danger" onclick="clearEntropy()">🗑️ Reset Mouse Entropy</button>
+            <button class="btn" id="btnToggleMouse" onclick="toggleMouseTracking()">⏸️ Pause Tracking</button>
+            <button class="btn btn-danger" onclick="clearEntropy()">🗑️ Reset Entropy</button>
           </div>
           <!-- Success Harvest State Badge (shown when completed) -->
           <div class="mouse-success-box" id="mouseSuccessBox" style="display: none;">
@@ -2101,22 +2113,18 @@
             <span id="valPercent">0%</span>
           </div>
 
-          <div
-            style="margin-top: 1rem; text-align: center; border-top: 1px solid var(--card-border); padding-top: 1rem;">
-            <a href="#" onclick="showVerificationModal(event)"
-              style="color: var(--accent-cyan); font-size: 0.85rem; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem;">
-              🔍 How can I verify this entropy is valid?
-            </a>
-          </div>
-
           <!-- Real-time SHA-256 Entropy Digest (only shown when minimum met) -->
           <div id="realtimeEntropyDigestBox"
             style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--card-border); text-align: left;">
             <div class="output-header"
               style="margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
               <span class="output-title"
-                style="font-size: 0.85rem; font-weight: 700; color: var(--btc-gold); text-transform: uppercase; letter-spacing: 0.05em;">
+                style="font-size: 0.85rem; font-weight: 700; color: var(--btc-gold); text-transform: uppercase; letter-spacing: 0.05em; display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0.4rem;">
                 SHA-256 Entropy Digest (256-bit Private Key Hex)
+                <a href="#" onclick="showVerificationModal(event)"
+                  style="color: var(--accent-cyan); text-transform: none; font-size: 0.75rem; text-decoration: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center;">
+                  (How to verify?)
+                </a>
               </span>
               <span class="output-tag"
                 style="font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(255, 255, 255, 0.08); color: var(--text-muted);">Real-time
@@ -2139,7 +2147,7 @@
           </button>
           <button class="btn btn-primary" id="btnGenerateSeed" disabled onclick="generateSeedAndAddresses()"
             style="flex: 1; min-width: 250px; background: linear-gradient(135deg, #085c40, #059669);">
-            🌱 Generate 12 or 24 Word Backup Seed
+            🌱 Generate 12 or 24 Word Seed
           </button>
         </div>
 
@@ -2309,26 +2317,7 @@
       <div class="card-title">
         <span>🌱 BIP-39 Seed Phrase & HD Wallet (m/84'/0'/0'/0/i)</span>
         <div style="display: flex; gap: 0.5rem; align-items: center;">
-          <button class="btn" onclick="printSeedWallet()">🖨️ Print Seed Wallet</button>
-          <div
-            style="display: flex; align-items: center; gap: 0.35rem; font-family: -apple-system, sans-serif; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--card-border); padding: 0.2rem 0.5rem; border-radius: 6px;">
-            <span
-              style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">+
-              Addresses:</span>
-            <select id="printAddressCount" onchange="updatePrintSeedWallet()"
-              style="background: transparent; border: none; color: var(--text-main); font-size: 0.78rem; font-weight: bold; outline: none; cursor: pointer;">
-              <option value="5" selected style="background: #111827;">5 (1 Row)</option>
-              <option value="10" style="background: #111827;">10 (2 Rows)</option>
-              <option value="15" style="background: #111827;">15 (2 Rows)</option>
-              <option value="20" style="background: #111827;">20 (2 Pages)</option>
-              <option value="25" style="background: #111827;">25 (2 Pages)</option>
-              <option value="30" style="background: #111827;">30 (2 Pages)</option>
-              <option value="35" style="background: #111827;">35 (2 Pages)</option>
-              <option value="40" style="background: #111827;">40 (3 Pages)</option>
-              <option value="45" style="background: #111827;">45 (3 Pages)</option>
-              <option value="50" style="background: #111827;">50 (3 Pages)</option>
-            </select>
-          </div>
+          <button class="btn" onclick="showPrintSeedPopup()">🖨️ Print Seed Wallet</button>
         </div>
       </div>
 
@@ -2348,9 +2337,8 @@
       <!-- Seed Phrase Options Panel (Moved above the mnemonic box) -->
       <div class="seed-options" id="seedOptionsRow" style="display: none; margin-bottom: 1.5rem;">
         <div class="seed-row">
-          <span style="font-weight: 600; color: var(--text-main);">Word Counts:</span>
-          <button class="btn active" id="btn12Words" onclick="setWordCount(12)">12 Words</button>
-          <button class="btn" id="btn24Words" onclick="setWordCount(24)">24 Words</button>
+          <button class="btn" id="btn12Words" onclick="setWordCount(12)">12 Words</button>
+          <button class="btn active" id="btn24Words" onclick="setWordCount(24)">24 Words</button>
         </div>
         <div class="seed-row">
           <span style="font-weight: 600; color: var(--text-main);">BIP-39 Passphrase (Optional):</span>
@@ -2522,17 +2510,20 @@
         <!-- Tabs Navigation -->
         <div class="about-verify-tabs">
           <button class="about-verify-tab-btn active" id="aboutVTabBtn-mouse"
-            onclick="switchAboutVerifyTab('mouse')">🖱️ Mouse</button>
+            onclick="switchAboutVerifyTab('mouse')">🖱️ Touch/Mouse</button>
           <button class="about-verify-tab-btn" id="aboutVTabBtn-coin" onclick="switchAboutVerifyTab('coin')">🪙 Coin
             Flip</button>
           <button class="about-verify-tab-btn" id="aboutVTabBtn-dice" onclick="switchAboutVerifyTab('dice')">🎲 Dice
             (D6-D20)</button>
+          <button class="about-verify-tab-btn" id="aboutVTabBtn-cards" onclick="switchAboutVerifyTab('cards')">🃏
+            Cards</button>
         </div>
 
         <!-- Tab Contents -->
         <div id="aboutVTab-mouse" class="about-verify-tab-content active">
-          <strong style="color: var(--accent-cyan);">Mouse Movement Verification:</strong><br>
-          Our mouse engine captures your micro-movements and timings, translating them into the raw text vectors you see
+          <strong style="color: var(--accent-cyan);">Touch/Mouse Verification:</strong><br>
+          Our Touch/Mouse engine captures your micro-movements and timings, translating them into the raw text vectors
+          you see
           in the entropy box (e.g., <code>A1B2...</code>). <br><br>
           <strong>Step 1: Check the Hash</strong><br>
           We take the <em>exact literal text</em> from that box and run a standard SHA-256 hash on it. Copy all the text
@@ -2560,6 +2551,16 @@
           and run a standard SHA-256 cryptographic hash on it. Copy the string from the entropy box and hash it offline
           to
           prove it matches our "SHA-256 Entropy Digest" output exactly.
+        </div>
+
+        <div id="aboutVTab-cards" class="about-verify-tab-content">
+          <strong style="color: var(--accent-cyan);">Deck of Cards Verification:</strong><br>
+          When you enter card draws, we record them exactly as you see them in the entropy box (e.g.,
+          <code>A&spades;10&hearts;K&diams;</code>). <br><br>
+          <strong>Step 1: Check the Hash</strong><br>
+          We do not mathematically alter these symbols; we simply take the <em>exact literal text string</em> you typed
+          and run a standard SHA-256 cryptographic hash on it. Copy the string from the entropy box and hash it offline
+          to prove it matches our "SHA-256 Entropy Digest" output exactly.
         </div>
 
         <!-- Universal Verification Steps -->
@@ -2655,7 +2656,7 @@
 
         <!-- RIGHT: SPEND / SECRET SIDE -->
         <div class="wallet-half secret-half">
-          <div class="watermark secret-watermark">🔑</div>
+          <div class="watermark secret-watermark"></div>
           <!-- Ornate frame border -->
           <div class="ornate-frame">
             <!-- Corner values -->
@@ -2704,7 +2705,7 @@
       <div class="seed-bill">
         <!-- LEFT: SECRET BACKUP -->
         <div class="seed-half secret-half">
-          <div class="watermark secret-watermark">🔑</div>
+          <div class="watermark secret-watermark"></div>
           <!-- Ornate frame border -->
           <div class="ornate-frame">
             <!-- Corner values -->
@@ -3150,7 +3151,7 @@
       lastMouseTime: null,
       particles: [],
       animLoopActive: false,
-      seedWordCount: 12,
+      seedWordCount: 24,
       currentMnemonic: "",
       hdMasterSeed: null,
       currentDerivationIndex: 0,
@@ -3194,6 +3195,19 @@
       d12: { name: 'D12 Dice', sides: 12, bitsPerRoll: Math.log2(12), minRolls: 72, labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'] },
       d16: { name: '16-Sided (D16)', sides: 16, bitsPerRoll: 4.0, minRolls: 64, labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'] },
       d20: { name: 'D20 Dice', sides: 20, bitsPerRoll: Math.log2(20), minRolls: 60, labels: Array.from({ length: 20 }, (_, i) => (i + 1).toString()) },
+      cards: {
+        name: 'Deck of Cards',
+        sides: 52,
+        bitsPerRoll: Math.log2(52),
+        minRolls: 45,
+        labels: (() => {
+          const suits = ['♠', '♥', '♣', '♦'];
+          const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+          const lst = [];
+          suits.forEach(s => ranks.forEach(r => lst.push(r + s)));
+          return lst;
+        })()
+      },
       mouse: { name: 'Mouse Movement', sides: 'Vector', bitsPerRoll: 2.0, minRolls: 128, labels: [] }
     };
 
@@ -3286,7 +3300,7 @@
       if (passphraseInput) passphraseInput.value = '';
 
       // Force open expansion if a collapsible type is programmatically selected
-      const isMoreType = ['d10', 'd12', 'd16', 'd20'].includes(type);
+      const isMoreType = ['d10', 'd12', 'd16', 'd20', 'cards'].includes(type);
       if (isMoreType) {
         toggleMoreDice(true);
       } else {
@@ -3340,19 +3354,19 @@
       STATE.mouseEngaged = !STATE.mouseEngaged;
       const btn = document.getElementById('btnToggleMouse');
       if (btn) {
-        btn.textContent = STATE.mouseEngaged ? '⏸️ Pause Mouse Tracking' : '▶️ Engage Mouse Tracking';
+        btn.textContent = STATE.mouseEngaged ? '⏸️ Pause Tracking' : '▶️ Engage Tracking';
       }
       if (!STATE.mouseEngaged) {
-        updateMouseBadge('paused', '⏸️ Mouse Tracking Paused', 'Click Engage Mouse Tracking to resume capture');
+        updateMouseBadge('paused', '⏸️ Tracking Paused', 'Click Engage Tracking to resume capture');
       } else {
-        updateMouseBadge('paused', '⏸️ Ready for Mouse Movement', 'Move mouse inside box to capture physical entropy vectors');
+        updateMouseBadge('paused', '⏸️ Ready for Touch/Mouse', 'Touch / move inside box to capture physical entropy vectors');
       }
     }
 
     function startMouseCapture() {
       if (!STATE.mouseEngaged) return;
       STATE.mouseCapturing = true;
-      updateMouseBadge('active', '⚡ Capturing Active Mouse Entropy', 'Harvesting physical motion & micro-timing vectors');
+      updateMouseBadge('active', '⚡ Capturing Active Entropy', 'Harvesting physical motion & micro-timing vectors');
     }
 
     function handleMouseLeave() {
@@ -3360,7 +3374,7 @@
       STATE.lastMouseX = null;
       STATE.lastMouseY = null;
       if (STATE.mouseEngaged) {
-        updateMouseBadge('paused', '⏸️ Tracking Paused', 'Move cursor back inside box to resume');
+        updateMouseBadge('paused', '⏸️ Tracking Paused', 'Touch or move back inside box to resume');
       }
     }
 
@@ -3545,7 +3559,7 @@
           }
           const successBox = document.getElementById('mouseSuccessBox');
           if (successBox) successBox.style.display = 'flex';
-          if (titleEl) titleEl.textContent = '2. Captured Entropy Sequence (128 Samples - 256 Bits Standard Reached 🔒)';
+          if (titleEl) titleEl.textContent = '2. Captured Entropy - Mouse/Touch';
         } else {
           if (mouseContainer) {
             mouseContainer.style.display = 'flex';
@@ -3553,7 +3567,7 @@
           }
           const successBox = document.getElementById('mouseSuccessBox');
           if (successBox) successBox.style.display = 'none';
-          if (titleEl) titleEl.textContent = '2. Move Mouse Inside Capture Box';
+          if (titleEl) titleEl.textContent = '2. Swipe / Move Inside Capture Box';
           setTimeout(initMouseCanvas, 50);
         }
       } else {
@@ -3582,7 +3596,41 @@
             btn.onclick = () => addRoll(hexVal);
             pad.appendChild(btn);
           }
+        } else if (STATE.diceType === 'cards') {
+          pad.style.flexDirection = 'column';
+          pad.style.width = '100%';
+          pad.style.alignItems = 'center';
+
+          const suits = ['♠', '♥', '♣', '♦'];
+          const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+          suits.forEach(suit => {
+            const row = document.createElement('div');
+            row.style.display = 'flex';
+            row.style.flexWrap = 'wrap';
+            row.style.gap = '0.6rem';
+            row.style.justifyContent = 'center';
+            row.style.width = '100%';
+            row.style.marginBottom = '0.6rem';
+
+            ranks.forEach(rank => {
+              const lbl = rank + suit;
+              const btn = document.createElement('button');
+              btn.className = 'pad-btn card-btn';
+              if (suit === '♥' || suit === '♦') {
+                btn.style.color = '#ef4444';
+                btn.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+              }
+              btn.textContent = lbl;
+              btn.onclick = () => addRoll(lbl);
+              row.appendChild(btn);
+            });
+            pad.appendChild(row);
+          });
         } else {
+          pad.style.flexDirection = '';
+          pad.style.width = '';
+          pad.style.alignItems = '';
+
           const cfg = DICE_CONFIG[STATE.diceType];
           cfg.labels.forEach(lbl => {
             const btn = document.createElement('button');
@@ -3708,6 +3756,19 @@
           parsedHex = matches;
         }
         STATE.rolls = parsedHex;
+      } else if (STATE.diceType === 'cards') {
+        const cardRegex = /10[♠♥♦♣shdc]|[2-9AJQK][♠♥♦♣shdc]/gi;
+        const matches = raw.match(cardRegex) || [];
+        STATE.rolls = matches.map(token => {
+          const rank = token.slice(0, -1).toUpperCase();
+          const suitChar = token.slice(-1).toLowerCase();
+          let suit = suitChar;
+          if (suitChar === 's' || suitChar === '♠') suit = '♠';
+          else if (suitChar === 'h' || suitChar === '♥') suit = '♥';
+          else if (suitChar === 'd' || suitChar === '♦') suit = '♦';
+          else if (suitChar === 'c' || suitChar === '♣') suit = '♣';
+          return rank + suit;
+        });
       } else if (STATE.diceType === 'mouse') {
         const tokens = raw.match(/[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}/gi) || [];
         STATE.rolls = tokens.reverse();
@@ -3743,13 +3804,19 @@
       // Determine the correct terminology for the labels
       const isCoin = STATE.diceType === 'coin';
       const isMouse = STATE.diceType === 'mouse';
-      const termSingle = isCoin ? 'Flip' : (isMouse ? 'Sample' : 'Roll');
-      const termPlural = isCoin ? 'Flips' : (isMouse ? 'Samples' : 'Rolls');
+      const isCards = STATE.diceType === 'cards';
+      const termSingle = isCoin ? 'Flip' : (isMouse ? 'Sample' : (isCards ? 'Draw' : 'Roll'));
+      const termPlural = isCoin ? 'Flips' : (isMouse ? 'Samples' : (isCards ? 'Draws' : 'Rolls'));
 
       // Update metric box label for roll count
       const metricLabelRoll = document.querySelector('.metric-box:first-child .metric-label');
       if (metricLabelRoll) {
         metricLabelRoll.textContent = termPlural;
+      }
+
+      const metricLabelRequired = document.querySelector('.metric-box:nth-child(3) .metric-label');
+      if (metricLabelRequired) {
+        metricLabelRequired.textContent = `Min ${termPlural} Needed`;
       }
 
       const needed = Math.max(0, cfg.minRolls - count);
@@ -3758,11 +3825,7 @@
       const realtimeDigestBox = document.getElementById('realtimeEntropyDigestBox');
       const outRealtimeHexKey = document.getElementById('outRealtimeHexKey');
 
-      if (count >= cfg.minRolls) {
-        rat.textContent = '🔒 Fully Secure (256+ bits)';
-        rat.style.color = 'var(--accent-green)';
-        btn.disabled = false;
-
+      if (count > 0) {
         // Generate realtime digest hex
         const rawString = STATE.rolls.join('');
         const entropyBytes = new TextEncoder().encode(rawString);
@@ -3775,6 +3838,19 @@
         if (realtimeDigestBox) {
           realtimeDigestBox.style.display = 'block';
         }
+      } else {
+        if (realtimeDigestBox) {
+          realtimeDigestBox.style.display = 'none';
+        }
+        if (outRealtimeHexKey) {
+          outRealtimeHexKey.textContent = '----------------------------------------------------------------';
+        }
+      }
+
+      if (count >= cfg.minRolls) {
+        rat.textContent = '🔒 Fully Secure (256+ bits)';
+        rat.style.color = 'var(--accent-green)';
+        btn.disabled = false;
 
         // Dynamically update active generated cards if they are open!
         if (resultsCard && STATE.resultsGenerated) {
@@ -3789,20 +3865,13 @@
       } else {
         if (count > 0) {
           const pct = Math.floor((count / cfg.minRolls) * 100);
-          rat.textContent = `⏳ Need ${needed} more (${pct}% complete)`;
+          rat.textContent = `⏳ Need ${needed} more`;
           rat.style.color = 'var(--accent-yellow)';
         } else {
           rat.textContent = `🔴 No ${termPlural.toLowerCase()} collected yet`;
           rat.style.color = 'var(--accent-red)';
         }
         btn.disabled = true;
-
-        if (realtimeDigestBox) {
-          realtimeDigestBox.style.display = 'none';
-        }
-        if (outRealtimeHexKey) {
-          outRealtimeHexKey.textContent = '----------------------------------------------------------------';
-        }
 
         // Hide generated address and seed cards if entropy is insufficient!
         if (resultsCard) resultsCard.style.display = 'none';
@@ -3922,6 +3991,7 @@
         resultsSimWarning.style.display = STATE.hasSimulatedEntropy ? 'flex' : 'none';
       }
       document.getElementById('resultsCard').style.display = 'block';
+      document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth' });
       // Setup paper wallet print views
       const isSegwitActive = document.getElementById('btnTabSegWit').classList.contains('active');
       const isWifCompActive = document.getElementById('btnTabWifComp').classList.contains('active');
@@ -4147,12 +4217,13 @@
       // Proceed to render grid and derive seed/addresses
       await deriveFromMnemonic();
 
-      // Reveal Results (No auto-scrolling)
+      // Reveal Results
       const seedResultsSimWarning = document.getElementById('seedResultsSimulatedWarning');
       if (seedResultsSimWarning) {
         seedResultsSimWarning.style.display = STATE.hasSimulatedEntropy ? 'flex' : 'none';
       }
       document.getElementById('seedResultsCard').style.display = 'block';
+      document.getElementById('seedResultsCard').scrollIntoView({ behavior: 'smooth' });
     }
 
     function renderMnemonicGrid() {
@@ -4274,20 +4345,35 @@
         row.innerHTML = `
           <td>#${i}</td>
           <td><code style="color: var(--text-muted);">${derivationPath}</code></td>
-          
+
           <td style="font-family: monospace;" title="${derivedAddress}">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; max-width: 380px;">
               <span data-full="${derivedAddress}">${displayAddress}</span>
-              <button class="btn-icon" onclick="copyString('${derivedAddress}')" title="Copy Address">📋</button>
+              <div style="display: flex; gap: 0.2rem;">
+                <button class="btn-icon" onclick="copyString('${derivedAddress}')" title="Copy Address">📋</button>
+                <button class="btn-icon" onclick="showQrModal('${derivedAddress}', 'Public Address')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">
+                  <svg viewBox="0 0 336 336" width="16" height="16" fill="currentColor">
+                    <path d="m 16,16 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 128,0 0,16 0,16 16,0 0,-16 16,0 0,-16 -16,0 -16,0 z m 32,16 0,16 16,0 0,-16 -16,0 z m 16,16 0,16 16,0 16,0 0,-16 0,-16 0,-16 -16,0 0,16 0,16 -16,0 z m 0,16 -16,0 -16,0 -16,0 0,16 16,0 16,0 0,16 -16,0 0,16 16,0 0,16 16,0 0,-16 16,0 0,16 -16,0 0,16 -16,0 0,16 16,0 16,0 0,16 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 0,-16 -16,0 0,-16 z m 16,112 -16,0 0,16 -16,0 0,16 0,16 16,0 0,16 0,16 -16,0 -16,0 0,-16 16,0 0,-16 -16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,16 16,0 0,-16 0,-16 -16,0 -16,0 0,-16 -16,0 -16,0 -16,0 0,16 -16,0 0,16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,16 0,16 0,16 16,0 0,-16 16,0 16,0 16,0 0,-16 16,0 0,-16 16,0 0,16 -16,0 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,16 0,16 0,16 16,0 0,16 16,0 16,0 16,0 0,16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 0,-16 -16,0 -16,0 0,-16 -16,0 0,-16 -16,0 0,16 -16,0 -16,0 0,16 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 16,0 0,-16 -16,0 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 -16,0 0,-16 z m 48,128 0,-16 -16,0 0,16 16,0 z m 32,16 16,0 16,0 0,-16 -16,0 -16,0 0,16 z m 32,-16 16,0 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 -16,0 0,16 0,16 16,0 0,-16 16,0 0,16 0,16 16,0 16,0 0,16 z m -48,-80 0,-16 -16,0 -16,0 0,16 16,0 16,0 z m 16,0 16,0 0,-16 0,-16 0,-16 16,0 0,16 16,0 0,16 16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,-16 -16,0 0,16 -16,0 0,16 16,0 0,16 0,16 0,16 z m -16,-48 -16,0 0,16 16,0 0,-16 z m 64,32 -16,0 0,16 16,0 0,-16 z m -224,0 0,-16 -16,0 0,16 16,0 z m -16,0 -16,0 -16,0 -16,0 0,16 16,0 16,0 16,0 0,-16 z m -64,0 -16,0 0,16 16,0 0,-16 z m 0,-48 0,-16 -16,0 0,16 16,0 z m 112,-16 16,0 0,-16 0,-16 -16,0 0,16 0,16 z m 96,-128 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m -208,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 224,0 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m -208,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 224,0 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m -32,96 0,16 16,0 0,-16 -16,0 z m -224,96 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 16,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 16,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 288,48 0,16 16,0 0,-16 -16,0 z"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </td>
           
           <td style="font-family: monospace;">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
               <span data-full="${derivedWif}">${derivedWif}</span>
-              <button class="btn-icon" onclick="copyString('${derivedWif}')" title="Copy WIF">📋</button>
+              <div style="display: flex; gap: 0.2rem;">
+                <button class="btn-icon" onclick="copyString('${derivedWif}')" title="Copy WIF">📋</button>
+                <button class="btn-icon" onclick="showQrModal('${derivedWif}', 'Private Key (WIF)')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">
+                  <svg viewBox="0 0 336 336" width="16" height="16" fill="currentColor">
+                    <path d="m 16,16 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 128,0 0,16 0,16 16,0 0,-16 16,0 0,-16 -16,0 -16,0 z m 32,16 0,16 16,0 0,-16 -16,0 z m 16,16 0,16 16,0 16,0 0,-16 0,-16 0,-16 -16,0 0,16 0,16 -16,0 z m 0,16 -16,0 -16,0 -16,0 0,16 16,0 16,0 0,16 -16,0 0,16 16,0 0,16 16,0 0,-16 16,0 0,16 -16,0 0,16 -16,0 0,16 16,0 16,0 0,16 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 0,-16 -16,0 0,-16 z m 16,112 -16,0 0,16 -16,0 0,16 0,16 16,0 0,16 0,16 -16,0 -16,0 0,-16 16,0 0,-16 -16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,16 16,0 0,-16 0,-16 -16,0 -16,0 0,-16 -16,0 -16,0 -16,0 0,16 -16,0 0,16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,16 0,16 0,16 16,0 0,-16 16,0 16,0 16,0 0,-16 16,0 0,-16 16,0 0,16 -16,0 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,16 0,16 0,16 16,0 0,16 16,0 16,0 16,0 0,16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 0,-16 -16,0 -16,0 0,-16 -16,0 0,-16 -16,0 0,16 -16,0 -16,0 0,16 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 16,0 0,-16 -16,0 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 -16,0 0,-16 z m 48,128 0,-16 -16,0 0,16 16,0 z m 32,16 16,0 16,0 0,-16 -16,0 -16,0 0,16 z m 32,-16 16,0 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 -16,0 0,16 0,16 16,0 0,-16 16,0 0,16 0,16 16,0 16,0 0,16 z m -48,-80 0,-16 -16,0 -16,0 0,16 16,0 16,0 z m 16,0 16,0 0,-16 0,-16 0,-16 16,0 0,16 16,0 0,16 16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,-16 -16,0 0,16 -16,0 0,16 16,0 0,16 0,16 0,16 z m -16,-48 -16,0 0,16 16,0 0,-16 z m 64,32 -16,0 0,16 16,0 0,-16 z m -224,0 0,-16 -16,0 0,16 16,0 z m -16,0 -16,0 -16,0 -16,0 0,16 16,0 16,0 16,0 0,-16 z m -64,0 -16,0 0,16 16,0 0,-16 z m 0,-48 0,-16 -16,0 0,16 16,0 z m 112,-16 16,0 0,-16 0,-16 -16,0 0,16 0,16 z m 96,-128 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m -208,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 224,0 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m -208,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 224,0 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m -32,96 0,16 16,0 0,-16 -16,0 z m -224,96 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 16,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 16,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 288,48 0,16 16,0 0,-16 -16,0 z"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </td>
+
         `;
         tbody.appendChild(row);
       }
@@ -4498,13 +4584,61 @@
       window.print();
     }
 
-    async function printSeedWallet() {
+    function showPrintSeedPopup() {
+      const checkbox = document.getElementById('popupPrintSeedOnly');
+      if (checkbox) checkbox.checked = false;
+      const dropdown = document.getElementById('popupAddressCount');
+      if (dropdown) {
+        dropdown.disabled = false;
+        dropdown.style.opacity = '1';
+      }
+      document.getElementById('printSeedModal').classList.add('open');
+    }
+
+    function closePrintSeedModal(e) {
+      if (e && e.target.id !== 'printSeedModal') return;
+      document.getElementById('printSeedModal').classList.remove('open');
+    }
+
+
+    function showQrModal(text, title) {
+      document.getElementById('qrModalTitle').textContent = title;
+      document.getElementById('qrModalText').textContent = text;
+      
+      // We reuse your existing renderQRCode helper!
+      renderQRCode('qrModalCanvas', text); 
+      
+      document.getElementById('qrCodeModal').classList.add('open');
+    }
+
+    function closeQrModal(e) {
+      // Close only if clicking the background overlay or the X button
+      if (e && e.target.id !== 'qrCodeModal') return;
+      document.getElementById('qrCodeModal').classList.remove('open');
+    }
+
+    function togglePopupAddressDropdown(checkbox) {
+      const dropdown = document.getElementById('popupAddressCount');
+      if (dropdown) {
+        dropdown.disabled = checkbox.checked;
+        dropdown.style.opacity = checkbox.checked ? '0.5' : '1';
+      }
+    }
+
+    async function confirmAndPrintSeedWallet() {
+      const printSeedOnly = document.getElementById('popupPrintSeedOnly').checked;
+      const countVal = printSeedOnly ? 0 : parseInt(document.getElementById('popupAddressCount').value, 10);
+      document.getElementById('printSeedModal').classList.remove('open');
+      await printSeedWallet(countVal);
+    }
+
+    async function printSeedWallet(totalCount) {
       // Ensure print mode seed class is on body and single is off
       document.body.classList.add('print-mode-seed');
       document.body.classList.remove('print-mode-single');
 
       // Make sure print layout is updated before printing
-      await updatePrintSeedWallet();
+      await updatePrintSeedWallet(totalCount);
 
       window.print();
     }
@@ -4669,14 +4803,13 @@
       `;
     }
 
-    async function updatePrintSeedWallet() {
+    async function updatePrintSeedWallet(totalCountOverride) {
       if (!STATE.currentMnemonic || !STATE.hdMasterSeed) return;
 
       const printContainer = document.getElementById('seedWalletPrint');
       if (!printContainer) return;
 
-      const countSelect = document.getElementById('printAddressCount');
-      const totalCount = countSelect ? parseInt(countSelect.value, 10) : 5;
+      const totalCount = (totalCountOverride !== undefined) ? totalCountOverride : 5;
       const isSimulated = STATE.hasSimulatedEntropy;
 
       const masterSeedHexStr = bytesToHex(STATE.hdMasterSeed);
@@ -4731,7 +4864,9 @@
 
       const words = STATE.currentMnemonic.split(" ");
       const privateSeedBlock = createPrivateSeedBlock(words, words.length, serialId, isSimulated);
-      const publicBlock1 = createPublicAddressBlock(0, derivedAddresses, purpose, pathName, serialId, isSimulated);
+      const publicBlock1 = totalCount > 0
+        ? createPublicAddressBlock(0, derivedAddresses, purpose, pathName, serialId, isSimulated)
+        : createBlankBlock();
       page1Rows += createSeedRow(privateSeedBlock, publicBlock1);
 
       if (totalCount >= 10) {
@@ -4884,6 +5019,55 @@
   <div id="toast" class="toast">✅ Copied to clipboard!</div>
 
 
+  <!-- Print Seed Modal -->
+  <div class="modal-overlay" id="printSeedModal" onclick="closePrintSeedModal(event)">
+    <div class="modal-card" style="max-width: 400px; text-align: left; position: relative;"
+      onclick="event.stopPropagation()">
+      <button onclick="closePrintSeedModal()"
+        style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+
+      <h3 style="color: var(--btc-gold); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        🖨️ Print Backup Options
+      </h3>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label
+          style="display: block; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-main); font-weight: 600;">
+          Include Addresses:
+        </label>
+        <select id="popupAddressCount"
+          style="width: 100%; padding: 0.6rem; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 6px; outline: none; cursor: pointer;">
+          <option value="5" selected>5 Addresses (1 Row)</option>
+          <option value="10">10 Addresses (2 Rows)</option>
+          <option value="15">15 Addresses (2 Rows)</option>
+          <option value="20">20 Addresses (2 Pages)</option>
+          <option value="25">25 Addresses (2 Pages)</option>
+          <option value="30">30 Addresses (2 Pages)</option>
+          <option value="35">35 Addresses (2 Pages)</option>
+          <option value="40">40 Addresses (3 Pages)</option>
+          <option value="45">45 Addresses (3 Pages)</option>
+          <option value="50">50 Addresses (3 Pages)</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <input type="checkbox" id="popupPrintSeedOnly" onchange="togglePopupAddressDropdown(this)"
+          style="width: 16px; height: 16px; accent-color: var(--btc-gold); cursor: pointer;">
+        <label for="popupPrintSeedOnly"
+          style="font-size: 0.9rem; color: var(--text-main); cursor: pointer; user-select: none;">
+          Print Mnemonic Seed Only (No Addresses)
+        </label>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+        <button class="btn" onclick="closePrintSeedModal()"
+          style="border-color: var(--card-border); color: var(--text-muted); background: transparent;">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmAndPrintSeedWallet()"
+          style="background: var(--btc-gold); border-color: var(--btc-gold); color: #fff;">Confirm & Print</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Verification Modal -->
   <div class="modal-overlay" id="verificationModal" onclick="closeVerificationModal(event)">
     <div class="modal-card" style="max-width: 600px; text-align: left; position: relative;"
@@ -4960,7 +5144,21 @@
     </div>
   </div>
 
-
+  <!-- QR Code Popup Modal -->
+  <div class="modal-overlay" id="qrCodeModal" onclick="closeQrModal(event)">
+    <div class="modal-card" style="max-width: 320px; text-align: center; position: relative;" onclick="event.stopPropagation()">
+      <button onclick="closeQrModal()" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      
+      <h3 id="qrModalTitle" style="color: var(--btc-gold); margin-bottom: 1rem; font-size: 1.1rem;">QR Code</h3>
+      
+      <!-- The white background wrapper is needed so the QR code can be easily scanned -->
+      <div style="background: #fff; padding: 15px; border-radius: 8px; display: inline-block; margin-bottom: 1rem;">
+        <div id="qrModalCanvas"></div>
+      </div>
+      
+      <p id="qrModalText" style="font-family: monospace; font-size: 0.75rem; word-break: break-all; color: var(--text-muted); margin: 0;"></p>
+    </div>
+  </div>
 
 </body>
 
