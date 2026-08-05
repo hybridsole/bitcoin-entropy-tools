@@ -1,0 +1,28 @@
+name: Release Checksum
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  checksum:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Generate SHA-256 Checksum
+        run: |
+          sha256sum bitcoin-entropy-tools.html > SHA256SUMS.txt
+
+      - name: Upload Single HTML & Checksum to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            bitcoin-entropy-tools.html
+            SHA256SUMS.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
