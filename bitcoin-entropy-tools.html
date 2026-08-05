@@ -274,8 +274,8 @@
     .dice-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-bottom: 1.5rem;
+      gap: 0.3rem;
+      margin-bottom: 1rem;
     }
 
     .dice-option {
@@ -515,12 +515,12 @@
     /* Text Input Area */
     .textarea-wrapper {
       position: relative;
-      margin-bottom: 1.25rem;
+      margin-bottom: 0.75rem;
     }
 
     textarea {
       width: 100%;
-      height: 60px;
+      height: 75px;
       background: rgba(15, 23, 42, 0.8);
       border: 1px solid var(--card-border);
       border-radius: 8px;
@@ -619,8 +619,8 @@
       display: none;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
       width: 100%;
       transition: gap 0.5s ease;
     }
@@ -1870,9 +1870,11 @@
         box-sizing: border-box;
       }
 
+      /* Allow 'Other Methods' button to match the 2-column width on mobile */
       #btnMoreDice {
-        flex: 1 1 100%;
-        min-width: 100%;
+        flex: 1 1 calc(50% - 0.2rem);
+        min-width: calc(50% - 0.2rem);
+        width: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1917,15 +1919,6 @@
         </div>
       </a>
       <div style="display: flex; align-items: center; gap: 1rem;">
-        <a href="https://github.com/hybridsole/bitcoin-entropy-tools" target="_blank" class="github-link">
-          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"
-            style="display: inline-block; vertical-align: middle;">
-            <path
-              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
-            </path>
-          </svg>
-          GitHub
-        </a>
         <div class="offline-badge" id="offlineBadge">
           <span class="offline-pulse"></span>
           <span id="offlineBadgeText">100% Offline Standalone</span>
@@ -1939,6 +1932,7 @@
       <button class="nav-tab" id="tabBtn-converterTab" onclick="switchTab('converterTab')">🔄 Address & Key
         Converter</button>
       <button class="nav-tab" id="tabBtn-aboutTab" onclick="switchTab('aboutTab')">🛡️ Offline Security & Math</button>
+      <button class="nav-tab" id="tabBtn-whatIsEntropyTab" onclick="switchTab('whatIsEntropyTab')">📚 What is Entropy?</button>
     </nav>
   </header>
 
@@ -1950,7 +1944,7 @@
       <div style="cursor: pointer;"
         onclick="switchTab('aboutTab'); document.getElementById('auditGuide').scrollIntoView({ behavior: 'smooth' });">
         <strong>Educational & Testing Tool Only:</strong> You should not use keys generated here without validating the
-        source code or comparing other offline tools. <a href="#"
+        source code or comparing with other offline tools. <a href="#"
           style="color: var(--btc-gold); font-weight: bold; text-decoration: underline;"
           onclick="event.stopPropagation(); switchTab('aboutTab'); document.getElementById('auditGuide').scrollIntoView({ behavior: 'smooth' }); return false;">Click
           here to learn to audit.</a>
@@ -1966,10 +1960,13 @@
       <div class="card">
         <div class="card-title">
           <span>1. Select Your Entropy Source</span>
-          <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">Provide true physical
-            randomness</span>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <a href="#" onclick="event.preventDefault(); switchTab('whatIsEntropyTab');" 
+               style="color: var(--accent-cyan); font-size: 0.8rem; font-weight: 600; text-decoration: underline;">
+               What is entropy?
+            </a>
+          </div>
         </div>
-
         <div class="dice-grid">
           <div class="dice-option selected" id="opt-mouse" onclick="selectDice('mouse')">
             <span class="dice-icon">🖱️</span>
@@ -2167,7 +2164,7 @@
         <div class="card-title">
           <span>🔑 Generated Bitcoin Address</span>
           <div style="display: flex; gap: 0.5rem;">
-            <button class="btn" onclick="printSingleWallet()">🖨️ Print Paper Wallet</button>
+            <button class="btn" onclick="showPrintSinglePopup()">🖨️ Print Wallet</button>
           </div>
         </div>
 
@@ -2322,7 +2319,7 @@
       <div class="card-title">
         <span>🌱 BIP-39 Seed Phrase</span>
         <div style="display: flex; gap: 0.5rem; align-items: center;">
-          <button class="btn" onclick="showPrintSeedPopup()">🖨️ Print Seed Wallet</button>
+          <button class="btn" onclick="showPrintSeedPopup()">🖨️ Print Wallet</button>
         </div>
       </div>
 
@@ -2593,6 +2590,92 @@
         </div>
       </div>
     </div>
+
+
+    <!-- TAB 4: WHAT IS ENTROPY? -->
+    <div id="whatIsEntropyTab" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>📚 What is Entropy in Bitcoin?</span>
+        </div>
+
+        <p style="margin-bottom: 1.25rem; color: var(--text-muted); line-height: 1.6;">
+          In cryptography, <strong>entropy</strong> refers to the measure of randomness or unpredictability used to create security keys. In Bitcoin, your private key is essentially a giant 256-bit number chosen between 1 and ~10<sup>77</sup>. If that number is truly random, no computer in the universe can guess it. However, if your entropy is flawed, predictable, or biased, your funds can be stolen instantly.
+        </p>
+
+        <h4 style="color: var(--btc-gold); margin: 1.5rem 0 0.5rem;">Why Generating True Entropy is Hard</h4>
+        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
+          Computers are deterministic machines designed to follow instructions precisely. They struggle to create true randomness on their own. Most software relies on <i>Pseudo-Random Number Generators (PRNGs)</i>, which produce random-looking sequences based on an initial seed. If an attacker knows or can guess the seed or PRNG state, the key becomes completely predictable.
+        </p>
+
+        <h4 style="color: var(--btc-gold); margin: 1.5rem 0 0.5rem;">Entropy Source Breakdown & Biases</h4>
+        <ul style="padding-left: 1.25rem; color: var(--text-muted); line-height: 1.8; font-size: 0.9rem; margin-bottom: 1.5rem;">
+          <li>
+            <strong>Coin Flips (D2):</strong> Yields exactly 1.0 bit of entropy per flip. 
+            <em>Bias Warning:</em> Physical coins can have slight weight distribution imbalances or human catching biases. Spin or flip onto soft surfaces to maximize randomness.
+          </li>
+          <li>
+            <strong>Dice (D6 – D20):</strong> Casino-grade precision dice with razor edges offer optimal physical randomness. 
+            <em>Bias Warning:</em> Standard board-game dice often have rounded corners and hollow pips that introduce heavy statistical biases. Always use high-quality precision dice rolled in a cup.
+          </li>
+          <li>
+            <strong>Touch / Mouse Movements:</strong> Captures physical human micro-movements, speeds, and high-precision event timing. 
+            <em>Bias Warning:</em> Human hand gestures follow subconscious patterns and muscle memory. This tool hashes micro-timings to improve entropy, but physical dice remain superior for long-term cold storage.
+          </li>
+          <li>
+            <strong>Deck of Cards:</strong> A fully shuffled 52-card deck yields ~225.5 bits of entropy ($52!$). 
+            <em>Tip & Trick:</em> A single riffle shuffle is highly predictable! It requires a minimum of <strong>7 thorough riffle shuffles</strong> or a lengthy wash shuffle to fully randomize a standard deck.
+          </li>
+        </ul>
+
+        <h4 style="color: var(--btc-gold); margin: 1.5rem 0 0.5rem;">Key Technical Terms & Definitions</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          <div style="background: rgba(15, 23, 42, 0.6); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--card-border);">
+            <strong style="color: var(--accent-cyan); display: block; margin-bottom: 0.25rem;">Bit of Entropy</strong>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">A binary unit of uncertainty. Each additional bit doubles the number of possible key combinations.</span>
+          </div>
+          <div style="background: rgba(15, 23, 42, 0.6); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--card-border);">
+            <strong style="color: var(--accent-cyan); display: block; margin-bottom: 0.25rem;">256-Bit Standard</strong>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">$2^{256}$ possibilities. There are more 256-bit keys than there are atoms in the observable universe (~$10^{80}$).</span>
+          </div>
+          <div style="background: rgba(15, 23, 42, 0.6); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--card-border);">
+            <strong style="color: var(--accent-cyan); display: block; margin-bottom: 0.25rem;">SHA-256 Digest</strong>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">A standard one-way cryptographic function that condenses raw entropy inputs into a fixed 256-bit master key.</span>
+          </div>
+          <div style="background: rgba(15, 23, 42, 0.6); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--card-border);">
+            <strong style="color: var(--accent-cyan); display: block; margin-bottom: 0.25rem;">PRNG vs. TRNG</strong>
+            <span style="font-size: 0.85rem; color: var(--text-muted);"><i>Pseudo</i>-Random Generators use software formulas; <i>True</i>-Random Generators rely on unpredictable physical physics.</span>
+          </div>
+        </div>
+
+        <h4 style="color: var(--btc-gold); margin: 1.5rem 0 0.5rem;">History of Entropy: Non-Tech & Tech Milestones</h4>
+        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
+          Randomness has played a critical role throughout human history:
+        </p>
+        <ul style="padding-left: 1.25rem; color: var(--text-muted); line-height: 1.8; font-size: 0.9rem; margin-bottom: 1.5rem;">
+          <li><strong>Ancient History:</strong> Astragali (dice made from animal knuckle bones) were used over 5,000 years ago in Mesopotamia for divinations and games of chance.</li>
+          <li><strong>1940s (Monte Carlo Method):</strong> During the Manhattan Project, scientists John von Neumann and Stanislaw Ulam used physical random sampling (roulette wheels and dice) to simulate nuclear reactions.</li>
+          <li><strong>1955 (RAND Book):</strong> The RAND Corporation published <i>"A Million Random Digits"</i>—a book consisting entirely of random numbers generated by an electronic roulette wheel, used by early cryptographers.</li>
+          <li><strong>Modern Computing:</strong> Hardware Random Number Generators (HRNGs) now measure thermal noise, radioactive decay, or quantum photon arrival times.</li>
+        </ul>
+
+        <h4 style="color: var(--btc-gold); margin: 1.5rem 0 0.5rem;">Notable Crypto Exploits from Poor Entropy</h4>
+        <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 1rem; color: var(--text-main); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1rem;">
+          <ul style="padding-left: 1rem; margin: 0;">
+            <li style="margin-bottom: 0.5rem;">
+              <strong>Android SecureRandom Bug (2013):</strong> A flaw in Android’s PRNG generated identical $k$-values (ECDSA nonces) across different Bitcoin transactions, allowing attackers to calculate private keys and drain millions from Android wallets.
+            </li>
+            <li style="margin-bottom: 0.5rem;">
+              <strong>Brainwallet Hacks:</strong> Users who created private keys using human-chosen phrases (e.g., <code>sha256("correcthorsebatterystaple")</code>) had their funds stolen in seconds by automated bots continually sweeping common dictionary phrases.
+            </li>
+            <li>
+              <strong>Milk Sad Vulnerability (2023):</strong> Libbitcoin Explorer used a flawed 32-bit Mersenne Twister PRNG seed initialization, reducing the entropy space from 256 bits down to just 32 bits ($2^{32}$). Attackers brute-forced every single key in seconds and drained over $900,000.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <!-- PAPER WALLET PRINT TEMPLATE (Only visible when printing) -->
@@ -3304,12 +3387,11 @@
       const passphraseInput = document.getElementById('bip39Passphrase');
       if (passphraseInput) passphraseInput.value = '';
 
-      // Force open expansion if a collapsible type is programmatically selected
+      // Force open expansion if a collapsible type is selected,
+      // but keep it open if it was already expanded by the user.
       const isMoreType = ['d10', 'd12', 'd16', 'd20', 'cards'].includes(type);
       if (isMoreType) {
         toggleMoreDice(true);
-      } else {
-        toggleMoreDice(false);
       }
 
       document.querySelectorAll('.dice-option').forEach(el => el.classList.remove('selected'));
@@ -3538,13 +3620,14 @@
       requestAnimationFrame(animateMouseCanvas);
     }
 
+
     function renderInteractivePad() {
       const pad = document.getElementById('interactivePad');
       const mouseContainer = document.getElementById('mouseCaptureContainer');
       const controlsBar = document.getElementById('controlsBar') || document.querySelector('.controls-bar');
       const toggleContainer = document.getElementById('d16ToggleRow');
       const titleEl = document.getElementById('section2Title');
-      const metricsGrid = document.querySelector('.metrics-grid'); // Target the 4 metric boxes
+      const metricsGrid = document.querySelector('.metrics-grid');
 
       if (STATE.diceType === 'd16') {
         if (toggleContainer) toggleContainer.style.display = 'flex';
@@ -3555,7 +3638,7 @@
       if (STATE.diceType === 'mouse') {
         if (pad) pad.style.display = 'none';
         if (controlsBar) controlsBar.style.display = 'none';
-        if (metricsGrid) metricsGrid.style.display = 'none'; // Hide boxes for mouse entropy
+        if (metricsGrid) metricsGrid.style.display = 'none';
 
         if (STATE.mouseCompleted || STATE.rolls.length >= 128) {
           if (mouseContainer) {
@@ -3584,8 +3667,13 @@
         }
         const successBox = document.getElementById('mouseSuccessBox');
         if (successBox) successBox.style.display = 'none';
-        if (metricsGrid) metricsGrid.style.display = 'grid'; // Restore boxes for physical dice
+        if (metricsGrid) metricsGrid.style.display = 'grid';
         if (titleEl) titleEl.textContent = '2. Enter Rolls / Flips';
+
+        // RESET INLINE FLEX STYLES FROM CARD MODE
+        pad.style.flexDirection = '';
+        pad.style.width = '';
+        pad.style.alignItems = '';
 
         pad.innerHTML = '';
         if (STATE.diceType === 'd16') {
@@ -3632,10 +3720,6 @@
             pad.appendChild(row);
           });
         } else {
-          pad.style.flexDirection = '';
-          pad.style.width = '';
-          pad.style.alignItems = '';
-
           const cfg = DICE_CONFIG[STATE.diceType];
           cfg.labels.forEach(lbl => {
             const btn = document.createElement('button');
@@ -3776,7 +3860,16 @@
         });
       } else if (STATE.diceType === 'mouse') {
         const tokens = raw.match(/[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}/gi) || [];
-        STATE.rolls = tokens.reverse();
+        STATE.rolls = tokens; // Note: Ensure .reverse() is removed here from the previous fix
+
+        // Check if pasted tokens meet or exceed the 128-sample requirement
+        if (STATE.rolls.length >= 128) {
+          STATE.mouseCompleted = true;
+          renderInteractivePad(); // Triggers the success box and hides the canvas wrapper
+        } else {
+          STATE.mouseCompleted = false;
+          renderInteractivePad();
+        }
       } else {
         const rawUpper = raw.toUpperCase();
         const cfg = DICE_CONFIG[STATE.diceType];
@@ -4114,7 +4207,7 @@
     // BIP-39 Standard English Wordlist (2048 Words)
     const BIP39_WORDLIST = [
 
-      "abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident", "account", "accuse", "achieve", "acid", "acoustic", "acquire", "across", "act", "action", "actor", "actress", "actual", "adapt", "add", "addict", "address", "adjust", "admit", "adult", "advance", "advice", "aerobic", "affair", "afford", "afraid", "again", "age", "agent", "agree", "ahead", "aim", "air", "airport", "aisle", "alarm", "album", "alcohol", "alert", "alien", "all", "alley", "allow", "almost", "alone", "alpha", "already", "also", "alter", "always", "amateur", "amazing", "among", "amount", "amused", "analyst", "anchor", "ancient", "anger", "angle", "angry", "animal", "ankle", "announce", "annual", "another", "answer", "antenna", "antique", "anxiety", "any", "apart", "apology", "appear", "apple", "approve", "april", "arch", "arctic", "area", "arena", "argue", "arm", "armed", "armor", "army", "around", "arrange", "arrest", "arrive", "arrow", "art", "artefact", "artist", "artwork", "ask", "aspect", "assault", "asset", "assist", "assume", "asthma", "athlete", "atom", "attack", "attend", "attitude", "attract", "auction", "audit", "august", "aunt", "author", "auto", "autumn", "average", "avocado", "avoid", "awake", "aware", "away", "awesome", "awful", "awkward", "axis", "baby", "bachelor", "bacon", "badge", "bag", "balance", "balcony", "ball", "bamboo", "banana", "banner", "bar", "barely", "bargain", "barrel", "base", "basic", "basket", "battle", "beach", "bean", "beauty", "because", "become", "beef", "before", "begin", "behave", "behind", "believe", "below", "belt", "bench", "benefit", "best", "betray", "better", "between", "beyond", "bicycle", "bid", "bike", "bind", "biology", "bird", "birth", "bitter", "black", "blade", "blame", "blanket", "blast", "bleak", "bless", "blind", "blood", "blossom", "blouse", "blue", "blur", "blush", "board", "boat", "body", "boil", "bomb", "bone", "bonus", "book", "boost", "border", "boring", "borrow", "boss", "bottom", "bounce", "box", "boy", "bracket", "brain", "brand", "brass", "brave", "bread", "breeze", "brick", "bridge", "brief", "bright", "bring", "brisk", "broccoli", "broken", "bronze", "broom", "brother", "brown", "brush", "bubble", "buddy", "budget", "buffalo", "build", "bulb", "bulk", "bullet", "bundle", "bunker", "burden", "burger", "burst", "bus", "business", "busy", "butter", "buyer", "buzz", "cabbage", "cabin", "cable", "cactus", "cage", "cake", "call", "calm", "camera", "camp", "can", "canal", "cancel", "candy", "cannon", "canoe", "canvas", "canyon", "capable", "capital", "captain", "car", "carbon", "card", "cargo", "carpet", "carry", "cart", "case", "cash", "casino", "castle", "casual", "cat", "catalog", "catch", "category", "cattle", "caught", "cause", "caution", "cave", "ceiling", "celery", "cement", "census", "century", "cereal", "certain", "chair", "chalk", "champion", "change", "chaos", "chapter", "charge", "chase", "chat", "cheap", "check", "cheese", "chef", "cherry", "chest", "chicken", "chief", "child", "chimney", "choice", "choose", "chronic", "chuckle", "chunk", "churn", "cigar", "cinnamon", "circle", "citizen", "city", "civil", "claim", "clap", "clarify", "claw", "clay", "clean", "clerk", "clever", "click", "client", "cliff", "climb", "clinic", "clip", "clock", "clog", "close", "cloth", "cloud", "clown", "club", "clump", "cluster", "clutch", "coach", "coast", "coconut", "code", "coffee", "coil", "coin", "collect", "color", "column", "combine", "come", "comfort", "comic", "common", "company", "concert", "conduct", "confirm", "congress", "connect", "consider", "control", "convince", "cook", "cool", "copper", "copy", "coral", "core", "corn", "correct", "cost", "cotton", "couch", "country", "couple", "course", "cousin", "cover", "coyote", "crack", "cradle", "craft", "cram", "crane", "crash", "crater", "crawl", "crazy", "cream", "credit", "creek", "crew", "cricket", "crime", "crisp", "critic", "crop", "cross", "crouch", "crowd", "crucial", "cruel", "cruise", "crumble", "crunch", "crush", "cry", "crystal", "cube", "culture", "cup", "cupboard", "curious", "current", "curtain", "curve", "cushion", "custom", "cute", "cycle", "dad", "damage", "damp", "dance", "danger", "daring", "dash", "daughter", "dawn", "day", "deal", "debate", "debris", "decade", "december", "decide", "decline", "decorate", "decrease", "deer", "defense", "define", "defy", "degree", "delay", "deliver", "demand", "demise", "denial", "dentist", "deny", "depart", "depend", "deposit", "depth", "deputy", "derive", "describe", "desert", "design", "desk", "despair", "destroy", "detail", "detect", "develop", "device", "devote", "diagram", "dial", "diamond", "diary", "dice", "diesel", "diet", "differ", "digital", "dignity", "dilemma", "dinner", "dinosaur", "direct", "dirt", "disagree", "discover", "disease", "dish", "dismiss", "disorder", "display", "distance", "divert", "divide", "divorce", "dizzy", "doctor", "document", "dog", "doll", "dolphin", "domain", "donate", "donkey", "donor", "door", "dose", "double", "dove", "draft", "dragon", "drama", "drastic", "draw", "dream", "dress", "drift", "drill", "drink", "drip", "drive", "drop", "drum", "dry", "duck", "dumb", "dune", "during", "dust", "dutch", "duty", "dwarf", "dynamic", "eager", "eagle", "early", "earn", "earth", "easily", "east", "easy", "echo", "ecology", "economy", "edge", "edit", "educate", "effort", "egg", "eight", "either", "elbow", "elder", "electric", "elegant", "element", "elephant", "elevator", "elite", "else", "embark", "embody", "embrace", "emerge", "emotion", "employ", "empower", "empty", "enable", "enact", "end", "endless", "endorse", "enemy", "energy", "enforce", "engage", "engine", "enhance", "enjoy", "enlist", "enough", "enrich", "enroll", "ensure", "enter", "entire", "entry", "envelope", "episode", "equal", "equip", "era", "erase", "erode", "erosion", "error", "erupt", "escape", "essay", "essence", "estate", "eternal", "ethics", "evidence", "evil", "evoke", "evolve", "exact", "example", "excess", "exchange", "excite", "exclude", "excuse", "execute", "exercise", "exhaust", "exhibit", "exile", "exist", "exit", "exotic", "expand", "expect", "expire", "explain", "expose", "express", "extend", "extra", "eye", "eyebrow", "fabric", "face", "faculty", "fade", "faint", "faith", "fall", "false", "fame", "family", "famous", "fan", "fancy", "fantasy", "farm", "fashion", "fat", "fatal", "father", "fatigue", "fault", "favorite", "feature", "february", "federal", "fee", "feed", "feel", "female", "fence", "festival", "fetch", "fever", "few", "fiber", "fiction", "field", "figure", "file", "film", "filter", "final", "find", "fine", "finger", "finish", "fire", "firm", "first", "fiscal", "fish", "fit", "fitness", "fix", "flag", "flame", "flash", "flat", "flavor", "flee", "flight", "flip", "float", "flock", "floor", "flower", "fluid", "flush", "fly", "foam", "focus", "fog", "foil", "fold", "follow", "food", "foot", "force", "forest", "forget", "fork", "fortune", "forum", "forward", "fossil", "foster", "found", "fox", "fragile", "frame", "frequent", "fresh", "friend", "fringe", "frog", "front", "frost", "frown", "frozen", "fruit", "fuel", "fun", "funny", "furnace", "fury", "future", "gadget", "gain", "galaxy", "gallery", "game", "gap", "garage", "garbage", "garden", "garlic", "garment", "gas", "gasp", "gate", "gather", "gauge", "gaze", "general", "genius", "genre", "gentle", "genuine", "gesture", "ghost", "giant", "gift", "giggle", "ginger", "giraffe", "girl", "give", "glad", "glance", "glare", "glass", "glide", "glimpse", "globe", "gloom", "glory", "glove", "glow", "glue", "goat", "goddess", "gold", "good", "goose", "gorilla", "gospel", "gossip", "govern", "gown", "grab", "grace", "grain", "grant", "grape", "grass", "gravity", "great", "green", "grid", "grief", "grit", "grocery", "group", "grow", "grunt", "guard", "guess", "guide", "guilt", "guitar", "gun", "gym", "habit", "hair", "half", "hammer", "hamster", "hand", "happy", "harbor", "hard", "harsh", "harvest", "hat", "have", "hawk", "hazard", "head", "health", "heart", "heavy", "hedgehog", "height", "hello", "helmet", "help", "hen", "hero", "hidden", "high", "hill", "hint", "hip", "hire", "history", "hobby", "hockey", "hold", "hole", "holiday", "hollow", "home", "honey", "hood", "hope", "horn", "horror", "horse", "hospital", "host", "hotel", "hour", "hover", "hub", "huge", "human", "humble", "humor", "hundred", "hungry", "hunt", "hurdle", "hurry", "hurt", "husband", "hybrid", "ice", "icon", "idea", "identify", "idle", "ignore", "ill", "illegal", "illness", "image", "imitate", "immense", "immune", "impact", "impose", "improve", "impulse", "inch", "include", "income", "increase", "index", "indicate", "indoor", "industry", "infant", "inflict", "inform", "inhale", "inherit", "initial", "inject", "injury", "inmate", "inner", "innocent", "input", "inquiry", "insane", "insect", "inside", "inspire", "install", "intact", "interest", "into", "invest", "invite", "involve", "iron", "island", "isolate", "issue", "item", "ivory", "jacket", "jaguar", "jar", "jazz", "jealous", "jeans", "jelly", "jewel", "job", "join", "joke", "journey", "joy", "judge", "juice", "jump", "jungle", "junior", "junk", "just", "kangaroo", "keen", "keep", "ketchup", "key", "kick", "kid", "kidney", "kind", "kingdom", "kiss", "kit", "kitchen", "kite", "kitten", "kiwi", "knee", "knife", "knock", "know", "lab", "label", "labor", "ladder", "lady", "lake", "lamp", "language", "laptop", "large", "later", "latin", "laugh", "laundry", "lava", "law", "lawn", "lawsuit", "layer", "lazy", "leader", "leaf", "learn", "leave", "lecture", "left", "leg", "legal", "legend", "leisure", "lemon", "lend", "length", "lens", "leopard", "lesson", "letter", "level", "liar", "liberty", "library", "license", "life", "lift", "light", "like", "limb", "limit", "link", "lion", "liquid", "list", "little", "live", "lizard", "load", "loan", "lobster", "local", "lock", "logic", "lonely", "long", "loop", "lottery", "loud", "lounge", "love", "loyal", "lucky", "luggage", "lumber", "lunar", "lunch", "luxury", "lyrics", "machine", "mad", "magic", "magnet", "maid", "mail", "main", "major", "make", "mammal", "man", "manage", "mandate", "mango", "mansion", "manual", "maple", "marble", "march", "margin", "marine", "market", "marriage", "mask", "mass", "master", "match", "material", "math", "matrix", "matter", "maximum", "maze", "meadow", "mean", "measure", "meat", "mechanic", "medal", "media", "melody", "melt", "member", "memory", "mention", "menu", "mercy", "merge", "merit", "merry", "mesh", "message", "metal", "method", "middle", "midnight", "milk", "million", "mimic", "mind", "minimum", "minor", "minute", "miracle", "mirror", "misery", "miss", "mistake", "mix", "mixed", "mixture", "mobile", "model", "modify", "mom", "moment", "monitor", "monkey", "monster", "month", "moon", "moral", "more", "morning", "mosquito", "mother", "motion", "motor", "mountain", "mouse", "move", "movie", "much", "muffin", "mule", "multiply", "muscle", "museum", "mushroom", "music", "must", "mutual", "myself", "mystery", "myth", "naive", "name", "napkin", "narrow", "nasty", "nation", "nature", "near", "neck", "need", "negative", "neglect", "neither", "nephew", "nerve", "nest", "net", "network", "neutral", "never", "news", "next", "nice", "night", "noble", "noise", "nominee", "noodle", "normal", "north", "nose", "notable", "note", "nothing", "notice", "novel", "now", "nuclear", "number", "nurse", "nut", "oak", "obey", "object", "oblige", "obscure", "observe", "obtain", "obvious", "occur", "ocean", "october", "odor", "off", "offer", "office", "often", "oil", "okay", "old", "olive", "olympic", "omit", "once", "one", "onion", "online", "only", "open", "opera", "opinion", "oppose", "option", "orange", "orbit", "orchard", "order", "ordinary", "organ", "orient", "original", "orphan", "ostrich", "other", "outdoor", "outer", "output", "outside", "oval", "oven", "over", "own", "owner", "oxygen", "oyster", "ozone", "pact", "paddle", "page", "pair", "palace", "palm", "panda", "panel", "panic", "panther", "paper", "parade", "parent", "park", "parrot", "party", "pass", "patch", "path", "patient", "patrol", "pattern", "pause", "pave", "payment", "peace", "peanut", "pear", "peasant", "pelican", "pen", "penalty", "pencil", "people", "pepper", "perfect", "permit", "person", "pet", "phone", "photo", "phrase", "physical", "piano", "picnic", "picture", "piece", "pig", "pigeon", "pill", "pilot", "pink", "pioneer", "pipe", "pistol", "pitch", "pizza", "place", "planet", "plastic", "plate", "play", "please", "pledge", "pluck", "plug", "plunge", "poem", "poet", "point", "polar", "pole", "police", "pond", "pony", "pool", "popular", "portion", "position", "possible", "post", "potato", "pottery", "poverty", "powder", "power", "practice", "praise", "predict", "prefer", "prepare", "present", "pretty", "prevent", "price", "pride", "primary", "print", "priority", "prison", "private", "prize", "problem", "process", "produce", "profit", "program", "project", "promote", "proof", "property", "prosper", "protect", "proud", "provide", "public", "pudding", "pull", "pulp", "pulse", "pumpkin", "punch", "pupil", "puppy", "purchase", "purity", "purpose", "purse", "push", "put", "puzzle", "pyramid", "quality", "quantum", "quarter", "question", "quick", "quit", "quiz", "quote", "rabbit", "raccoon", "race", "rack", "radar", "radio", "rail", "rain", "raise", "rally", "ramp", "ranch", "random", "range", "rapid", "rare", "rate", "rather", "raven", "raw", "razor", "ready", "real", "reason", "rebel", "rebuild", "recall", "receive", "recipe", "record", "recycle", "reduce", "reflect", "reform", "refuse", "region", "regret", "regular", "reject", "relax", "release", "relief", "rely", "remain", "remember", "remind", "remove", "render", "renew", "rent", "reopen", "repair", "repeat", "replace", "report", "require", "rescue", "resemble", "resist", "resource", "response", "result", "retire", "retreat", "return", "reunion", "reveal", "review", "reward", "rhythm", "rib", "ribbon", "rice", "rich", "ride", "ridge", "rifle", "right", "rigid", "ring", "riot", "ripple", "risk", "ritual", "rival", "river", "road", "roast", "robot", "robust", "rocket", "romance", "roof", "rookie", "room", "rose", "rotate", "rough", "round", "route", "royal", "rubber", "rude", "rug", "rule", "run", "runway", "rural", "sad", "saddle", "sadness", "safe", "sail", "salad", "salmon", "salon", "salt", "salute", "same", "sample", "sand", "satisfy", "satoshi", "sauce", "sausage", "save", "say", "scale", "scan", "scare", "scatter", "scene", "scheme", "school", "science", "scissors", "scorpion", "scout", "scrap", "screen", "script", "scrub", "sea", "search", "season", "seat", "second", "secret", "section", "security", "seed", "seek", "segment", "select", "sell", "seminar", "senior", "sense", "sentence", "series", "service", "session", "settle", "setup", "seven", "shadow", "shaft", "shallow", "share", "shed", "shell", "sheriff", "shield", "shift", "shine", "ship", "shiver", "shock", "shoe", "shoot", "shop", "short", "shoulder", "shove", "shrimp", "shrug", "shuffle", "shy", "sibling", "sick", "side", "siege", "sight", "sign", "silent", "silk", "silly", "silver", "similar", "simple", "since", "sing", "siren", "sister", "situate", "six", "size", "skate", "sketch", "ski", "skill", "skin", "skirt", "skull", "slab", "slam", "sleep", "slender", "slice", "slide", "slight", "slim", "slogan", "slot", "slow", "slush", "small", "smart", "smile", "smoke", "smooth", "snack", "snake", "snap", "sniff", "snow", "soap", "soccer", "social", "sock", "soda", "soft", "solar", "soldier", "solid", "solution", "solve", "someone", "song", "soon", "sorry", "sort", "soul", "sound", "soup", "source", "south", "space", "spare", "spatial", "spawn", "speak", "special", "speed", "spell", "spend", "sphere", "spice", "spider", "spike", "spin", "spirit", "split", "spoil", "sponsor", "spoon", "sport", "spot", "spray", "spread", "spring", "spy", "square", "squeeze", "squirrel", "stable", "stadium", "staff", "stage", "stairs", "stamp", "stand", "start", "state", "stay", "steak", "steel", "stem", "step", "stereo", "stick", "still", "sting", "stock", "stomach", "stone", "stool", "story", "stove", "strategy", "street", "strike", "strong", "struggle", "student", "stuff", "stumble", "style", "subject", "submit", "subway", "success", "such", "sudden", "suffer", "sugar", "suggest", "suit", "summer", "sun", "sunny", "sunset", "super", "supply", "supreme", "sure", "surface", "surge", "surprise", "surround", "survey", "suspect", "sustain", "swallow", "swamp", "swap", "swarm", "swear", "sweet", "swift", "swim", "swing", "switch", "sword", "symbol", "symptom", "syrup", "system", "table", "tackle", "tag", "tail", "talent", "talk", "tank", "tape", "target", "task", "taste", "tattoo", "taxi", "teach", "team", "tell", "ten", "tenant", "tennis", "tent", "term", "test", "text", "thank", "that", "theme", "then", "theory", "there", "they", "thing", "this", "thought", "three", "thrive", "throw", "thumb", "thunder", "ticket", "tide", "tiger", "tilt", "timber", "time", "tiny", "tip", "tired", "tissue", "title", "toast", "tobacco", "today", "toddler", "toe", "together", "toilet", "token", "tomato", "tomorrow", "tone", "tongue", "tonight", "tool", "tooth", "top", "topic", "topple", "torch", "tornado", "tortoise", "toss", "total", "tourist", "toward", "tower", "town", "toy", "track", "trade", "traffic", "tragic", "train", "transfer", "trap", "trash", "travel", "tray", "treat", "tree", "trend", "trial", "tribe", "trick", "trigger", "trim", "trip", "trophy", "trouble", "truck", "true", "truly", "trumpet", "trust", "truth", "try", "tube", "tuition", "tumble", "tuna", "tunnel", "turkey", "turn", "turtle", "twelve", "twenty", "twice", "twin", "twist", "two", "type", "typical", "ugly", "umbrella", "unable", "unaware", "uncle", "uncover", "under", "undo", "unfair", "unfold", "unhappy", "uniform", "unique", "unit", "universe", "unknown", "unlock", "until", "unusual", "unveil", "update", "upgrade", "uphold", "upon", "upper", "upset", "urban", "urge", "usage", "use", "used", "useful", "useless", "usual", "utility", "vacant", "vacuum", "vague", "valid", "valley", "valve", "van", "vanish", "vapor", "various", "vast", "vault", "vehicle", "velvet", "vendor", "venture", "venue", "verb", "verify", "version", "very", "vessel", "veteran", "viable", "vibrant", "vicious", "victory", "video", "view", "village", "vintage", "violin", "virtual", "virus", "visa", "visi", "", "visual", "vital", "vivid", "vocal", "voice", "void", "volcano", "volume", "vote", "voyage", "wage", "wagon", "wait", "walk", "wall", "walnut", "want", "warfare", "warm", "warrior", "wash", "wasp", "waste", "water", "wave", "way", "wealth", "weapon", "wear", "weasel", "weather", "web", "wedding", "weekend", "weird", "welcome", "west", "wet", "whale", "what", "wheat", "wheel", "when", "where", "whip", "whisper", "wide", "width", "wife", "wild", "will", "win", "window", "wine", "wing", "wink", "winner", "winter", "wire", "wisdom", "wise", "wish", "witness", "wolf", "woman", "wonder", "wood", "wool", "word", "work", "world", "worry", "worth", "wrap", "wreck", "wrestle", "wrist", "write", "wrong", "yard", "year", "yellow", "you", "young", "youth", "zebra", "zero", "zone", "zoo"
+      "abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "accident", "account", "accuse", "achieve", "acid", "acoustic", "acquire", "across", "act", "action", "actor", "actress", "actual", "adapt", "add", "addict", "address", "adjust", "admit", "adult", "advance", "advice", "aerobic", "affair", "afford", "afraid", "again", "age", "agent", "agree", "ahead", "aim", "air", "airport", "aisle", "alarm", "album", "alcohol", "alert", "alien", "all", "alley", "allow", "almost", "alone", "alpha", "already", "also", "alter", "always", "amateur", "amazing", "among", "amount", "amused", "analyst", "anchor", "ancient", "anger", "angle", "angry", "animal", "ankle", "announce", "annual", "another", "answer", "antenna", "antique", "anxiety", "any", "apart", "apology", "appear", "apple", "approve", "april", "arch", "arctic", "area", "arena", "argue", "arm", "armed", "armor", "army", "around", "arrange", "arrest", "arrive", "arrow", "art", "artefact", "artist", "artwork", "ask", "aspect", "assault", "asset", "assist", "assume", "asthma", "athlete", "atom", "attack", "attend", "attitude", "attract", "auction", "audit", "august", "aunt", "author", "auto", "autumn", "average", "avocado", "avoid", "awake", "aware", "away", "awesome", "awful", "awkward", "axis", "baby", "bachelor", "bacon", "badge", "bag", "balance", "balcony", "ball", "bamboo", "banana", "banner", "bar", "barely", "bargain", "barrel", "base", "basic", "basket", "battle", "beach", "bean", "beauty", "because", "become", "beef", "before", "begin", "behave", "behind", "believe", "below", "belt", "bench", "benefit", "best", "betray", "better", "between", "beyond", "bicycle", "bid", "bike", "bind", "biology", "bird", "birth", "bitter", "black", "blade", "blame", "blanket", "blast", "bleak", "bless", "blind", "blood", "blossom", "blouse", "blue", "blur", "blush", "board", "boat", "body", "boil", "bomb", "bone", "bonus", "book", "boost", "border", "boring", "borrow", "boss", "bottom", "bounce", "box", "boy", "bracket", "brain", "brand", "brass", "brave", "bread", "breeze", "brick", "bridge", "brief", "bright", "bring", "brisk", "broccoli", "broken", "bronze", "broom", "brother", "brown", "brush", "bubble", "buddy", "budget", "buffalo", "build", "bulb", "bulk", "bullet", "bundle", "bunker", "burden", "burger", "burst", "bus", "business", "busy", "butter", "buyer", "buzz", "cabbage", "cabin", "cable", "cactus", "cage", "cake", "call", "calm", "camera", "camp", "can", "canal", "cancel", "candy", "cannon", "canoe", "canvas", "canyon", "capable", "capital", "captain", "car", "carbon", "card", "cargo", "carpet", "carry", "cart", "case", "cash", "casino", "castle", "casual", "cat", "catalog", "catch", "category", "cattle", "caught", "cause", "caution", "cave", "ceiling", "celery", "cement", "census", "century", "cereal", "certain", "chair", "chalk", "champion", "change", "chaos", "chapter", "charge", "chase", "chat", "cheap", "check", "cheese", "chef", "cherry", "chest", "chicken", "chief", "child", "chimney", "choice", "choose", "chronic", "chuckle", "chunk", "churn", "cigar", "cinnamon", "circle", "citizen", "city", "civil", "claim", "clap", "clarify", "claw", "clay", "clean", "clerk", "clever", "click", "client", "cliff", "climb", "clinic", "clip", "clock", "clog", "close", "cloth", "cloud", "clown", "club", "clump", "cluster", "clutch", "coach", "coast", "coconut", "code", "coffee", "coil", "coin", "collect", "color", "column", "combine", "come", "comfort", "comic", "common", "company", "concert", "conduct", "confirm", "congress", "connect", "consider", "control", "convince", "cook", "cool", "copper", "copy", "coral", "core", "corn", "correct", "cost", "cotton", "couch", "country", "couple", "course", "cousin", "cover", "coyote", "crack", "cradle", "craft", "cram", "crane", "crash", "crater", "crawl", "crazy", "cream", "credit", "creek", "crew", "cricket", "crime", "crisp", "critic", "crop", "cross", "crouch", "crowd", "crucial", "cruel", "cruise", "crumble", "crunch", "crush", "cry", "crystal", "cube", "culture", "cup", "cupboard", "curious", "current", "curtain", "curve", "cushion", "custom", "cute", "cycle", "dad", "damage", "damp", "dance", "danger", "daring", "dash", "daughter", "dawn", "day", "deal", "debate", "debris", "decade", "december", "decide", "decline", "decorate", "decrease", "deer", "defense", "define", "defy", "degree", "delay", "deliver", "demand", "demise", "denial", "dentist", "deny", "depart", "depend", "deposit", "depth", "deputy", "derive", "describe", "desert", "design", "desk", "despair", "destroy", "detail", "detect", "develop", "device", "devote", "diagram", "dial", "diamond", "diary", "dice", "diesel", "diet", "differ", "digital", "dignity", "dilemma", "dinner", "dinosaur", "direct", "dirt", "disagree", "discover", "disease", "dish", "dismiss", "disorder", "display", "distance", "divert", "divide", "divorce", "dizzy", "doctor", "document", "dog", "doll", "dolphin", "domain", "donate", "donkey", "donor", "door", "dose", "double", "dove", "draft", "dragon", "drama", "drastic", "draw", "dream", "dress", "drift", "drill", "drink", "drip", "drive", "drop", "drum", "dry", "duck", "dumb", "dune", "during", "dust", "dutch", "duty", "dwarf", "dynamic", "eager", "eagle", "early", "earn", "earth", "easily", "east", "easy", "echo", "ecology", "economy", "edge", "edit", "educate", "effort", "egg", "eight", "either", "elbow", "elder", "electric", "elegant", "element", "elephant", "elevator", "elite", "else", "embark", "embody", "embrace", "emerge", "emotion", "employ", "empower", "empty", "enable", "enact", "end", "endless", "endorse", "enemy", "energy", "enforce", "engage", "engine", "enhance", "enjoy", "enlist", "enough", "enrich", "enroll", "ensure", "enter", "entire", "entry", "envelope", "episode", "equal", "equip", "era", "erase", "erode", "erosion", "error", "erupt", "escape", "essay", "essence", "estate", "eternal", "ethics", "evidence", "evil", "evoke", "evolve", "exact", "example", "excess", "exchange", "excite", "exclude", "excuse", "execute", "exercise", "exhaust", "exhibit", "exile", "exist", "exit", "exotic", "expand", "expect", "expire", "explain", "expose", "express", "extend", "extra", "eye", "eyebrow", "fabric", "face", "faculty", "fade", "faint", "faith", "fall", "false", "fame", "family", "famous", "fan", "fancy", "fantasy", "farm", "fashion", "fat", "fatal", "father", "fatigue", "fault", "favorite", "feature", "february", "federal", "fee", "feed", "feel", "female", "fence", "festival", "fetch", "fever", "few", "fiber", "fiction", "field", "figure", "file", "film", "filter", "final", "find", "fine", "finger", "finish", "fire", "firm", "first", "fiscal", "fish", "fit", "fitness", "fix", "flag", "flame", "flash", "flat", "flavor", "flee", "flight", "flip", "float", "flock", "floor", "flower", "fluid", "flush", "fly", "foam", "focus", "fog", "foil", "fold", "follow", "food", "foot", "force", "forest", "forget", "fork", "fortune", "forum", "forward", "fossil", "foster", "found", "fox", "fragile", "frame", "frequent", "fresh", "friend", "fringe", "frog", "front", "frost", "frown", "frozen", "fruit", "fuel", "fun", "funny", "furnace", "fury", "future", "gadget", "gain", "galaxy", "gallery", "game", "gap", "garage", "garbage", "garden", "garlic", "garment", "gas", "gasp", "gate", "gather", "gauge", "gaze", "general", "genius", "genre", "gentle", "genuine", "gesture", "ghost", "giant", "gift", "giggle", "ginger", "giraffe", "girl", "give", "glad", "glance", "glare", "glass", "glide", "glimpse", "globe", "gloom", "glory", "glove", "glow", "glue", "goat", "goddess", "gold", "good", "goose", "gorilla", "gospel", "gossip", "govern", "gown", "grab", "grace", "grain", "grant", "grape", "grass", "gravity", "great", "green", "grid", "grief", "grit", "grocery", "group", "grow", "grunt", "guard", "guess", "guide", "guilt", "guitar", "gun", "gym", "habit", "hair", "half", "hammer", "hamster", "hand", "happy", "harbor", "hard", "harsh", "harvest", "hat", "have", "hawk", "hazard", "head", "health", "heart", "heavy", "hedgehog", "height", "hello", "helmet", "help", "hen", "hero", "hidden", "high", "hill", "hint", "hip", "hire", "history", "hobby", "hockey", "hold", "hole", "holiday", "hollow", "home", "honey", "hood", "hope", "horn", "horror", "horse", "hospital", "host", "hotel", "hour", "hover", "hub", "huge", "human", "humble", "humor", "hundred", "hungry", "hunt", "hurdle", "hurry", "hurt", "husband", "hybrid", "ice", "icon", "idea", "identify", "idle", "ignore", "ill", "illegal", "illness", "image", "imitate", "immense", "immune", "impact", "impose", "improve", "impulse", "inch", "include", "income", "increase", "index", "indicate", "indoor", "industry", "infant", "inflict", "inform", "inhale", "inherit", "initial", "inject", "injury", "inmate", "inner", "innocent", "input", "inquiry", "insane", "insect", "inside", "inspire", "install", "intact", "interest", "into", "invest", "invite", "involve", "iron", "island", "isolate", "issue", "item", "ivory", "jacket", "jaguar", "jar", "jazz", "jealous", "jeans", "jelly", "jewel", "job", "join", "joke", "journey", "joy", "judge", "juice", "jump", "jungle", "junior", "junk", "just", "kangaroo", "keen", "keep", "ketchup", "key", "kick", "kid", "kidney", "kind", "kingdom", "kiss", "kit", "kitchen", "kite", "kitten", "kiwi", "knee", "knife", "knock", "know", "lab", "label", "labor", "ladder", "lady", "lake", "lamp", "language", "laptop", "large", "later", "latin", "laugh", "laundry", "lava", "law", "lawn", "lawsuit", "layer", "lazy", "leader", "leaf", "learn", "leave", "lecture", "left", "leg", "legal", "legend", "leisure", "lemon", "lend", "length", "lens", "leopard", "lesson", "letter", "level", "liar", "liberty", "library", "license", "life", "lift", "light", "like", "limb", "limit", "link", "lion", "liquid", "list", "little", "live", "lizard", "load", "loan", "lobster", "local", "lock", "logic", "lonely", "long", "loop", "lottery", "loud", "lounge", "love", "loyal", "lucky", "luggage", "lumber", "lunar", "lunch", "luxury", "lyrics", "machine", "mad", "magic", "magnet", "maid", "mail", "main", "major", "make", "mammal", "man", "manage", "mandate", "mango", "mansion", "manual", "maple", "marble", "march", "margin", "marine", "market", "marriage", "mask", "mass", "master", "match", "material", "math", "matrix", "matter", "maximum", "maze", "meadow", "mean", "measure", "meat", "mechanic", "medal", "media", "melody", "melt", "member", "memory", "mention", "menu", "mercy", "merge", "merit", "merry", "mesh", "message", "metal", "method", "middle", "midnight", "milk", "million", "mimic", "mind", "minimum", "minor", "minute", "miracle", "mirror", "misery", "miss", "mistake", "mix", "mixed", "mixture", "mobile", "model", "modify", "mom", "moment", "monitor", "monkey", "monster", "month", "moon", "moral", "more", "morning", "mosquito", "mother", "motion", "motor", "mountain", "mouse", "move", "movie", "much", "muffin", "mule", "multiply", "muscle", "museum", "mushroom", "music", "must", "mutual", "myself", "mystery", "myth", "naive", "name", "napkin", "narrow", "nasty", "nation", "nature", "near", "neck", "need", "negative", "neglect", "neither", "nephew", "nerve", "nest", "net", "network", "neutral", "never", "news", "next", "nice", "night", "noble", "noise", "nominee", "noodle", "normal", "north", "nose", "notable", "note", "nothing", "notice", "novel", "now", "nuclear", "number", "nurse", "nut", "oak", "obey", "object", "oblige", "obscure", "observe", "obtain", "obvious", "occur", "ocean", "october", "odor", "off", "offer", "office", "often", "oil", "okay", "old", "olive", "olympic", "omit", "once", "one", "onion", "online", "only", "open", "opera", "opinion", "oppose", "option", "orange", "orbit", "orchard", "order", "ordinary", "organ", "orient", "original", "orphan", "ostrich", "other", "outdoor", "outer", "output", "outside", "oval", "oven", "over", "own", "owner", "oxygen", "oyster", "ozone", "pact", "paddle", "page", "pair", "palace", "palm", "panda", "panel", "panic", "panther", "paper", "parade", "parent", "park", "parrot", "party", "pass", "patch", "path", "patient", "patrol", "pattern", "pause", "pave", "payment", "peace", "peanut", "pear", "peasant", "pelican", "pen", "penalty", "pencil", "people", "pepper", "perfect", "permit", "person", "pet", "phone", "photo", "phrase", "physical", "piano", "picnic", "picture", "piece", "pig", "pigeon", "pill", "pilot", "pink", "pioneer", "pipe", "pistol", "pitch", "pizza", "place", "planet", "plastic", "plate", "play", "please", "pledge", "pluck", "plug", "plunge", "poem", "poet", "point", "polar", "pole", "police", "pond", "pony", "pool", "popular", "portion", "position", "possible", "post", "potato", "pottery", "poverty", "powder", "power", "practice", "praise", "predict", "prefer", "prepare", "present", "pretty", "prevent", "price", "pride", "primary", "print", "priority", "prison", "private", "prize", "problem", "process", "produce", "profit", "program", "project", "promote", "proof", "property", "prosper", "protect", "proud", "provide", "public", "pudding", "pull", "pulp", "pulse", "pumpkin", "punch", "pupil", "puppy", "purchase", "purity", "purpose", "purse", "push", "put", "puzzle", "pyramid", "quality", "quantum", "quarter", "question", "quick", "quit", "quiz", "quote", "rabbit", "raccoon", "race", "rack", "radar", "radio", "rail", "rain", "raise", "rally", "ramp", "ranch", "random", "range", "rapid", "rare", "rate", "rather", "raven", "raw", "razor", "ready", "real", "reason", "rebel", "rebuild", "recall", "receive", "recipe", "record", "recycle", "reduce", "reflect", "reform", "refuse", "region", "regret", "regular", "reject", "relax", "release", "relief", "rely", "remain", "remember", "remind", "remove", "render", "renew", "rent", "reopen", "repair", "repeat", "replace", "report", "require", "rescue", "resemble", "resist", "resource", "response", "result", "retire", "retreat", "return", "reunion", "reveal", "review", "reward", "rhythm", "rib", "ribbon", "rice", "rich", "ride", "ridge", "rifle", "right", "rigid", "ring", "riot", "ripple", "risk", "ritual", "rival", "river", "road", "roast", "robot", "robust", "rocket", "romance", "roof", "rookie", "room", "rose", "rotate", "rough", "round", "route", "royal", "rubber", "rude", "rug", "rule", "run", "runway", "rural", "sad", "saddle", "sadness", "safe", "sail", "salad", "salmon", "salon", "salt", "salute", "same", "sample", "sand", "satisfy", "satoshi", "sauce", "sausage", "save", "say", "scale", "scan", "scare", "scatter", "scene", "scheme", "school", "science", "scissors", "scorpion", "scout", "scrap", "screen", "script", "scrub", "sea", "search", "season", "seat", "second", "secret", "section", "security", "seed", "seek", "segment", "select", "sell", "seminar", "senior", "sense", "sentence", "series", "service", "session", "settle", "setup", "seven", "shadow", "shaft", "shallow", "share", "shed", "shell", "sheriff", "shield", "shift", "shine", "ship", "shiver", "shock", "shoe", "shoot", "shop", "short", "shoulder", "shove", "shrimp", "shrug", "shuffle", "shy", "sibling", "sick", "side", "siege", "sight", "sign", "silent", "silk", "silly", "silver", "similar", "simple", "since", "sing", "siren", "sister", "situate", "six", "size", "skate", "sketch", "ski", "skill", "skin", "skirt", "skull", "slab", "slam", "sleep", "slender", "slice", "slide", "slight", "slim", "slogan", "slot", "slow", "slush", "small", "smart", "smile", "smoke", "smooth", "snack", "snake", "snap", "sniff", "snow", "soap", "soccer", "social", "sock", "soda", "soft", "solar", "soldier", "solid", "solution", "solve", "someone", "song", "soon", "sorry", "sort", "soul", "sound", "soup", "source", "south", "space", "spare", "spatial", "spawn", "speak", "special", "speed", "spell", "spend", "sphere", "spice", "spider", "spike", "spin", "spirit", "split", "spoil", "sponsor", "spoon", "sport", "spot", "spray", "spread", "spring", "spy", "square", "squeeze", "squirrel", "stable", "stadium", "staff", "stage", "stairs", "stamp", "stand", "start", "state", "stay", "steak", "steel", "stem", "step", "stereo", "stick", "still", "sting", "stock", "stomach", "stone", "stool", "story", "stove", "strategy", "street", "strike", "strong", "struggle", "student", "stuff", "stumble", "style", "subject", "submit", "subway", "success", "such", "sudden", "suffer", "sugar", "suggest", "suit", "summer", "sun", "sunny", "sunset", "super", "supply", "supreme", "sure", "surface", "surge", "surprise", "surround", "survey", "suspect", "sustain", "swallow", "swamp", "swap", "swarm", "swear", "sweet", "swift", "swim", "swing", "switch", "sword", "symbol", "symptom", "syrup", "system", "table", "tackle", "tag", "tail", "talent", "talk", "tank", "tape", "target", "task", "taste", "tattoo", "taxi", "teach", "team", "tell", "ten", "tenant", "tennis", "tent", "term", "test", "text", "thank", "that", "theme", "then", "theory", "there", "they", "thing", "this", "thought", "three", "thrive", "throw", "thumb", "thunder", "ticket", "tide", "tiger", "tilt", "timber", "time", "tiny", "tip", "tired", "tissue", "title", "toast", "tobacco", "today", "toddler", "toe", "together", "toilet", "token", "tomato", "tomorrow", "tone", "tongue", "tonight", "tool", "tooth", "top", "topic", "topple", "torch", "tornado", "tortoise", "toss", "total", "tourist", "toward", "tower", "town", "toy", "track", "trade", "traffic", "tragic", "train", "transfer", "trap", "trash", "travel", "tray", "treat", "tree", "trend", "trial", "tribe", "trick", "trigger", "trim", "trip", "trophy", "trouble", "truck", "true", "truly", "trumpet", "trust", "truth", "try", "tube", "tuition", "tumble", "tuna", "tunnel", "turkey", "turn", "turtle", "twelve", "twenty", "twice", "twin", "twist", "two", "type", "typical", "ugly", "umbrella", "unable", "unaware", "uncle", "uncover", "under", "undo", "unfair", "unfold", "unhappy", "uniform", "unique", "unit", "universe", "unknown", "unlock", "until", "unusual", "unveil", "update", "upgrade", "uphold", "upon", "upper", "upset", "urban", "urge", "usage", "use", "used", "useful", "useless", "usual", "utility", "vacant", "vacuum", "vague", "valid", "valley", "valve", "van", "vanish", "vapor", "various", "vast", "vault", "vehicle", "velvet", "vendor", "venture", "venue", "verb", "verify", "version", "very", "vessel", "veteran", "viable", "vibrant", "vicious", "victory", "video", "view", "village", "vintage", "violin", "virtual", "virus", "visa", "visit", "visual", "vital", "vivid", "vocal", "voice", "void", "volcano", "volume", "vote", "voyage", "wage", "wagon", "wait", "walk", "wall", "walnut", "want", "warfare", "warm", "warrior", "wash", "wasp", "waste", "water", "wave", "way", "wealth", "weapon", "wear", "weasel", "weather", "web", "wedding", "weekend", "weird", "welcome", "west", "wet", "whale", "what", "wheat", "wheel", "when", "where", "whip", "whisper", "wide", "width", "wife", "wild", "will", "win", "window", "wine", "wing", "wink", "winner", "winter", "wire", "wisdom", "wise", "wish", "witness", "wolf", "woman", "wonder", "wood", "wool", "word", "work", "world", "worry", "worth", "wrap", "wreck", "wrestle", "wrist", "write", "wrong", "yard", "year", "yellow", "you", "young", "youth", "zebra", "zero", "zone", "zoo"
 
     ]
 
@@ -4181,48 +4274,56 @@
       return privKey;
     }
 
+
     async function generateSeedAndAddresses() {
       STATE.seedGenerated = true;
       STATE.resultsGenerated = false;
 
-      // Hide standard single key results and show the seed options row
       document.getElementById('resultsCard').style.display = 'none';
       document.getElementById('seedOptionsRow').style.display = 'flex';
 
-      // 1. Generate Entropy (16 bytes for 12 words, 32 bytes for 24 words)
       const requiredBytes = STATE.seedWordCount === 12 ? 16 : 32;
       const rawString = STATE.rolls.join('');
 
-      const rawEntropyHash = sha256(new TextEncoder().encode(rawString));
+      let entropyBytes;
+
+      // 1. Extract exact entropy bytes
+      if (/^[0-9a-fA-F]{64}$/.test(rawString.trim())) {
+        const fullBytes = hexToBytes(rawString.trim());
+        entropyBytes = fullBytes.slice(0, requiredBytes);
+      } else {
+        const rawEntropyHash = sha256(new TextEncoder().encode(rawString));
+        entropyBytes = rawEntropyHash.slice(0, requiredBytes);
+      }
 
       const outSeedHex = document.getElementById('outSeedHexKey');
-      if (outSeedHex) outSeedHex.textContent = bytesToHex(rawEntropyHash);
+      if (outSeedHex) outSeedHex.textContent = bytesToHex(entropyBytes);
 
-      const entropyBytes = new Uint8Array(rawEntropyHash.slice(0, requiredBytes));
-
-      // 2. Calculate Checksum
-      const hashBytes = sha256(entropyBytes);
-      const checksumBitsLength = requiredBytes / 4;
-
+      // 2. Convert raw entropy bytes to binary string
       let binaryString = "";
       for (let i = 0; i < entropyBytes.length; i++) {
         binaryString += entropyBytes[i].toString(2).padStart(8, '0');
       }
-      const firstHashByteBin = hashBytes[0].toString(2).padStart(8, '0');
-      binaryString += firstHashByteBin.substring(0, checksumBitsLength);
 
-      // 3. Map Binary to Mnemonic Words
+      // 3. Calculate SHA-256 checksum and append necessary bits (4 bits for 12 words, 8 bits for 24 words)
+      const hashBytes = sha256(entropyBytes);
+      const checksumBitsLength = entropyBytes.length / 4; 
+      const checksumBin = hashBytes[0].toString(2).padStart(8, '0');
+      binaryString += checksumBin.substring(0, checksumBitsLength);
+
+      // 4. Extract 11-bit indices accurately
       const mnemonicWords = [];
       for (let i = 0; i < binaryString.length; i += 11) {
-        const index = parseInt(binaryString.substring(i, i + 11), 2);
+        const bitChunk = binaryString.substring(i, i + 11);
+        const index = parseInt(bitChunk, 2);
         mnemonicWords.push(BIP39_WORDLIST[index]);
       }
+
       STATE.currentMnemonic = mnemonicWords.join(" ");
 
-      // Proceed to render grid and derive seed/addresses
+      // Derive downstream keys
       await deriveFromMnemonic();
 
-      // Reveal Results
       const seedResultsSimWarning = document.getElementById('seedResultsSimulatedWarning');
       if (seedResultsSimWarning) {
         seedResultsSimWarning.style.display = STATE.hasSimulatedEntropy ? 'flex' : 'none';
@@ -4667,7 +4768,7 @@
           badge.classList.add('remote-hosted');
         }
         if (text) {
-          text.innerHTML = '⚠️ Hosted Remotely (<a href="https://github.com/hybridsole/bitcoin-entropy-tools" target="_blank" style="color: inherit; text-decoration: underline; font-weight: 700;">Download to run offline</a>)';
+          text.innerHTML = '⚠️ Hosted Remotely (<a href="https://github.com/hybridsole/bitcoin-entropy-tools" target="_blank" style="color: inherit; text-decoration: underline; font-weight: 700;">Download on Github</a>)';
         }
       }
     });
@@ -5016,6 +5117,21 @@
       }, 2000);
     }
 
+
+    function showPrintSinglePopup() {
+      document.getElementById('printSingleModal').classList.add('open');
+    }
+
+    function closePrintSingleModal(e) {
+      if (e && e.target.id !== 'printSingleModal') return;
+      document.getElementById('printSingleModal').classList.remove('open');
+    }
+
+    function confirmAndPrintSingleWallet() {
+      document.getElementById('printSingleModal').classList.remove('open');
+      printSingleWallet();
+    }
+
     // INIT DEFAULT STATE
     selectDice('mouse');
   </script>
@@ -5023,25 +5139,58 @@
 
   <div id="toast" class="toast">✅ Copied to clipboard!</div>
 
+  <!-- Print Single Address Paper Wallet Modal -->
+  <div class="modal-overlay" id="printSingleModal" onclick="closePrintSingleModal(event)">
+    <div class="modal-card" style="max-width: 420px; text-align: left; position: relative;" onclick="event.stopPropagation()">
+      <button onclick="closePrintSingleModal()" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+
+      <h3 style="color: var(--btc-gold); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+        🖨️ Print Paper Wallet
+      </h3>
+
+      <!-- Internet Connection Security Warning -->
+      <div class="warning-banner warning-yellow" style="margin-bottom: 1.25rem;">
+        <span class="warning-icon">⚠️</span>
+        <div>
+          <strong>Printer Security Warning:</strong> Ensure your printer is not connected to the internet or a shared network before printing sensitive key materials.
+        </div>
+      </div>
+
+      <!-- Placeholder for future print settings -->
+      <div id="singlePrintSettingsContainer" style="margin-bottom: 1.25rem;">
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Paper wallet layout will print using the currently selected public address and private key format.</p>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+        <button class="btn" onclick="closePrintSingleModal()" style="border-color: var(--card-border); color: var(--text-muted); background: transparent;">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmAndPrintSingleWallet()" style="background: var(--btc-gold); border-color: var(--btc-gold); color: #fff;">Confirm & Print</button>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Print Seed Modal -->
   <div class="modal-overlay" id="printSeedModal" onclick="closePrintSeedModal(event)">
-    <div class="modal-card" style="max-width: 400px; text-align: left; position: relative;"
-      onclick="event.stopPropagation()">
-      <button onclick="closePrintSeedModal()"
-        style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+    <div class="modal-card" style="max-width: 420px; text-align: left; position: relative;" onclick="event.stopPropagation()">
+      <button onclick="closePrintSeedModal()" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
 
-      <h3 style="color: var(--btc-gold); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <h3 style="color: var(--btc-gold); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
         🖨️ Print Backup Options
       </h3>
 
+      <!-- Internet Connection Security Warning -->
+      <div class="warning-banner warning-yellow" style="margin-bottom: 1.25rem;">
+        <span class="warning-icon">⚠️</span>
+        <div>
+          <strong>Printer Security Warning:</strong> Ensure your printer is not connected to the internet or a shared network before printing sensitive seed backup materials.
+        </div>
+      </div>
+
       <div style="margin-bottom: 1.25rem;">
-        <label
-          style="display: block; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-main); font-weight: 600;">
+        <label style="display: block; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-main); font-weight: 600;">
           Include Addresses:
         </label>
-        <select id="popupAddressCount"
-          style="width: 100%; padding: 0.6rem; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 6px; outline: none; cursor: pointer;">
+        <select id="popupAddressCount" style="width: 100%; padding: 0.6rem; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 6px; outline: none; cursor: pointer;">
           <option value="5" selected>5 Addresses (1 Row)</option>
           <option value="10">10 Addresses (2 Rows)</option>
           <option value="15">15 Addresses (2 Rows)</option>
@@ -5056,19 +5205,15 @@
       </div>
 
       <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-        <input type="checkbox" id="popupPrintSeedOnly" onchange="togglePopupAddressDropdown(this)"
-          style="width: 16px; height: 16px; accent-color: var(--btc-gold); cursor: pointer;">
-        <label for="popupPrintSeedOnly"
-          style="font-size: 0.9rem; color: var(--text-main); cursor: pointer; user-select: none;">
+        <input type="checkbox" id="popupPrintSeedOnly" onchange="togglePopupAddressDropdown(this)" style="width: 16px; height: 16px; accent-color: var(--btc-gold); cursor: pointer;">
+        <label for="popupPrintSeedOnly" style="font-size: 0.9rem; color: var(--text-main); cursor: pointer; user-select: none;">
           Print Mnemonic Seed Only (No Addresses)
         </label>
       </div>
 
       <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
-        <button class="btn" onclick="closePrintSeedModal()"
-          style="border-color: var(--card-border); color: var(--text-muted); background: transparent;">Cancel</button>
-        <button class="btn btn-primary" onclick="confirmAndPrintSeedWallet()"
-          style="background: var(--btc-gold); border-color: var(--btc-gold); color: #fff;">Confirm & Print</button>
+        <button class="btn" onclick="closePrintSeedModal()" style="border-color: var(--card-border); color: var(--text-muted); background: transparent;">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmAndPrintSeedWallet()" style="background: var(--btc-gold); border-color: var(--btc-gold); color: #fff;">Confirm & Print</button>
       </div>
     </div>
   </div>
