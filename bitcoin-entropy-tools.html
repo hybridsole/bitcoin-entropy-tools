@@ -27,6 +27,7 @@
 
   <!-- Canonical link -->
   <link rel="canonical" href="https://hybridsole.github.io/bitcoin-entropy-tools/">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>">
   <style>
     /* Modern Slate & Bitcoin Gold Styling */
     :root {
@@ -44,7 +45,7 @@
       --accent-red: #ef4444;
       --accent-yellow: #f59e0b;
       --radius: 12px;
-      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
 
     * {
@@ -68,8 +69,7 @@
 
     header {
       border-bottom: 1px solid var(--card-border);
-      background: rgba(9, 13, 22, 0.85);
-      backdrop-filter: blur(16px);
+      background: #090d16;
       position: sticky;
       top: 0;
       z-index: 50;
@@ -98,7 +98,7 @@
       width: 40px;
       height: 40px;
       background: linear-gradient(135deg, var(--btc-gold), #d97706);
-      border-radius: 50%;
+      border-radius: 12px; /* Changed from 50% to 12px for a dice-like rounded square */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -251,13 +251,12 @@
 
     /* Cards */
     .card {
-      background: var(--card-bg);
+      background: #111827; /* Changed to a solid color */
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
       padding: 1.5rem;
       margin-bottom: 1.5rem;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Simplified shadow */
     }
 
     .card-title {
@@ -386,8 +385,6 @@
       background: linear-gradient(180deg, var(--btc-gold) 0%, #d97706 100%);
       border-color: var(--btc-gold);
       color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px var(--btc-gold-glow);
     }
 
     .pad-btn:active {
@@ -480,8 +477,6 @@
 
     .btn-primary:hover {
       background: linear-gradient(135deg, var(--btc-gold-hover), #f59e0b);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(247, 147, 26, 0.45);
     }
 
     .btn-primary:disabled {
@@ -666,7 +661,6 @@
     .mouse-canvas-wrapper:hover,
     .mouse-canvas-wrapper.active {
       border-color: var(--btc-gold);
-      box-shadow: inset 0 0 30px rgba(247, 147, 26, 0.15), 0 0 15px var(--btc-gold-glow);
     }
 
     .mouse-canvas {
@@ -693,7 +687,6 @@
       background: rgba(9, 13, 22, 0.7);
       padding: 0.8rem 1.5rem;
       border-radius: 10px;
-      backdrop-filter: blur(6px);
       border: 1px solid rgba(255, 255, 255, 0.08);
       transition: opacity 0.3s ease;
     }
@@ -918,7 +911,6 @@
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1272,6 +1264,9 @@
         display: none !important;
       }
 
+      footer {
+        display: none !important;
+      }
       /* Hide both print containers by default in print query */
       #paperWalletPrint,
       #seedWalletPrint {
@@ -1786,7 +1781,6 @@
     footer {
       border-top: 1px solid var(--card-border);
       background: rgba(9, 13, 22, 0.85);
-      backdrop-filter: blur(16px);
       padding: 1.5rem;
       margin-top: auto;
     }
@@ -1953,7 +1947,7 @@
   <header>
     <div class="header-container">
       <a href="#" class="brand" onclick="resetApp(event)">
-        <div class="brand-icon">₿</div>
+        <div class="brand-icon">🎲</div>
         <div>
           <div class="brand-title">Hybrid's Bitcoin Entropy Tools</div>
           <div class="brand-subtitle">Offline Bitcoin Cryptographic Suite</div>
@@ -2164,14 +2158,20 @@
             style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--card-border); text-align: left;">
             <div class="output-header"
               style="margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+              
               <span class="output-title"
                 style="font-size: 0.85rem; font-weight: 700; color: var(--btc-gold); text-transform: uppercase; letter-spacing: 0.05em; display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0.4rem;">
                 SHA-256 Entropy (256-bit Hex)
+                
+                <!-- Added Tooltip Here -->
+                <span class="tooltip-icon" data-tooltip="This is the cryptographic hash of your raw physical inputs. It acts as the mathematical master key from which all other keys and addresses are derived.">?</span>
+                
                 <a href="#" onclick="showVerificationModal(event)"
-                  style="color: var(--accent-cyan); text-transform: none; font-size: 0.75rem; text-decoration: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center;">
-                  (How to verify?)
+                  style="color: var(--accent-cyan); text-transform: none; font-size: 0.75rem; text-decoration: underline; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center;">
+                    How to verify?
                 </a>
               </span>
+
             </div>
             <div class="value-box">
               <span id="outRealtimeHexKey"
@@ -3567,60 +3567,26 @@
         if (dist >= 4) {
           STATE.mouseMoveCount++;
 
-          // Changed from % 4 to % 3 to speed up collection by ~33%
           if (STATE.mouseMoveCount % 3 === 0) {
             const vectorToken = formatMouseVector(x, y, dist, dt, STATE.rolls.length);
             STATE.rolls.push(vectorToken);
 
-            // Add visual sparks and floating cryptographic texts/bits
-            const colors = ['#f7931a', '#06b6d4', '#10b981', '#a855f7', '#ec4899', '#ffffff'];
-            // 1. Spawning colorful micro sparks
-            for (let i = 0; i < 3; i++) {
-              STATE.particles.push({
-                type: 'spark',
-                x: x,
-                y: y,
-                vx: (Math.random() - 0.5) * 3,
-                vy: (Math.random() - 0.5) * 3,
-                size: Math.random() * 3 + 2,
-                alpha: 1.0,
-                color: colors[Math.floor(Math.random() * colors.length)]
-              });
-            }
-            // 2. Spawn floating segment of the harvested hex vector
-            const cleanTokenPart = vectorToken.split('-')[Math.floor(Math.random() * 4)];
-            STATE.particles.push({
-              type: 'text',
-              text: cleanTokenPart,
-              x: x,
-              y: y,
-              vx: (Math.random() - 0.5) * 1.5,
-              vy: -Math.random() * 1.2 - 0.4, // floats up
-              size: Math.floor(Math.random() * 3) + 12,
-              alpha: 1.0,
-              color: colors[Math.floor(Math.random() * colors.length)],
-              angle: (Math.random() - 0.5) * 0.4
-            });
-            // 3. Spawn floating binary digits (0 and 1)
-            for (let i = 0; i < 2; i++) {
-              STATE.particles.push({
-                type: 'text',
-                text: Math.random() > 0.5 ? '1' : '0',
-                x: x + (Math.random() - 0.5) * 20,
-                y: y + (Math.random() - 0.5) * 20,
-                vx: (Math.random() - 0.5) * 1,
-                vy: -Math.random() * 1 - 0.2,
-                size: Math.floor(Math.random() * 2) + 9,
-                alpha: 0.8,
-                color: '#10b981',
-                angle: (Math.random() - 0.5) * 0.6
-              });
+            // Spawn only 2 lightweight circle particles (no text or rotation)
+            STATE.particles.push(
+              { x: x, y: y, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, size: 3, alpha: 1.0, color: '#f7931a' },
+              { x: x, y: y, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, size: 2, alpha: 1.0, color: '#06b6d4' }
+            );
+
+            // Wake up animation loop only if idle
+            if (!STATE.animLoopActive) {
+              STATE.animLoopActive = true;
+              requestAnimationFrame(animateMouseCanvas);
             }
 
             updateTextareaFromState();
             updateMetrics();
 
-            // Auto hide capture box when 128 samples (256 bits) reached!
+            // Auto-hide capture box when 128 samples (256 bits) reached
             if (STATE.rolls.length >= 128) {
               STATE.mouseCompleted = true;
               renderInteractivePad();
@@ -3638,49 +3604,38 @@
       }
     }
 
+
     function animateMouseCanvas() {
       const canvas = document.getElementById('mouseCanvas');
       if (canvas && STATE.diceType === 'mouse' && !STATE.mouseCompleted) {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw particle trails (sparks, floating hex texts, and binary numbers)
         for (let i = STATE.particles.length - 1; i >= 0; i--) {
           const p = STATE.particles[i];
           p.x += p.vx;
           p.y += p.vy;
-          p.alpha -= 0.018; // Fades out slowly to preserve readability
-          p.size *= 0.985;
+          p.alpha -= 0.04; // Faster fade out
 
-          if (p.alpha <= 0 || p.size < 0.5) {
+          if (p.alpha <= 0) {
             STATE.particles.splice(i, 1);
             continue;
           }
 
-          ctx.save();
-          ctx.globalAlpha = Math.max(0, p.alpha);
-
-          if (p.type === 'text') {
-            ctx.fillStyle = p.color;
-            ctx.font = `bold ${p.size}px monospace`;
-            ctx.translate(p.x, p.y);
-            if (p.angle) {
-              ctx.rotate(p.angle);
-            }
-            ctx.fillText(p.text, 0, 0);
-          } else {
-            ctx.fillStyle = p.color;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fill();
-          }
-          ctx.restore();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
         }
       }
 
-      requestAnimationFrame(animateMouseCanvas);
+      if (STATE.particles.length > 0) {
+        requestAnimationFrame(animateMouseCanvas);
+      } else {
+        STATE.animLoopActive = false;
+      }
     }
-
 
     function renderInteractivePad() {
       const pad = document.getElementById('interactivePad');
@@ -5392,21 +5347,21 @@
       </h3>
 
       <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1rem;">
-        Because this application is a single standalone HTML file, you can verify that your local copy has not been altered or tampered with by computing its SHA-256 hash locally.
+        Verify that your local standalone copy has not been altered or tampered with by checking its SHA-256 cryptographic hash.
       </p>
 
       <div style="margin-bottom: 1rem;">
         <strong style="font-size: 0.85rem; color: var(--text-main);">Mac / Linux Terminal:</strong>
-        <span class="code-block" style="display: block; margin-top: 0.25rem;">shasum -a 256 index.html</span>
+        <span class="code-block" style="display: block; margin-top: 0.25rem;">shasum -a 256 bitcoin-entropy-tools.html</span>
       </div>
 
       <div style="margin-bottom: 1rem;">
         <strong style="font-size: 0.85rem; color: var(--text-main);">Windows PowerShell:</strong>
-        <span class="code-block" style="display: block; margin-top: 0.25rem;">Get-FileHash -Algorithm SHA256 .\index.html</span>
+        <span class="code-block" style="display: block; margin-top: 0.25rem;">Get-FileHash -Algorithm SHA256 .\bitcoin-entropy-tools.html</span>
       </div>
 
       <p style="color: var(--text-muted); font-size: 0.82rem; line-height: 1.5;">
-        Compare the resulting 64-character hexadecimal hash with the official hash listed under the latest Release on GitHub: 
+        Compare the resulting 64-character hash against the <code>SHA256SUMS.txt</code> file attached under Assets in the latest release: 
         <a href="https://github.com/hybridsole/bitcoin-entropy-tools/releases" target="_blank" rel="noopener" style="color: var(--accent-cyan); text-decoration: underline;">github.com/hybridsole/bitcoin-entropy-tools/releases</a>.
       </p>
     </div>
