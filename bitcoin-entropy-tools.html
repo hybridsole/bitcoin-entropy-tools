@@ -787,7 +787,7 @@
     /* Output Results Layout */
     .results-grid {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 1.25rem;
     }
 
@@ -1073,19 +1073,35 @@
     }
 
     .address-table {
-      width: 100%;
+      width: max-content; /* Hugs the content tightly to eliminate empty gaps */
+      min-width: 100%; /* Ensures it still fills the space on smaller screens */
       border-collapse: collapse;
       margin-top: 1rem;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
     }
 
     .address-table th,
     .address-table td {
-      padding: 0.75rem;
+      padding: 0.35rem 0.5rem;
       text-align: left;
       border-bottom: 1px solid var(--card-border);
       white-space: nowrap;
     }
+
+    .address-table th:nth-child(1),
+    .address-table td:nth-child(1) {
+      width: 50px;
+      padding-right: 0.25rem;
+    }
+
+    .address-table th:nth-child(2),
+    .address-table td:nth-child(2) {
+      width: 90px;
+      padding-right: 0.25rem;
+    }
+
+
+
 
     .address-table th {
       color: var(--btc-gold);
@@ -1108,6 +1124,7 @@
 
     .wallet-col-card {
       background: rgba(15, 23, 42, 0.7);
+      height: 100%;
       border: 1px solid var(--card-border);
       border-radius: 10px;
       padding: 1.25rem;
@@ -1180,6 +1197,8 @@
 
     .wallet-tab-content.active {
       display: flex;
+      flex: 1; /* Takes up remaining height */
+      justify-content: space-between; /* Pushes the button perfectly to the bottom */
     }
 
     .tooltip-icon {
@@ -1705,6 +1724,26 @@
         color: #111827;
       }
 
+
+      /* Prevent Seed Phrase Overflow */
+      .mnemonic-grid {
+        grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+        gap: 0.5rem;
+      }
+
+      .word-badge {
+        padding: 0.5rem;
+      }
+
+      .word-text {
+        font-size: 0.95rem; /* Shrink the text slightly to fit long words */
+      }
+
+      /* Give the output containers slightly tighter padding on mobile to maximize screen real estate */
+      .output-group {
+        padding: 0.75rem; 
+      }
+
       /* Banknote Serial Number Formatting */
       .serial-number {
         position: absolute;
@@ -1966,8 +2005,7 @@
         Generator</button>
       <button class="nav-tab" id="tabBtn-converterTab" onclick="switchTab('converterTab')">🔄 Address & Key
         Converter</button>
-      <button class="nav-tab" id="tabBtn-aboutTab" onclick="switchTab('aboutTab')">🛡️ Offline Security & Math</button>
-      <button class="nav-tab" id="tabBtn-whatIsEntropyTab" onclick="switchTab('whatIsEntropyTab')">📚 What is Entropy?</button>
+      <button class="nav-tab" id="tabBtn-aboutTab" onclick="switchTab('aboutTab')">🛡️ Offline Security & Entropy</button>
     </nav>
   </header>
 
@@ -1978,11 +2016,10 @@
       <span class="warning-icon">⚠️</span>
       <div style="cursor: pointer;"
         onclick="switchTab('aboutTab'); document.getElementById('auditGuide').scrollIntoView({ behavior: 'smooth' });">
-        <strong>Educational & Testing Tool Only:</strong> You should not use keys generated here without validating the
+        <strong>Educational & Testing Tool Only:</strong> You should not trust these keys without validating the
         source code or comparing with other offline tools. <a href="#"
           style="color: var(--btc-gold); font-weight: bold; text-decoration: underline;"
-          onclick="event.stopPropagation(); switchTab('aboutTab'); document.getElementById('auditGuide').scrollIntoView({ behavior: 'smooth' }); return false;">Click
-          here to learn to audit.</a>
+          onclick="event.stopPropagation(); switchTab('aboutTab'); document.getElementById('auditGuide').scrollIntoView({ behavior: 'smooth' }); return false;">Learn to audit.</a>
       </div>
       <button onclick="document.getElementById('mainDisclaimer').style.display='none'"
         style="position: absolute; top: 0.5rem; right: 0.75rem; background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; line-height: 1; transition: var(--transition);"
@@ -1996,7 +2033,7 @@
         <div class="card-title">
           <span>1. Select Your Entropy Source</span>
           <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <a href="#" onclick="event.preventDefault(); switchTab('whatIsEntropyTab');" 
+            <a href="#" onclick="event.preventDefault(); switchTab('aboutTab'); setTimeout(() => document.getElementById('whatIsEntropySection').scrollIntoView({ behavior: 'smooth' }), 50);" 
                style="color: var(--accent-cyan); font-size: 0.8rem; font-weight: 600; text-decoration: underline;">
                What is entropy?
             </a>
@@ -2165,8 +2202,7 @@
                 
                 <!-- Added Tooltip Here -->
                 <span class="tooltip-icon" data-tooltip="This is the cryptographic hash of your raw physical inputs. It acts as the mathematical master key from which all other keys and addresses are derived.">?</span>
-                
-                <a href="#" onclick="showVerificationModal(event)"
+                <a href="#" onclick="event.preventDefault(); switchTab('aboutTab'); window.scrollTo({ top: 0, behavior: 'smooth' });"
                   style="color: var(--accent-cyan); text-transform: none; font-size: 0.75rem; text-decoration: underline; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center;">
                     How to verify?
                 </a>
@@ -2419,47 +2455,58 @@
           </div>
         </div>
 
-        <div class="output-group" style="overflow-x: auto;">
+        <div class="output-group">
           <!-- Address Type Toggle & Copy All Row -->
-          <div class="seed-row" style="margin-bottom: 1rem; justify-content: space-between;">
-            <select id="hdDerivationPath" class="btn" onchange="changeDerivationPath()"
-              style="background: rgba(15, 23, 42, 0.9); color: var(--text-main); border: 1px solid var(--card-border); font-weight: 600;">
-              <option value="84">Native SegWit (bc1q...) - Recommended</option>
-              <option value="44">Legacy Addresses (1...)</option>
-              <option value="49">Nested SegWit (3...)</option>
-              <option value="86">Taproot (bc1p...)</option>
-            </select>
+          <div class="seed-row" style="margin-bottom: 1rem; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div class="verify-tabs" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0; flex-wrap: wrap; overflow: visible;" id="derivationToggleGroup">
+              <button class="verify-tab-btn active" id="btnDerive44" onclick="changeDerivationPath(44)">
+                Legacy <span class="tooltip-icon" data-tooltip="(BIP-44) 1... Original format, highest fees.">?</span>
+              </button>
+              <button class="verify-tab-btn" id="btnDerive84" onclick="changeDerivationPath(84)">
+                Native SegWit <span class="tooltip-icon" data-tooltip="(BIP-84) bc1q... Recommended modern standard with lowest fees.">?</span>
+              </button>
+              <button class="verify-tab-btn" id="btnDerive49" onclick="changeDerivationPath(49)">
+                Nested SegWit <span class="tooltip-icon" data-tooltip="(BIP-49) 3... Backward-compatible SegWit.">?</span>
+              </button>
+              <button class="verify-tab-btn" id="btnDerive86" onclick="changeDerivationPath(86)">
+                Taproot <span class="tooltip-icon" data-tooltip="(BIP-86) bc1p... Latest standard for enhanced privacy.">?</span>
+              </button>
+            </div>
             <button class="btn btn-primary" onclick="copyAllAddresses()"
               style="padding: 0.5rem 1rem; flex: none; width: auto;">📋 Copy All Generated Rows</button>
           </div>
 
-          <table class="address-table" id="hdAddressTable">
-            <thead>
-              <tr>
-                <th>
-                  Index
-                  <span class="tooltip-icon"
-                    data-tooltip="The sequential number (0, 1, 2...) representing the specific child key generated within the HD wallet tree.">?</span>
-                </th>
-                <th>
-                  Path
-                  <span class="tooltip-icon"
-                    data-tooltip="(BIP-32) The Hierarchical Deterministic (HD) derivation path showing exactly how this key was calculated from the Master Seed.">?</span>
-                </th>
-                <th>
-                  <span id="hdAddressHeaderText">Native SegWit Address</span>
-                  <span class="tooltip-icon" id="hdAddressTooltip"
-                    data-tooltip="(BIP-84) Starts with bc1q. Modern standard offering the lowest fees.">?</span>
-                </th>
-                <th>
-                  WIF Private Key
-                  <span class="tooltip-icon"
-                    data-tooltip="The individual secret key controlling the funds specifically at this index path.">?</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody id="hdAddressTableBody"></tbody>
-          </table>
+          <!-- New scrollable wrapper added around the table -->
+          <div style="overflow-x: auto; width: 100%;">
+            <table class="address-table" id="hdAddressTable">
+              <thead>
+                <tr>
+                  <th>
+                    Index
+                    <span class="tooltip-icon"
+                      data-tooltip="The sequential number (0, 1, 2...) representing the specific child key generated within the HD wallet tree.">?</span>
+                  </th>
+                  <th>
+                    Path
+                    <span class="tooltip-icon"
+                      data-tooltip="(BIP-32) The Hierarchical Deterministic (HD) derivation path showing exactly how this key was calculated from the Master Seed.">?</span>
+                  </th>
+                  <th>
+                    <span id="hdAddressHeaderText">Legacy Address</span>
+                    <span class="tooltip-icon" id="hdAddressTooltip"
+                      data-tooltip="(BIP-44) Starts with 1. Original format, highest fees, but max backward compatibility.">?</span>
+                  </th>
+                  <th>
+                    WIF Private Key
+                    <span class="tooltip-icon"
+                      data-tooltip="The individual secret key controlling the funds specifically at this index path.">?</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="hdAddressTableBody"></tbody>
+            </table>
+          </div>
+
           <button class="btn" onclick="loadMoreAddresses()"
             style="margin-top: 1rem; width: 100%; justify-content: center;">➕ Load 10 More Addresses</button>
         </div>
@@ -2517,18 +2564,6 @@
             style="color: var(--accent-cyan); font-weight: 600; text-decoration: underline;">github.com/hybridsole/bitcoin-entropy-tools</a>.
           Save it to a local drive, disconnect from the internet, and generate your keys in complete privacy.
         </div>
-
-        <h4 style="color: var(--btc-gold); margin: 1rem 0 0.5rem;">How Physical Entropy Works:</h4>
-        <ul style="padding-left: 1.5rem; color: var(--text-muted); line-height: 1.8;">
-          <li><strong>Coin Flip (D2):</strong> 2 outcomes per flip = 1.000 bit per flip. Requires 256 flips for full
-            256-bit security.</li>
-          <li><strong>D6 Dice:</strong> 6 outcomes (1-6) = ~2.585 bits per roll. Requires 100 rolls (258.5 bits).</li>
-          <li><strong>D10 Dice:</strong> 10 outcomes (0-9) = ~3.322 bits per roll. Requires 78 rolls (259.1 bits).</li>
-          <li><strong>D12 Dice:</strong> 12 outcomes (1-12) = ~3.585 bits per roll. Requires 72 rolls (258.1 bits).</li>
-          <li><strong>D16 Dice (Hex):</strong> 16 outcomes (0-F) = 4.000 bits per roll. Requires 64 rolls (256.0 bits).
-          </li>
-          <li><strong>D20 Dice:</strong> 20 outcomes (1-20) = ~4.322 bits per roll. Requires 60 rolls (259.3 bits).</li>
-        </ul>
 
         <h4 style="color: var(--btc-gold); margin: 1.5rem 0 0.5rem;">Math & Cryptography Validation:</h4>
         <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">
@@ -2629,16 +2664,15 @@
           on GitHub: <a href="https://github.com/hybridsole/bitcoin-entropy-tools" target="_blank"
             style="color: var(--accent-cyan); text-decoration: underline;">github.com/hybridsole/bitcoin-entropy-tools</a>.
         </div>
-      </div>
-    </div>
-
-
-    <!-- TAB 4: WHAT IS ENTROPY? -->
-    <div id="whatIsEntropyTab" class="tab-content">
-      <div class="card">
+      </div> <!-- Closes the first card in aboutTab -->
+      
+      <!-- MERGED TAB 4: WHAT IS ENTROPY? (Now a section inside aboutTab) -->
+      <div id="whatIsEntropySection" class="card" style="margin-top: 1.5rem;">
         <div class="card-title">
           <span>📚 What is Entropy in Bitcoin?</span>
         </div>
+
+
 
         <p style="margin-bottom: 1.25rem; color: var(--text-muted); line-height: 1.6;">
           In cryptography, <strong>entropy</strong> refers to the measure of randomness or unpredictability used to create security keys. In Bitcoin, your private key is essentially a giant 256-bit number chosen between 1 and ~10<sup>77</sup>. If that number is truly random, no computer in the universe can guess it. However, if your entropy is flawed, predictable, or biased, your funds can be stolen instantly.
@@ -2648,6 +2682,17 @@
         <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
           Computers are deterministic machines designed to follow instructions precisely. They struggle to create true randomness on their own. Most software relies on <i>Pseudo-Random Number Generators (PRNGs)</i>, which produce random-looking sequences based on an initial seed. If an attacker knows or can guess the seed or PRNG state, the key becomes completely predictable.
         </p>
+
+        <!-- PASTED 'How Physical Entropy Works' BLOCK -->
+        <h4 style="color: var(--btc-gold); margin: 1.5rem 0 0.5rem;">How Physical Entropy Works:</h4>
+        <ul style="padding-left: 1.5rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 1.5rem;">
+          <li><strong>Coin Flip (D2):</strong> 2 outcomes per flip = 1.000 bit per flip. Requires 256 flips for full 256-bit security.</li>
+          <li><strong>D6 Dice:</strong> 6 outcomes (1-6) = ~2.585 bits per roll. Requires 100 rolls (258.5 bits).</li>
+          <li><strong>D10 Dice:</strong> 10 outcomes (0-9) = ~3.322 bits per roll. Requires 78 rolls (259.1 bits).</li>
+          <li><strong>D12 Dice:</strong> 12 outcomes (1-12) = ~3.585 bits per roll. Requires 72 rolls (258.1 bits).</li>
+          <li><strong>D16 Dice (Hex):</strong> 16 outcomes (0-F) = 4.000 bits per roll. Requires 64 rolls (256.0 bits).</li>
+          <li><strong>D20 Dice:</strong> 20 outcomes (1-20) = ~4.322 bits per roll. Requires 60 rolls (259.3 bits).</li>
+        </ul>
 
         <h4 style="color: var(--btc-gold); margin: 1.5rem 0 0.5rem;">Entropy Source Breakdown & Biases</h4>
         <ul style="padding-left: 1.25rem; color: var(--text-muted); line-height: 1.8; font-size: 0.9rem; margin-bottom: 1.5rem;">
@@ -2703,14 +2748,23 @@
         <h4 style="color: var(--btc-gold); margin: 1.5rem 0 0.5rem;">Notable Crypto Exploits from Poor Entropy</h4>
         <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 1rem; color: var(--text-main); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1rem;">
           <ul style="padding-left: 1rem; margin: 0;">
-            <li style="margin-bottom: 0.5rem;">
-              <strong>Android SecureRandom Bug (2013):</strong> A flaw in Android’s PRNG generated identical $k$-values (ECDSA nonces) across different Bitcoin transactions, allowing attackers to calculate private keys and drain millions from Android wallets.
+            <li style="margin-bottom: 0.75rem;">
+              <strong>Coinkite Coldcard Bug (2026):</strong> A firmware configuration error silently disabled the hardware True-Random Number Generator (TRNG) on certain models, falling back to predictable software seeds. This reduced entropy from 256 bits down to ~40-72 bits, allowing attackers to pre-compute keyspaces and drain over $100 million via automated sweeps. <em>(Lesson: Always use external physical dice to supplement hardware wallets!)</em>
             </li>
-            <li style="margin-bottom: 0.5rem;">
-              <strong>Brainwallet Hacks:</strong> Users who created private keys using human-chosen phrases (e.g., <code>sha256("correcthorsebatterystaple")</code>) had their funds stolen in seconds by automated bots continually sweeping common dictionary phrases.
+            <li style="margin-bottom: 0.75rem;">
+              <strong>Libbitcoin Explorer "Milk Sad" Vulnerability (2023):</strong> A flawed 32-bit Mersenne Twister PRNG seed initialization tied to the system clock reduced the entropy space from 256 bits down to just 32 bits ($2^{32}$). Attackers brute-forced the keys in seconds and drained over $900,000.
+            </li>
+            <li style="margin-bottom: 0.75rem;">
+              <strong>Profanity Ethereum Vanity Hacks (2022):</strong> The popular "Profanity" vanity address generator seeded its secp256k1 keys using only 32 bits of entropy. Attackers reverse-engineered private keys from public addresses, stealing $160 million from market maker Wintermute.
+            </li>
+            <li style="margin-bottom: 0.75rem;">
+              <strong>Trust Wallet Browser Extension Flaw (2023):</strong> A WebAssembly (WASM) implementation error in the PRNG generated weak, non-uniform seed phrases. It forced emergency disclosures and user migrations before mass exploitation could occur.
+            </li>
+            <li style="margin-bottom: 0.75rem;">
+              <strong>Android SecureRandom Bug (2013):</strong> A flaw in Android’s PRNG generated identical $k$-values (ECDSA nonces) across different Bitcoin transactions. Attackers mathematically calculated private keys directly from on-chain signatures and drained Android-based wallets.
             </li>
             <li>
-              <strong>Milk Sad Vulnerability (2023):</strong> Libbitcoin Explorer used a flawed 32-bit Mersenne Twister PRNG seed initialization, reducing the entropy space from 256 bits down to just 32 bits ($2^{32}$). Attackers brute-forced every single key in seconds and drained over $900,000.
+              <strong>Brainwallet Hacks:</strong> Users who created private keys using human-chosen phrases (e.g., <code>sha256("correcthorsebatterystaple")</code>) had their funds stolen in seconds by automated bots continually sweeping common dictionary combinations.
             </li>
           </ul>
         </div>
@@ -3304,7 +3358,7 @@
       currentMnemonic: "",
       hdMasterSeed: null,
       currentDerivationIndex: 0,
-      activeDerivationPurpose: 84,
+      activeDerivationPurpose: 44,
       hasSimulatedEntropy: false,
       resultsGenerated: false,
       seedGenerated: false
@@ -4459,8 +4513,8 @@
           derivedAddress = bech32Encode('bc', 1, Array.from(hexToBytes(xHex)), true);
         }
 
-        // Create a truncated display version if the address is longer than 40 characters
-        const displayAddress = derivedAddress.length > 40 ? derivedAddress.substring(0, 40) + '...' : derivedAddress;
+        // Display the full address without truncation
+        const displayAddress = derivedAddress;
 
         // 5. Append to Table (Store the full address in data-full attribute)
         const row = document.createElement('tr');
@@ -4468,10 +4522,11 @@
           <td>#${i}</td>
           <td><code style="color: var(--text-muted);">${derivationPath}</code></td>
 
+
           <td style="font-family: monospace;" title="${derivedAddress}">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; max-width: 380px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; width: 100%;">
               <span data-full="${derivedAddress}">${displayAddress}</span>
-              <div style="display: flex; gap: 0.2rem;">
+              <div style="display: flex; gap: 0; align-items: center;">
                 <button class="btn-icon" onclick="copyString('${derivedAddress}')" title="Copy Address">📋</button>
                 <button class="btn-icon" onclick="showQrModal('${derivedAddress}', 'Public Address')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">
                   <svg viewBox="0 0 336 336" width="16" height="16" fill="currentColor">
@@ -4482,17 +4537,22 @@
             </div>
           </td>
           
+
           <td style="font-family: monospace;">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; width: 100%;">
               <span data-full="${derivedWif}">${derivedWif}</span>
-              <div style="display: flex; gap: 0.2rem;">
-                <button class="btn-icon" onclick="copyString('${derivedWif}')" title="Copy WIF">📋</button>
-                <button class="btn-icon" onclick="showQrModal('${derivedWif}', 'Private Key (WIF)')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">
+              
+              <div style="display: flex; gap: 0; align-items: center;">
+                <button class="btn-icon" onclick="copyString('${derivedWif}')" title="Copy WIF" style="display: inline-flex; align-items: center; justify-content: center;">📋</button>
+
+                <button class="btn-icon" onclick="showQrModal('${derivedWif}', 'WIF Private Key')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">
                   <svg viewBox="0 0 336 336" width="16" height="16" fill="currentColor">
                     <path d="m 16,16 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 128,0 0,16 0,16 16,0 0,-16 16,0 0,-16 -16,0 -16,0 z m 32,16 0,16 16,0 0,-16 -16,0 z m 16,16 0,16 16,0 16,0 0,-16 0,-16 0,-16 -16,0 0,16 0,16 -16,0 z m 0,16 -16,0 -16,0 -16,0 0,16 16,0 16,0 0,16 -16,0 0,16 16,0 0,16 16,0 0,-16 16,0 0,16 -16,0 0,16 -16,0 0,16 16,0 16,0 0,16 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 0,-16 -16,0 0,-16 z m 16,112 -16,0 0,16 -16,0 0,16 0,16 16,0 0,16 0,16 -16,0 -16,0 0,-16 16,0 0,-16 -16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,16 16,0 0,-16 0,-16 -16,0 -16,0 0,-16 -16,0 -16,0 -16,0 0,16 -16,0 0,16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,16 0,16 0,16 16,0 0,-16 16,0 16,0 16,0 0,-16 16,0 0,-16 16,0 0,16 -16,0 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,16 0,16 0,16 16,0 0,16 16,0 16,0 16,0 0,16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 0,-16 -16,0 -16,0 0,-16 -16,0 0,-16 -16,0 0,16 -16,0 -16,0 0,16 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 16,0 0,-16 -16,0 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 -16,0 0,-16 z m 48,128 0,-16 -16,0 0,16 16,0 z m 32,16 16,0 16,0 0,-16 -16,0 -16,0 0,16 z m 32,-16 16,0 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 -16,0 0,16 0,16 16,0 0,-16 16,0 0,16 0,16 16,0 16,0 0,16 z m -48,-80 0,-16 -16,0 -16,0 0,16 16,0 16,0 z m 16,0 16,0 0,-16 0,-16 0,-16 16,0 0,16 16,0 0,16 16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,-16 -16,0 0,16 -16,0 0,16 16,0 0,16 0,16 0,16 z m -16,-48 -16,0 0,16 16,0 0,-16 z m 64,32 -16,0 0,16 16,0 0,-16 z m -224,0 0,-16 -16,0 0,16 16,0 z m -16,0 -16,0 -16,0 -16,0 0,16 16,0 16,0 16,0 0,-16 z m -64,0 -16,0 0,16 16,0 0,-16 z m 0,-48 0,-16 -16,0 0,16 16,0 z m 112,-16 16,0 0,-16 0,-16 -16,0 0,16 0,16 z m 96,-128 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m -208,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 224,0 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m -208,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 224,0 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m -32,96 0,16 16,0 0,-16 -16,0 z m -224,96 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 16,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 16,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 288,48 0,16 16,0 0,-16 -16,0 z"/>
                   </svg>
                 </button>
               </div>
+
+
             </div>
           </td>
 
@@ -4507,9 +4567,15 @@
       navigator.clipboard.writeText(STATE.currentMnemonic).then(showToast);
     }
 
-    function changeDerivationPath() {
-      const select = document.getElementById('hdDerivationPath');
-      STATE.activeDerivationPurpose = parseInt(select.value);
+    function changeDerivationPath(purpose) {
+      STATE.activeDerivationPurpose = purpose;
+
+      // Update toggle button UI states
+      const group = document.getElementById('derivationToggleGroup');
+      if (group) {
+        group.querySelectorAll('.verify-tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btnDerive' + purpose).classList.add('active');
+      }
 
       // Dynamically Update Table Header Text and Tooltip
       const headerText = document.getElementById('hdAddressHeaderText');
