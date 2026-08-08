@@ -2767,10 +2767,9 @@
             <li style="margin-bottom: 0.75rem;">
               <strong>Android SecureRandom Bug (2013):</strong> A flaw in Android’s PRNG generated identical $k$-values (ECDSA nonces) across different Bitcoin transactions. Attackers mathematically calculated private keys directly from on-chain signatures and drained Android-based wallets.
             </li>
-            <li>
+            <li style="margin-bottom: 0.75rem;">
               <strong>Brainwallet Hacks:</strong> Users who created private keys using human-chosen phrases (e.g., <code>sha256("correcthorsebatterystaple")</code>) had their funds stolen in seconds by automated bots continually sweeping common dictionary combinations.
             </li>
-
             <li style="margin-bottom: 0.75rem;">
               <strong>Debian OpenSSL Disaster (Non-Crypto - 2008):</strong> A developer accidentally removed two critical lines of entropy-gathering code while trying to silence a memory warning. For two years, the PRNG was seeded solely by the process ID (a max of 32,768 states). This meant millions of supposedly secure SSH and SSL keys globally could be brute-forced in milliseconds.
             </li>
