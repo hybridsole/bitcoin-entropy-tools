@@ -9,6 +9,8 @@
 
 Live version available at https://entropy.notablespends.com/
 
+Github hosted version at https://hybridsole.github.io/bitcoin-entropy-tools/bitcoin-entropy-tools.html
+
 Hybrid's Bitcoin Address Tools is engineered specifically for individuals who want complete cryptographic self-sovereignty. By relying on physical entropy (dice, coins, or mouse movements) and running entirely client-side without internet access, this tool eliminates reliance on third-party random number generators (RNGs) and network-connected wallets.
 
 Everything—including the SECP256K1 elliptic curve math, SHA-256 hashing, and QR code generation—is bundled into a single, highly readable `bitcoin-entropy-tools.html` file.
