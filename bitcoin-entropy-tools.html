@@ -2754,8 +2754,8 @@
             <div class="output-group">
               <div class="seed-row" style="margin-bottom: 1rem; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                 <div class="verify-tabs" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0; flex-wrap: wrap; overflow: visible;" id="restorerToggleGroup">
-                  <button class="verify-tab-btn" id="btnRestore44" onclick="changeRestoreDerivation(44)">Legacy</button>
-                  <button class="verify-tab-btn active" id="btnRestore84" onclick="changeRestoreDerivation(84)">Native SegWit</button>
+                  <button class="verify-tab-btn active" id="btnRestore44" onclick="changeRestoreDerivation(44)">Legacy</button>
+                  <button class="verify-tab-btn" id="btnRestore84" onclick="changeRestoreDerivation(84)">Native SegWit</button>
                   <button class="verify-tab-btn" id="btnRestore49" onclick="changeRestoreDerivation(49)">Nested SegWit</button>
                   <button class="verify-tab-btn" id="btnRestore86" onclick="changeRestoreDerivation(86)">Taproot</button>
                 </div>
@@ -2767,7 +2767,7 @@
                     <tr>
                       <th>Index</th>
                       <th>Path</th>
-                      <th><span id="restoreAddressHeaderText">Native SegWit Address</span></th>
+                      <th><span id="restoreAddressHeaderText">Legacy Address</span></th>
                       <th>WIF Private Key</th>
                     </tr>
                   </thead>
@@ -3733,7 +3733,7 @@
       activeDecryptedBytes: null,
       restoreMasterSeed: null,       // NEW
       restoreDerivationIndex: 0,     // NEW
-      restoreDerivationPurpose: 84   // NEW
+      restoreDerivationPurpose: 44   // NEW
 
     };
 
@@ -6125,7 +6125,7 @@
 
       // 3. Render Table Defaults
       document.getElementById('restorerResults').style.display = 'block';
-      changeRestoreDerivation(84); // Default to Native SegWit on fresh load
+      changeRestoreDerivation(44); // Default to Native SegWit on fresh load
     }
 
     function changeRestoreDerivation(purpose) {
