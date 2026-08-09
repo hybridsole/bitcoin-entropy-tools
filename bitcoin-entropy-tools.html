@@ -3397,11 +3397,17 @@
           <span style="font-size: 0.55rem; color: #64748b; font-weight: 600;">FOLD & TUCK TO LOCK</span>
         </div>
 
-        <div class="tf-cell tf-notes-cell">
-          <strong style="color: #1e293b; display: block; margin-bottom: 2px;">FOLDING INSTRUCTIONS:</strong>
-          1. Fold lengthwise along red dashed line (1).<br>
-          2. Fold outer panels inward along green dashed lines (2).<br>
-          3. Tuck one side flap into the other to conceal and lock private key.
+        <div class="tf-cell tf-notes-cell" style="justify-content: space-between; overflow: hidden; display: flex; flex-direction: column;">
+          <!-- SVG Envelope Security Tint Pattern -->
+          <div style="flex: 1; width: 100%; min-height: 40px; margin-bottom: 8px; border-radius: 2px; opacity: 0.85; background-color: #f8fafc; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='35'%3E%3Cg stroke='%231e293b' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M2 5l8 8M15 2l5 10M28 5l-8 8M38 2l-5 10M2 18l10-5M15 25l8-8M25 15l10 5M38 25l-8-8M5 38l5-10M18 35l-8-8M25 38l5-10M35 35l-8-8M10 20v8M30 20v8M20 10h8M20 30h8' /%3E%3C/g%3E%3C/svg%3E&quot;); background-repeat: repeat;"></div>
+
+          <!-- Folding Instructions Container (Pushed to bottom) -->
+          <div style="width: 100%; border-top: 1px solid #cbd5e1; padding-top: 4px; z-index: 2; background: #f8fafc;">
+            <strong style="color: #1e293b; display: block; margin-bottom: 2px;">FOLDING INSTRUCTIONS:</strong>
+            1. Fold lengthwise along red dashed line (1).<br>
+            2. Fold outer panels inward along green dashed lines (2).<br>
+            3. Tuck one side flap into the other to conceal and lock private key.
+          </div>
         </div>
 
         <div class="tf-cell tf-pub-cell">
