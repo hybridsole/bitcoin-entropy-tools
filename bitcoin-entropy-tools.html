@@ -2778,6 +2778,19 @@
               style="padding: 0.5rem 1rem; flex: none; width: auto;">📋 Copy All Generated Rows</button>
           </div>
 
+          <div class="output-group" style="margin-bottom: 1.25rem;">
+            <div class="output-header">
+              <span class="output-title">
+                Account Extended Public Key
+                <span class="tooltip-icon" data-tooltip="The account-level public key (e.g., m/84'/0'/0'). Import this into watch-only wallets to monitor addresses without exposing your private keys.">?</span>
+              </span>
+            </div>
+            <div class="value-box">
+              <span id="accountXpubStr">------------------------------------------------------------------</span>
+              <button class="btn-icon" onclick="copyText('accountXpubStr')" title="Copy">📋</button>
+            </div>
+          </div>
+
           <!-- New scrollable wrapper added around the table -->
           <div style="overflow-x: auto; width: 100%;">
             <table class="address-table" id="hdAddressTable">
@@ -2892,6 +2905,20 @@
                   <button class="verify-tab-btn" id="btnRestore84" onclick="changeRestoreDerivation(84)">Native SegWit</button>
                   <button class="verify-tab-btn" id="btnRestore49" onclick="changeRestoreDerivation(49)">Nested SegWit</button>
                   <button class="verify-tab-btn" id="btnRestore86" onclick="changeRestoreDerivation(86)">Taproot</button>
+                </div>
+              </div>
+
+
+              <div class="output-group" style="margin-bottom: 1.25rem;">
+                <div class="output-header">
+                  <span class="output-title">
+                    Account Extended Public Key
+                    <span class="tooltip-icon" data-tooltip="The account-level public key (e.g., m/84'/0'/0'). Import this into watch-only wallets to monitor addresses without exposing your private keys.">?</span>
+                  </span>
+                </div>
+                <div class="value-box">
+                  <span id="restoreAccountXpubStr">------------------------------------------------------------------</span>
+                  <button class="btn-icon" onclick="copyText('restoreAccountXpubStr')" title="Copy">📋</button>
                 </div>
               </div>
 
@@ -5250,36 +5277,42 @@
 
     // Standard BIP-32 Hierarchical Deterministic Derivation
     async function deriveBIP32(masterSeed, path) {
-      // 1. Master Key Generation ("Bitcoin seed")
+      // 1. Master Key Generation
       const keyBytes = new TextEncoder().encode("Bitcoin seed");
       let I = await hmacSha512(keyBytes, masterSeed);
       let privKey = I.slice(0, 32);
       let chainCode = I.slice(32, 64);
+      
+      let parentFingerprint = new Uint8Array([0, 0, 0, 0]);
+      let childNum = 0;
+      let depth = 0;
 
-      if (path === "m" || path === "m/") return privKey;
+      if (path === "m" || path === "m/") return { privKey, chainCode, parentFingerprint, depth, childNum };
       const parts = path.split('/').slice(1);
 
       // 2. Child Key Derivation (CKD)
       for (let p of parts) {
         const hardened = p.endsWith("'");
         let index = parseInt(p, 10);
-        if (hardened) index += 0x80000000; // Add hardened offset
+        if (hardened) index += 0x80000000;
+        childNum = index; // Save current child index
+
+        // Calculate parent fingerprint BEFORE updating privKey
+        const privIntForPub = BigInt('0x' + bytesToHex(privKey));
+        const pubP = Point.G.multiply(privIntForPub);
+        const pPref = (pubP.y % 2n === 0n) ? '02' : '03';
+        const pPubBytes = hexToBytes(pPref + pubP.x.toString(16).padStart(64, '0'));
+        parentFingerprint = hash160(pPubBytes).slice(0, 4);
 
         const data = new Uint8Array(37);
         if (hardened) {
           data[0] = 0x00;
           data.set(privKey, 1);
         } else {
-          // Normal derivation requires the parent compressed public key
-          const privInt = BigInt('0x' + bytesToHex(privKey));
-          const pubPoint = Point.G.multiply(privInt);
-          const prefix = (pubPoint.y % 2n === 0n) ? 0x02 : 0x03;
-          data[0] = prefix;
-          const xHex = pubPoint.x.toString(16).padStart(64, '0');
-          data.set(hexToBytes(xHex), 1);
+          data[0] = parseInt(pPref, 16);
+          data.set(hexToBytes(pubP.x.toString(16).padStart(64, '0')), 1);
         }
 
-        // Write 32-bit big-endian index
         data[33] = (index >>> 24) & 0xff;
         data[34] = (index >>> 16) & 0xff;
         data[35] = (index >>> 8) & 0xff;
@@ -5289,18 +5322,42 @@
         const IL = I.slice(0, 32);
         chainCode = I.slice(32, 64);
 
-        // Child Private Key = (IL + parent_private_key) mod n
         const ilInt = BigInt('0x' + bytesToHex(IL));
         const privInt = BigInt('0x' + bytesToHex(privKey));
         let childPrivInt = (ilInt + privInt) % SECP256K1_N;
 
-        let childPrivHex = childPrivInt.toString(16).padStart(64, '0');
-        privKey = hexToBytes(childPrivHex);
+        privKey = hexToBytes(childPrivInt.toString(16).padStart(64, '0'));
+        depth++;
       }
 
-      return privKey;
+      return { privKey, chainCode, parentFingerprint, depth, childNum };
     }
 
+
+    const XPUB_PREFIXES = {
+      44: [0x04, 0x88, 0xB2, 0x1E], // xpub (Legacy)
+      49: [0x04, 0x9D, 0x7C, 0xB2], // ypub (Nested SegWit)
+      84: [0x04, 0xB2, 0x47, 0x46], // zpub (Native SegWit)
+      86: [0x04, 0x88, 0xB2, 0x1E]  // xpub (Taproot typically defaults to standard xpub)
+    };
+
+    function encodeExtendedPublicKey(versionBytes, depth, parentFingerprint, childNumber, chainCode, pubKeyBytes) {
+      const payload = new Uint8Array(78);
+      payload.set(versionBytes, 0);
+      payload[4] = depth;
+      payload.set(parentFingerprint, 5);
+      
+      // Child Number (32-bit big-endian)
+      payload[9] = (childNumber >>> 24) & 0xff;
+      payload[10] = (childNumber >>> 16) & 0xff;
+      payload[11] = (childNumber >>> 8) & 0xff;
+      payload[12] = childNumber & 0xff;
+      
+      payload.set(chainCode, 13);
+      payload.set(pubKeyBytes, 45);
+      
+      return base58CheckEncode(payload);
+    }
 
     async function generateSeedAndAddresses() {
       STATE.seedGenerated = true;
@@ -5386,6 +5443,8 @@
     }
 
     let derivationTimeout = null;
+
+
     async function deriveFromMnemonic() {
       // Instantly update the UI grid so the user sees the passphrase badge update in real-time
       renderMnemonicGrid();
@@ -5417,6 +5476,7 @@
         document.getElementById('hdAddressTableBody').innerHTML = "";
         STATE.currentDerivationIndex = 0;
         await loadMoreAddresses();
+        updateAccountXpubDisplay(STATE.hdMasterSeed, STATE.activeDerivationPurpose, 'accountXpubStr');
       }, 300);
     }
 
@@ -5430,7 +5490,8 @@
         const derivationPath = `m/${purpose}'/0'/0'/0/${i}`;
 
         // 1. Derive proper BIP-32 HD Private Key
-        const privKeyBytes = await deriveBIP32(STATE.hdMasterSeed, derivationPath);
+        const derived = await deriveBIP32(STATE.hdMasterSeed, derivationPath);
+        const privKeyBytes = derived.privKey;
 
         // 2. Derive WIF Private Key
         const wifPayload = new Uint8Array(34);
@@ -5524,6 +5585,31 @@
       navigator.clipboard.writeText(STATE.currentMnemonic).then(showToast);
     }
 
+
+    async function updateAccountXpubDisplay(masterSeed, purpose, displayElementId) {
+      const accountPath = `m/${purpose}'/0'/0'`;
+      const accountNode = await deriveBIP32(masterSeed, accountPath);
+      
+      // Derive compressed public key for the account
+      const privInt = BigInt('0x' + bytesToHex(accountNode.privKey)) % SECP256K1_N;
+      const pubPoint = Point.G.multiply(privInt);
+      const prefix = (pubPoint.y % 2n === 0n) ? '02' : '03';
+      const pubKeyBytes = hexToBytes(prefix + pubPoint.x.toString(16).padStart(64, '0'));
+
+      const versionBytes = XPUB_PREFIXES[purpose] || XPUB_PREFIXES[44];
+      const xpubString = encodeExtendedPublicKey(
+        versionBytes, 
+        accountNode.depth, 
+        accountNode.parentFingerprint, 
+        accountNode.childNum, 
+        accountNode.chainCode, 
+        pubKeyBytes
+      );
+
+      const displayEl = document.getElementById(displayElementId);
+      if (displayEl) displayEl.textContent = xpubString;
+    }
+
     function changeDerivationPath(purpose) {
       STATE.activeDerivationPurpose = purpose;
 
@@ -5556,6 +5642,7 @@
       document.getElementById('hdAddressTableBody').innerHTML = "";
       STATE.currentDerivationIndex = 0;
       loadMoreAddresses();
+      updateAccountXpubDisplay(STATE.hdMasterSeed, purpose, 'accountXpubStr');
     }
 
     function copyString(text) {
@@ -6401,6 +6488,7 @@
       document.getElementById('restoredAddressTableBody').innerHTML = "";
       STATE.restoreDerivationIndex = 0;
       loadMoreRestoredAddresses();
+      updateAccountXpubDisplay(STATE.restoreMasterSeed, purpose, 'restoreAccountXpubStr');
     }
 
     async function loadMoreRestoredAddresses() {
@@ -6413,7 +6501,9 @@
 
       for (let i = start; i < end; i++) {
         const derivationPath = `m/${purpose}'/0'/0'/0/${i}`;
-        const privKeyBytes = await deriveBIP32(STATE.restoreMasterSeed, derivationPath);
+
+        const derived = await deriveBIP32(STATE.restoreMasterSeed, derivationPath);
+        const privKeyBytes = derived.privKey;
 
         const wifPayload = new Uint8Array(34);
         wifPayload[0] = 0x80;
