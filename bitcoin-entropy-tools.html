@@ -2942,6 +2942,63 @@
         </div>
       </details>
 
+
+      <!-- Accordion 2.5: XPUB Viewer -->
+      <details class="tool-accordion exclusive-accordion" id="accXpubViewer">
+        <summary>👁️ Extended Public Key (xpub) Viewer</summary>
+        <div class="tool-accordion-content">
+          <p style="color: var(--text-muted); margin-bottom: 1rem; margin-top: 1rem;">
+            Paste an Account-Level Extended Public Key (xpub, ypub, or zpub) to view its derived child addresses. 
+            <strong style="color: var(--accent-red);">Private keys cannot be derived from this key.</strong>
+          </p>
+          
+          <div class="textarea-wrapper">
+            <input type="text" id="xpubViewerInput" placeholder="Paste xpub, ypub, or zpub here..."
+              style="width: 100%; padding: 0.8rem; background: rgba(15,23,42,0.8); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-family: monospace;">
+          </div>
+
+          <div class="seed-row" style="margin-bottom: 1.5rem; justify-content: flex-start; align-items: center; gap: 1rem;">
+              <span style="font-weight: 600; color: var(--text-main);">Chain:</span>
+              <select id="xpubChainSelect" style="padding: 0.6rem; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 6px; outline: none; cursor: pointer; font-weight: 600;" onchange="if(document.getElementById('xpubViewerResults').style.display === 'block') resetXpubViewer()">
+                  <option value="0" selected>External (Receive) 0/i</option>
+                  <option value="1">Internal (Change) 1/i</option>
+              </select>
+          </div>
+
+          <button class="btn btn-primary" onclick="viewXpub()">Derive & View Addresses</button>
+          
+          <div id="xpubViewerResults" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--card-border);">
+            <div class="output-group">
+              <div class="output-header" style="margin-bottom: 0.5rem;">
+                <span class="output-title">Extracted Details</span>
+              </div>
+              <div class="value-box" style="margin-bottom: 0.5rem;">
+                  <span style="color: var(--text-muted);">Format Detected:</span>
+                  <span id="xpubFormatDetected" style="color: var(--btc-gold); font-weight: bold;">Standard (xpub)</span>
+              </div>
+            </div>
+            
+            <div class="output-group" style="margin-top: 1rem;">
+              <div style="overflow-x: auto; width: 100%;">
+                <table class="address-table" id="xpubAddressTable">
+                  <thead>
+                    <tr>
+                      <th>Index</th>
+                      <th>Path</th>
+                      <th>Public Address</th>
+                      <th>Public Key Hex</th>
+                    </tr>
+                  </thead>
+                  <tbody id="xpubAddressTableBody"></tbody>
+                </table>
+              </div>
+
+              <button class="btn" onclick="loadMoreXpubAddresses()" style="margin-top: 1rem; width: 100%; justify-content: center;">➕ Load 10 More Addresses</button>
+            </div>
+          </div>
+        </div>
+      </details>
+
       <!-- Accordion 3: QR Code Creator -->
       <details class="tool-accordion exclusive-accordion" id="accQrCreator">
         <summary>🔲 QR Code Creator</summary>
@@ -3869,6 +3926,43 @@
       }
       if (x < 0n) x += m0;
       return x;
+    }
+
+
+    // MATH HELPERS FOR XPUB DECOMPRESSION
+    function modPow(base, exp, mod = SECP256K1_P) {
+      let res = 1n;
+      base = base % mod;
+      while (exp > 0n) {
+        if (exp % 2n === 1n) res = (res * base) % mod;
+        exp = exp / 2n;
+        base = (base * base) % mod;
+      }
+      return res;
+    }
+
+    function decompressPublicKey(pubKeyBytes) {
+      const prefix = pubKeyBytes[0];
+      const xHex = bytesToHex(pubKeyBytes.slice(1));
+      const x = BigInt('0x' + xHex);
+      
+      // y^2 = x^3 + 7
+      const x3 = (x ** 3n) % SECP256K1_P;
+      let y2 = (x3 + 7n) % SECP256K1_P;
+      if (y2 < 0n) y2 += SECP256K1_P;
+      
+      // y = y2^((p+1)/4) mod p
+      const pPlus1Over4 = (SECP256K1_P + 1n) / 4n;
+      let y = modPow(y2, pPlus1Over4, SECP256K1_P);
+      
+      const isYEven = (y % 2n === 0n);
+      const isPrefixEven = (prefix === 0x02);
+      
+      if (isYEven !== isPrefixEven) {
+        y = SECP256K1_P - y;
+      }
+      
+      return new Point(x, y);
     }
 
     class Point {
@@ -5340,6 +5434,38 @@
     }
 
 
+    async function derivePublicChild(parentPubKeyBytes, parentChainCode, index) {
+      // Hardened derivation is impossible from an xpub without the private key
+      if (index >= 0x80000000) throw new Error("Cannot derive hardened child from extended public key");
+
+      const data = new Uint8Array(37);
+      data.set(parentPubKeyBytes, 0);
+      data[33] = (index >>> 24) & 0xff;
+      data[34] = (index >>> 16) & 0xff;
+      data[35] = (index >>> 8) & 0xff;
+      data[36] = index & 0xff;
+
+      const I = await hmacSha512(parentChainCode, data);
+      const IL = I.slice(0, 32);
+      const childChainCode = I.slice(32, 64);
+
+      const ilInt = BigInt('0x' + bytesToHex(IL));
+      if (ilInt >= SECP256K1_N) throw new Error("Invalid IL");
+
+      // Child PubKey = Parent PubKey + Point(IL)
+      const ilPoint = Point.G.multiply(ilInt);
+      const parentPoint = decompressPublicKey(parentPubKeyBytes);
+      const childPoint = parentPoint.add(ilPoint);
+
+      const prefix = (childPoint.y % 2n === 0n) ? '02' : '03';
+      const childPubKeyHex = prefix + childPoint.x.toString(16).padStart(64, '0');
+      const childPubKeyBytes = hexToBytes(childPubKeyHex);
+
+      return { pubKey: childPubKeyBytes, chainCode: childChainCode };
+    }
+
+
+
     const XPUB_PREFIXES = {
       44: [0x04, 0x88, 0xB2, 0x1E], // xpub (Legacy)
       49: [0x04, 0x9D, 0x7C, 0xB2], // ypub (Nested SegWit)
@@ -6569,7 +6695,117 @@
 
 
 
+    const XPUB_VERSIONS = {
+        '0488b21e': 'xpub', // Legacy
+        '049d7cb2': 'ypub', // Nested SegWit
+        '04b24746': 'zpub'  // Native SegWit
+    };
 
+    STATE.xpubBaseKey = null;
+    STATE.xpubBaseChainCode = null;
+    STATE.xpubAddressType = 'xpub';
+    STATE.xpubDerivationIndex = 0;
+    
+    function resetXpubViewer() {
+        document.getElementById('xpubAddressTableBody').innerHTML = "";
+        STATE.xpubDerivationIndex = 0;
+        loadMoreXpubAddresses();
+    }
+
+    function viewXpub() {
+        const input = document.getElementById('xpubViewerInput').value.trim();
+        if (!input) { alert('Please enter an extended public key.'); return; }
+        
+        try {
+            const decoded = base58Decode(input);
+            if (decoded.length !== 82) throw new Error("Invalid extended key length. Checksum might be wrong or missing.");
+            
+            // The last 4 bytes are checksum, first 78 are payload
+            const payload = decoded.slice(0, 78);
+            const versionHex = bytesToHex(payload.slice(0, 4)).toLowerCase();
+            const type = XPUB_VERSIONS[versionHex] || 'xpub'; // Default to legacy if unknown
+            
+            STATE.xpubBaseChainCode = payload.slice(13, 45);
+            STATE.xpubBaseKey = payload.slice(45, 78);
+            STATE.xpubAddressType = type;
+            
+            document.getElementById('xpubFormatDetected').textContent = type.toUpperCase();
+            document.getElementById('xpubViewerResults').style.display = 'block';
+            
+            resetXpubViewer();
+            
+        } catch (err) {
+            alert("Error parsing xpub: " + err.message);
+            document.getElementById('xpubViewerResults').style.display = 'none';
+        }
+    }
+    
+    async function loadMoreXpubAddresses() {
+        if (!STATE.xpubBaseKey || !STATE.xpubBaseChainCode) return;
+        
+        const tbody = document.getElementById('xpubAddressTableBody');
+        const start = STATE.xpubDerivationIndex;
+        const end = start + 10;
+        const chain = parseInt(document.getElementById('xpubChainSelect').value, 10);
+        const type = STATE.xpubAddressType;
+        
+        try {
+            // First derive the chain level (0 for external/receive, 1 for internal/change)
+            const chainNode = await derivePublicChild(STATE.xpubBaseKey, STATE.xpubBaseChainCode, chain);
+            
+            for (let i = start; i < end; i++) {
+                const childNode = await derivePublicChild(chainNode.pubKey, chainNode.chainCode, i);
+                const pubKeyHex = bytesToHex(childNode.pubKey);
+                const hash160PubKey = hash160(childNode.pubKey);
+                
+                let address = "";
+                if (type === 'zpub') {
+                    address = bech32Encode('bc', 0, Array.from(hash160PubKey), false);
+                } else if (type === 'ypub') {
+                    const redeemScript = new Uint8Array(22);
+                    redeemScript[0] = 0x00; redeemScript[1] = 0x14; redeemScript.set(hash160PubKey, 2);
+                    const p2shPayload = new Uint8Array(21);
+                    p2shPayload[0] = 0x05; p2shPayload.set(hash160(redeemScript), 1);
+                    address = base58CheckEncode(p2shPayload);
+                } else { 
+                    const p2pkhPayload = new Uint8Array(21);
+                    p2pkhPayload[0] = 0x00; p2pkhPayload.set(hash160PubKey, 1);
+                    address = base58CheckEncode(p2pkhPayload);
+                }
+                
+                // Reusable QR Code SVG string for buttons
+                const qrSvgHtml = `<svg viewBox="0 0 336 336" width="16" height="16" fill="currentColor"><path d="m 16,16 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 128,0 0,16 0,16 16,0 0,-16 16,0 0,-16 -16,0 -16,0 z m 32,16 0,16 16,0 0,-16 -16,0 z m 16,16 0,16 16,0 16,0 0,-16 0,-16 0,-16 -16,0 0,16 0,16 -16,0 z m 0,16 -16,0 -16,0 -16,0 0,16 16,0 16,0 0,16 -16,0 0,16 16,0 0,16 16,0 0,-16 16,0 0,16 -16,0 0,16 -16,0 0,16 16,0 16,0 0,16 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 0,-16 -16,0 0,-16 z m 16,112 -16,0 0,16 -16,0 0,16 0,16 16,0 0,16 0,16 -16,0 -16,0 0,-16 16,0 0,-16 -16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,16 16,0 0,-16 0,-16 -16,0 -16,0 0,-16 -16,0 -16,0 -16,0 0,16 -16,0 0,16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,16 0,16 0,16 16,0 0,-16 16,0 16,0 16,0 0,-16 16,0 0,-16 16,0 0,16 -16,0 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,16 0,16 0,16 16,0 0,16 16,0 16,0 16,0 0,16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 0,-16 -16,0 -16,0 0,-16 -16,0 0,-16 -16,0 0,16 -16,0 -16,0 0,16 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 16,0 0,-16 -16,0 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 -16,0 0,-16 z m 48,128 0,-16 -16,0 0,16 16,0 z m 32,16 16,0 16,0 0,-16 -16,0 -16,0 0,16 z m 32,-16 16,0 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 -16,0 0,16 0,16 16,0 0,-16 16,0 0,16 0,16 16,0 16,0 0,16 z m -48,-80 0,-16 -16,0 -16,0 0,16 16,0 16,0 z m 16,0 16,0 0,-16 0,-16 0,-16 16,0 0,16 16,0 0,16 16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,-16 -16,0 0,16 -16,0 0,16 16,0 0,16 0,16 0,16 z m -16,-48 -16,0 0,16 16,0 0,-16 z m 64,32 -16,0 0,16 16,0 0,-16 z m -224,0 0,-16 -16,0 0,16 16,0 z m -16,0 -16,0 -16,0 -16,0 0,16 16,0 16,0 16,0 0,-16 z m -64,0 -16,0 0,16 16,0 0,-16 z m 0,-48 0,-16 -16,0 0,16 16,0 z m 112,-16 16,0 0,-16 0,-16 -16,0 0,16 0,16 z m 96,-128 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m -208,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 224,0 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m -208,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 224,0 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m -32,96 0,16 16,0 0,-16 -16,0 z m -224,96 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 16,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 16,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 288,48 0,16 16,0 0,-16 -16,0 z"/></svg>`;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                  <td>#${i}</td>
+                  <td><code style="color: var(--text-muted);">${chain}/${i}</code></td>
+                  <td style="font-family: monospace;" title="${address}">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; width: 100%;">
+                      <span>${address}</span>
+                      <div style="display: flex; gap: 0; align-items: center;">
+                        <button class="btn-icon" onclick="copyString('${address}')" title="Copy Address">📋</button>
+                        <button class="btn-icon" onclick="showQrModal('${address}', 'Public Address')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="font-family: monospace;" title="${pubKeyHex}">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; width: 100%;">
+                      <span>${pubKeyHex.substring(0, 20)}...</span>
+                      <div style="display: flex; gap: 0; align-items: center;">
+                        <button class="btn-icon" onclick="copyString('${pubKeyHex}')" title="Copy Public Key">📋</button>
+                      </div>
+                    </div>
+                  </td>
+                `;
+                tbody.appendChild(row);
+            }
+            
+            STATE.xpubDerivationIndex = end;
+        } catch (err) {
+            alert("Derivation error: " + err.message);
+        }
+    }
 
 
 
