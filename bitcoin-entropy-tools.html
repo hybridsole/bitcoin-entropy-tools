@@ -1323,8 +1323,142 @@
     }
 
 
+    /* Design Picker Modal Styles */
+    .design-picker-grid .design-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 0.6rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .design-picker-grid .design-card:hover {
+      border-color: rgba(247, 147, 26, 0.5);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .design-picker-grid .design-card.active {
+      border-color: var(--btc-gold);
+      background: rgba(247, 147, 26, 0.1);
+      box-shadow: 0 0 12px rgba(247, 147, 26, 0.25);
+    }
+
+    .design-thumb {
+      width: 100%;
+      height: 80px;
+      margin-bottom: 0.4rem;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .design-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: block;
+    }
+
+    .design-desc {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
     /* Print View Styles - Dedicated Paper Wallet */
     @media print {
+
+      .trifold-bill {
+        width: 8.5in;
+        height: 4.8in;
+        border: 3px solid #1e293b;
+        background: #fff;
+        color: #1e293b;
+        page-break-inside: avoid;
+        box-sizing: border-box;
+        border-radius: 6px;
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-rows: 1fr 1fr;
+        overflow: hidden;
+      }
+
+      /* Grid Cells */
+      .tf-cell {
+        padding: 8px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        text-align: center;
+      }
+
+      .tf-bg-pattern {
+        background-color: #fffaf0 !important;
+        background-image: repeating-linear-gradient(45deg, rgba(247, 147, 26, 0.06) 0, rgba(247, 147, 26, 0.06) 10px, transparent 10px, transparent 20px) !important;
+      }
+
+      .tf-priv-cell {
+        background-color: #fffaf0 !important;
+        border: 1px dashed rgba(239, 68, 68, 0.3);
+      }
+
+      .tf-pub-cell {
+        background-color: #f0fdf4 !important;
+        border: 1px dashed rgba(16, 185, 129, 0.3);
+      }
+
+      .tf-notes-cell {
+        background-color: #f8fafc !important;
+        border: 1px solid #e2e8f0;
+        font-size: 0.52rem;
+        color: #475569;
+        text-align: left;
+        padding: 10px;
+        line-height: 1.35;
+      }
+
+      /* Guides & Arrows */
+      .tf-fold-h {
+        position: absolute;
+        left: 0; right: 0; top: 50%;
+        border-top: 2px dashed #ef4444;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .tf-fold-v1 {
+        position: absolute;
+        top: 0; bottom: 0; left: 33.333%;
+        border-left: 2px dashed #10b981;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .tf-fold-v2 {
+        position: absolute;
+        top: 0; bottom: 0; left: 66.666%;
+        border-left: 2px dashed #10b981;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .tf-label-vertical {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        transform: rotate(180deg);
+        font-size: 0.75rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
 
 
       .modal-overlay {
@@ -2373,7 +2507,7 @@
         <div class="card-title">
           <span>🔑 Generated Bitcoin Address</span>
           <div style="display: flex; gap: 0.5rem;">
-            <button class="btn" onclick="showPrintSinglePopup()">🖨️ Print Wallet</button>
+            <button class="btn" onclick="showPrintSinglePopup()">🖨️ Create Paper Wallet</button>
           </div>
         </div>
 
@@ -2564,7 +2698,7 @@
       <div class="card-title">
         <span>🌱 BIP-39 Seed Phrase</span>
         <div style="display: flex; gap: 0.5rem; align-items: center;">
-          <button class="btn" onclick="showPrintSeedPopup()">🖨️ Print Wallet</button>
+          <button class="btn" onclick="showPrintSeedPopup()">🖨️ Create Paper Backup</button>
         </div>
       </div>
 
@@ -3097,13 +3231,13 @@
         style="display: none; width: 8.5in; box-sizing: border-box; margin-bottom: 10px;">
         ⚠️ WARNING: SIMULATED ENTROPY - FOR TESTING/LEARNING ONLY. DO NOT USE FOR REAL FUNDS.
       </div>
-      <div class="wallet-bill">
+
+      <!-- TEMPLATE 1: STANDARD BANKNOTE (Default) -->
+      <div class="wallet-bill" id="singlePrintTemplateStandard">
         <!-- LEFT: DEPOSIT / PUBLIC SIDE -->
         <div class="wallet-half load-half">
           <div class="watermark">₿</div>
-          <!-- Ornate frame border -->
           <div class="ornate-frame">
-            <!-- Corner values -->
             <div class="corner-value top-left">₿</div>
             <div class="corner-value top-right">₿</div>
             <div class="corner-value bottom-left">₿</div>
@@ -3112,7 +3246,7 @@
 
             <div class="wallet-header">
               <h2>Public Deposit Address</h2>
-              <span class="sub-header-text" id="printAddrTitle">Native SegWit Address</span>
+              <span class="sub-header-text" id="printAddrTitle">Legacy Address</span>
               <div class="print-simulated-indicator" id="printSingleSimulatedLabelPublic">
                 ⚠️ TESTING ONLY - SIMULATED ENTROPY
               </div>
@@ -3126,11 +3260,10 @@
                 <span class="label">PUBLIC ADDRESS</span>
                 <div class="print-address" id="printOutAddr"></div>
               </div>
-              <!-- Loaded / Date write-in area -->
               <div class="print-loaded-details"
                 style="display: flex; gap: 15px; width: 90%; margin: 6px auto 2px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.6rem; color: #4b5563; font-weight: bold; justify-content: space-between; box-sizing: border-box;">
                 <div style="flex: 1; display: flex; align-items: center; gap: 4px;">
-                  <span>LOADED:</span>
+                  <span>AMOUNT:</span>
                   <div style="flex: 1; border-bottom: 1px solid #9ca3af; height: 12px;"></div>
                 </div>
                 <div style="width: 110px; display: flex; align-items: center; gap: 4px;">
@@ -3145,7 +3278,6 @@
           </div>
         </div>
 
-        <!-- FOLD / SEPARATION LINE -->
         <div class="wallet-fold-line">
           <div class="fold-arrow-left">◀</div>
           <div class="fold-text">FOLD HERE TO CONCEAL KEY</div>
@@ -3155,9 +3287,7 @@
         <!-- RIGHT: SPEND / SECRET SIDE -->
         <div class="wallet-half secret-half">
           <div class="watermark secret-watermark"></div>
-          <!-- Ornate frame border -->
           <div class="ornate-frame">
-            <!-- Corner values -->
             <div class="corner-value top-left">🔑</div>
             <div class="corner-value top-right">🔑</div>
             <div class="corner-value bottom-left">🔑</div>
@@ -3180,16 +3310,107 @@
                 <div class="print-address" id="printOutWif"></div>
               </div>
               <div class="warning-panel-print">
-                <strong>CRITICAL WARNING:</strong> Keep this key hidden. Anyone who sees it can sweep and steal all your
-                coins permanently.
+                <strong>CRITICAL WARNING:</strong> Keep this key hidden. Anyone who sees it can sweep and steal all your coins permanently.
               </div>
             </div>
           </div>
         </div>
       </div>
+
+
+      <!-- TEMPLATE 2: TRI-FOLD INTERLOCKING WALLET -->
+      <div class="trifold-bill" id="singlePrintTemplateTrifold" style="display: none; height: auto;">
+        <!-- Horizontal fold line centered -->
+        <div class="tf-fold-h"></div>
+        <div class="tf-fold-v1"></div>
+        <div class="tf-fold-v2"></div>
+
+        <!-- TOP ROW (Private) -->
+        <div class="tf-cell tf-bg-pattern">
+          <span style="font-size: 0.6rem; color: #94a3b8; font-weight: bold; letter-spacing: 1px;">BACK COVER</span>
+        </div>
+
+        <div class="tf-cell tf-priv-cell">
+          <!-- Expanded to 240x240 to fill more horizontal space -->
+          <div style="width: 240px; height: 240px; display: flex; flex-direction: row; background: #fff; border-radius: 6px; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); overflow: hidden;">
+            
+            <!-- Content Container (Left Side) -->
+            <div style="flex: 1; position: relative;">
+              <!-- 240x206 Container Rotated 90 degrees Clockwise -->
+              <div style="position: absolute; top: 50%; left: 50%; width: 240px; height: 206px; transform: translate(-50%, -50%) rotate(90deg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+                
+                <!-- QR Code (Scale increased to fill new space) -->
+                <div id="printTrifoldQrWif" class="print-qr" style="transform: scale(1); flex-shrink: 0;"></div>
+                
+                <!-- Text Area -->
+                <div style="text-align: center; width: 100%;">
+                  <span id="printTrifoldWifTitle" style="font-size: 0.45rem; font-weight: bold; color: #dc2626; display: block; margin-bottom: 2px;">PRIVATE KEY</span>
+                  <div class="print-address" id="printTrifoldOutWif" style="font-size: 0.85rem; width: 100%; word-break: break-all; text-align: center; font-family: monospace; color: #333; line-height: 1.2; padding: 0;"></div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Purple Ribbon -->
+            <div style="background: #a882b5; width: 34px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <span id="printTrifoldWifRibbon" style="color: #fff; font-size: 1.15rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; writing-mode: vertical-rl;">Private</span>
+            </div>
+            
+          </div>
+        </div>
+
+        <div class="tf-cell tf-bg-pattern">
+          <span style="font-size: 0.6rem; color: #94a3b8; font-weight: bold; letter-spacing: 1px;">BACK COVER</span>
+        </div>
+
+        <!-- BOTTOM ROW (Public) -->
+        <div class="tf-cell" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+          <div style="font-size: 2.2rem; margin-bottom: 2px; color: #f7931a;">₿</div>
+          <strong style="font-size: 0.8rem; letter-spacing: 1px; color: #1e293b;">BITCOIN WALLET</strong>
+          <span style="font-size: 0.55rem; color: #64748b; font-weight: 600;">FOLD & TUCK TO LOCK</span>
+        </div>
+
+        <div class="tf-cell tf-notes-cell">
+          <strong style="color: #1e293b; display: block; margin-bottom: 2px;">FOLDING INSTRUCTIONS:</strong>
+          1. Fold lengthwise along red dashed line (1).<br>
+          2. Fold outer panels inward along green dashed lines (2).<br>
+          3. Tuck one side flap into the other to conceal and lock private key.
+        </div>
+
+        <div class="tf-cell tf-pub-cell">
+          <!-- Expanded to 240x240 to fill more horizontal space -->
+          <div style="width: 240px; height: 240px; display: flex; flex-direction: row; background: #fff; border-radius: 6px; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); overflow: hidden;">
+            
+            <!-- Purple Ribbon -->
+            <div style="background: #a882b5; width: 34px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <span style="color: #fff; font-size: 1.15rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg);">Public</span>
+            </div>
+            
+            <!-- Content Container -->
+            <div style="flex: 1; position: relative;">
+              <!-- 240x206 Container Rotated -90 degrees Counter-Clockwise -->
+              <div style="position: absolute; top: 50%; left: 50%; width: 240px; height: 206px; transform: translate(-50%, -50%) rotate(-90deg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+                
+                <!-- QR Code (Scale increased to fill new space) -->
+                <div id="printTrifoldQrAddr" class="print-qr" style="transform: scale(1); flex-shrink: 0;"></div>
+                
+                <!-- Text Area -->
+                <div style="text-align: center; width: 100%;">
+                  <span style="font-size: 0.45rem; font-weight: bold; color: #4b5563; display: block; margin-bottom: 2px;">BITCOIN ADDRESS</span>
+                  <div class="print-address" id="printTrifoldOutAddr" style="font-size: 1.15rem; width: 100%; word-break: break-all; text-align: center; font-family: monospace; color: #333; line-height: 1.2; padding: 0;"></div>
+                </div>
+
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
       <div class="cutout-scissors-bottom">✂-------------------------------------------------------------✂</div>
     </div>
   </div>
+
 
   <!-- SEED PHRASE WALLET PRINT TEMPLATE (Only visible when printing) -->
   <div id="seedWalletPrint">
@@ -3339,7 +3560,7 @@
           renderQRCode('qrBech32', addrBech32);
 
           // Default back to standard views
-          switchAddressTab('segwit');
+          switchAddressTab('legacy');
           switchWifTab('comp');
         }
       }
@@ -4613,6 +4834,8 @@
       renderQRCode('qrWifComp', wifComp);
       renderQRCode('qrWifUncomp', wifUncomp);
 
+      switchAddressTab('legacy');
+
       document.getElementById('resultsCard').style.display = 'block';
       document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth' });
     }
@@ -5406,27 +5629,40 @@
       document.getElementById('verificationModal').classList.remove('open');
     }
 
+
+    // State tracking for selected paper wallet design
+    if (!STATE.singleWalletDesign) {
+      STATE.singleWalletDesign = 'standard'; // 'standard' or 'trifold'
+    }
+
+    function selectSingleWalletDesign(designName) {
+      STATE.singleWalletDesign = designName;
+      
+      // Toggle visual active state in the modal
+      document.querySelectorAll('.design-picker-grid .design-card').forEach(card => card.classList.remove('active'));
+      const activeCard = document.getElementById(`designCard-${designName}`);
+      if (activeCard) activeCard.classList.add('active');
+    }
+
     function updatePrintWalletAddress(tabId) {
       const isSegwit = tabId === 'segwit';
       const addrElement = document.getElementById(isSegwit ? 'outBech32' : 'outP2pkh');
+      const addrText = addrElement ? addrElement.textContent : "";
 
+      // 1. Update Standard Template
       const printOutAddr = document.getElementById('printOutAddr');
       const printAddrTitle = document.getElementById('printAddrTitle');
       const printInstructions = document.getElementById('printAddrInstructions');
 
-      if (printOutAddr && addrElement) {
-        const addrText = addrElement.textContent;
+      if (printOutAddr) {
         printOutAddr.textContent = addrText;
-        if (addrText.length > 50) { // e.g. Taproot is ~62 chars
-          printOutAddr.style.fontSize = '0.78rem';
-        } else if (addrText.length > 35) { // Segwit is 42 chars
-          printOutAddr.style.fontSize = '0.92rem';
-        } else { // Legacy is 34 chars
-          printOutAddr.style.fontSize = '1.15rem';
-        }
+        if (addrText.length > 50) printOutAddr.style.fontSize = '0.78rem';
+        else if (addrText.length > 35) printOutAddr.style.fontSize = '0.92rem';
+        else printOutAddr.style.fontSize = '1.15rem';
       }
-      if (addrElement && addrElement.textContent && addrElement.textContent !== "bc1q..." && addrElement.textContent !== "1...") {
-        renderQRCode('printQrAddr', addrElement.textContent);
+      if (addrText && addrText !== "bc1q..." && addrText !== "1...") {
+        renderQRCode('printQrAddr', addrText);
+        renderQRCode('printTrifoldQrAddr', addrText); // Also populate Tri-fold QR
       }
       if (printAddrTitle) {
         printAddrTitle.textContent = isSegwit ? "Native SegWit Address" : "Legacy Address (P2PKH)";
@@ -5437,7 +5673,11 @@
           : `To load funds, send BTC to this legacy address. Verify balance using a blockchain explorer.`;
       }
 
-      // Generate a deterministic serial ID based on the static P2PKH address to link both halves
+      // 2. Update Tri-Fold Template Address Text
+      const tfAddr = document.getElementById('printTrifoldOutAddr');
+      if (tfAddr) tfAddr.textContent = addrText;
+
+      // Serial number sync
       const p2pkhVal = document.getElementById('outP2pkh').textContent;
       if (p2pkhVal && p2pkhVal !== "1...") {
         const rawHex = sha256(new TextEncoder().encode(p2pkhVal));
@@ -5452,70 +5692,85 @@
       }
     }
 
+
     function updatePrintWalletWif(tabId) {
       const isComp = tabId === 'comp';
       const wifElement = document.getElementById(isComp ? 'outWifComp' : 'outWifUncomp');
+      const wifText = wifElement ? wifElement.textContent : "";
+      const isBip38 = wifText.startsWith('6P');
 
+      // 1. Update Standard Template
       const printOutWif = document.getElementById('printOutWif');
       const printWifTitle = document.getElementById('printWifTitle');
       const printWifLabelText = document.getElementById('printWifLabelText');
 
-      if (printOutWif && wifElement) {
-        printOutWif.textContent = wifElement.textContent;
+      if (printOutWif) {
+        printOutWif.textContent = wifText;
         printOutWif.style.fontSize = '0.88rem';
       }
-      
-      const wifText = wifElement ? wifElement.textContent : "";
-      const isBip38 = wifText.startsWith('6P');
 
       if (wifText && wifText !== "L..." && wifText !== "5...") {
         renderQRCode('printQrWif', wifText);
+        renderQRCode('printTrifoldQrWif', wifText); // Also populate Tri-fold WIF QR
       }
 
       if (printWifTitle) {
-        if (isBip38) {
-          printWifTitle.textContent = "Encrypted Private Key (BIP-38)";
-        } else {
-          printWifTitle.textContent = isComp ? "Private Key (WIF Compressed)" : "Private Key (WIF Uncompressed)";
-        }
+        if (isBip38) printWifTitle.textContent = "Encrypted Private Key (BIP-38)";
+        else printWifTitle.textContent = isComp ? "Private Key (WIF Compressed)" : "Private Key (WIF Uncompressed)";
       }
 
       if (printWifLabelText) {
         printWifLabelText.textContent = isBip38 ? "ENCRYPTED PRIVATE KEY" : "PRIVATE KEY (WIF)";
       }
+
+      // 2. Update Tri-Fold Template Elements
+      const tfWif = document.getElementById('printTrifoldOutWif');
+      if (tfWif) tfWif.textContent = wifText;
+      
+      // Update the small label placed directly above the private key
+      const tfWifTitle = document.getElementById('printTrifoldWifTitle');
+      if (tfWifTitle) {
+        tfWifTitle.textContent = isBip38 ? "ENCRYPTED KEY (BIP-38)" : "PRIVATE KEY";
+      }
+
+      // Update the large purple vertical ribbon
+      const tfWifRibbon = document.getElementById('printTrifoldWifRibbon');
+      if (tfWifRibbon) {
+        if (isBip38) {
+          tfWifRibbon.textContent = "Private";
+          tfWifRibbon.style.fontSize = "1.15rem"; // Shrink slightly to fit vertical space
+        } else {
+          tfWifRibbon.textContent = "Private";
+          tfWifRibbon.style.fontSize = "1.15rem";
+        }
+      }
     }
 
     function printSingleWallet() {
-      // Ensure print mode single class is on body and seed is off
       document.body.classList.add('print-mode-single');
       document.body.classList.remove('print-mode-seed');
 
-      // Make sure print layout is updated before printing
-      const isSegwitActive = document.getElementById('btnTabSegWit').classList.contains('active');
-      const isWifCompActive = document.getElementById('btnTabWifComp').classList.contains('active');
-      updatePrintWalletAddress(isSegwitActive ? 'segwit' : 'legacy');
-      updatePrintWalletWif(isWifCompActive ? 'comp' : 'uncomp');
+      // Toggle visible print layout template based on modal selection
+      const standardTpl = document.getElementById('singlePrintTemplateStandard');
+      const trifoldTpl = document.getElementById('singlePrintTemplateTrifold');
 
-      // Update simulated labels and watermark
-      const isSimulated = STATE.hasSimulatedEntropy;
-      document.getElementById('printSingleSimulatedLabelPublic').style.display = isSimulated ? 'block' : 'none';
-      document.getElementById('printSingleSimulatedLabelSecret').style.display = isSimulated ? 'block' : 'none';
-
-      const printSingleWarning = document.getElementById('printSingleSimulatedWarning');
-      if (printSingleWarning) {
-        printSingleWarning.style.display = isSimulated ? 'flex' : 'none';
+      if (STATE.singleWalletDesign === 'trifold') {
+        if (standardTpl) standardTpl.style.display = 'none';
+        if (trifoldTpl) trifoldTpl.style.display = 'grid';
+      } else {
+        if (standardTpl) standardTpl.style.display = 'flex';
+        if (trifoldTpl) trifoldTpl.style.display = 'none';
       }
 
-      const watermarks = document.querySelectorAll('#paperWalletPrint .watermark, #seedWalletPrint .watermark');
-      watermarks.forEach(wm => {
-        if (isSimulated) {
-          wm.textContent = 'TEST';
-          wm.style.fontSize = '8rem';
-        } else {
-          wm.textContent = wm.classList.contains('secret-watermark') ? '🔑' : '₿';
-          wm.style.fontSize = '11rem';
-        }
-      });
+      const isLegacyActive = document.getElementById('btnTabLegacy').classList.contains('active');
+      const isWifCompActive = document.getElementById('btnTabWifComp').classList.contains('active');
+      
+      updatePrintWalletAddress(isLegacyActive ? 'legacy' : 'segwit');
+      updatePrintWalletWif(isWifCompActive ? 'comp' : 'uncomp');
+
+      const isSimulated = STATE.hasSimulatedEntropy;
+      const simWarning = document.getElementById('printSingleSimulatedWarning');
+      if (simWarning) simWarning.style.display = isSimulated ? 'flex' : 'none';
 
       window.print();
     }
@@ -5636,7 +5891,7 @@
               <span class="address-text-small" style="font-family: monospace; font-size: 0.55rem; word-break: break-all; width: 100%; text-align: left; margin: 0; line-height: 1.1;">${address}</span>
               <div style="display: flex; gap: 8px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.48rem; color: #4b5563; font-weight: 700; width: 100%; box-sizing: border-box; margin: 0;">
                 <div style="flex: 1; display: flex; align-items: center; gap: 3px;">
-                  <span>LOADED:</span>
+                  <span>AMOUNT:</span>
                   <div style="flex: 1; border-bottom: 1px solid #9ca3af; height: 9px;"></div>
                 </div>
                 <div style="width: 65px; display: flex; align-items: center; gap: 3px;">
@@ -6218,6 +6473,10 @@
 
 
 
+
+
+
+
     // INIT DEFAULT STATE
     selectDice('mouse');
   </script>
@@ -6225,13 +6484,14 @@
 
   <div id="toast" class="toast">✅ Copied to clipboard!</div>
 
+
   <!-- Print Single Address Paper Wallet Modal -->
   <div class="modal-overlay" id="printSingleModal" onclick="closePrintSingleModal(event)">
-    <div class="modal-card" style="max-width: 420px; text-align: left; position: relative;" onclick="event.stopPropagation()">
+    <div class="modal-card" style="max-width: 480px; text-align: left; position: relative;" onclick="event.stopPropagation()">
       <button onclick="closePrintSingleModal()" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
 
       <h3 style="color: var(--btc-gold); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-        🖨️ Print Paper Wallet
+        🖨️ Create Paper Wallet
       </h3>
 
       <!-- Internet Connection Security Warning -->
@@ -6242,14 +6502,67 @@
         </div>
       </div>
 
-      <!-- Placeholder for future print settings -->
-      <div id="singlePrintSettingsContainer" style="margin-bottom: 1.25rem;">
-        <p style="font-size: 0.85rem; color: var(--text-muted);">Paper wallet layout will print using the currently selected public address and private key format.</p>
+      <!-- Design Selection Grid -->
+      <label style="display: block; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-main); font-weight: 600;">
+        Select Wallet Design:
+      </label>
+      
+      <div class="design-picker-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1.25rem;">
+        
+        <!-- Option 1: Standard Banknote -->
+        <div class="design-card active" id="designCard-standard" onclick="selectSingleWalletDesign('standard')">
+          <div class="design-thumb">
+            <svg viewBox="0 0 160 80" width="100%" height="100%">
+              <rect x="2" y="2" width="156" height="76" rx="4" fill="#1e293b" stroke="#f7931a" stroke-width="1.5"/>
+              <!-- Left Half (Public) -->
+              <rect x="6" y="6" width="70" height="68" fill="#10b981" fill-opacity="0.15" rx="2"/>
+              <rect x="12" y="14" width="24" height="24" fill="#fff" rx="1"/>
+              <rect x="40" y="16" width="30" height="4" fill="#f3f4f6" rx="1"/>
+              <rect x="40" y="24" width="22" height="3" fill="#9ca3af" rx="1"/>
+              <rect x="12" y="44" width="58" height="18" stroke="#10b981" stroke-dasharray="2 2" fill="none" rx="2"/>
+              <!-- Fold Line -->
+              <line x1="80" y1="2" x2="80" y2="78" stroke="#6b7280" stroke-dasharray="3 3"/>
+              <!-- Right Half (Secret) -->
+              <rect x="84" y="6" width="70" height="68" fill="#ef4444" fill-opacity="0.15" rx="2"/>
+              <rect x="90" y="14" width="24" height="24" fill="#fff" rx="1"/>
+              <rect x="118" y="16" width="30" height="4" fill="#f3f4f6" rx="1"/>
+              <rect x="118" y="24" width="22" height="3" fill="#ef4444" rx="1"/>
+              <rect x="90" y="44" width="58" height="18" fill="#ef4444" fill-opacity="0.2" rx="2"/>
+            </svg>
+          </div>
+          <span class="design-title">Standard Banknote</span>
+          <span class="design-desc">2-panel fold along center</span>
+        </div>
+
+        <!-- Option 2: Tri-Fold Interlocking -->
+        <div class="design-card" id="designCard-trifold" onclick="selectSingleWalletDesign('trifold')">
+          <div class="design-thumb">
+            <svg viewBox="0 0 160 80" width="100%" height="100%">
+              <rect x="2" y="2" width="156" height="76" rx="4" fill="#1e293b" stroke="#06b6d4" stroke-width="1.5"/>
+              <!-- Horizontal Fold Line -->
+              <line x1="2" y1="40" x2="158" y2="40" stroke="#ef4444" stroke-dasharray="3 2" stroke-width="1"/>
+              <!-- Vertical Fold Lines -->
+              <line x1="54" y1="2" x2="54" y2="78" stroke="#10b981" stroke-dasharray="2 2" stroke-width="1"/>
+              <line x1="106" y1="2" x2="106" y2="78" stroke="#10b981" stroke-dasharray="2 2" stroke-width="1"/>
+              <!-- Top Row Content -->
+              <rect x="62" y="8" width="18" height="18" fill="#fff" rx="1"/> <!-- Private QR -->
+              <rect x="10" y="10" width="34" height="20" fill="#f7931a" fill-opacity="0.2" rx="2"/> <!-- Pattern -->
+              <rect x="114" y="10" width="34" height="20" fill="#f7931a" fill-opacity="0.2" rx="2"/> <!-- Pattern -->
+              <!-- Bottom Row Content -->
+              <circle cx="28" cy="60" r="10" fill="#f7931a"/> <!-- Logo -->
+              <rect x="60" y="48" width="40" height="24" fill="#374151" rx="1"/> <!-- Notes -->
+              <rect x="128" y="48" width="18" height="18" fill="#fff" rx="1"/> <!-- Public QR -->
+            </svg>
+          </div>
+          <span class="design-title">Tri-Fold Interlocking</span>
+          <span class="design-desc">3-panel tuck & lock wallet</span>
+        </div>
+
       </div>
 
       <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
         <button class="btn" onclick="closePrintSingleModal()" style="border-color: var(--card-border); color: var(--text-muted); background: transparent;">Cancel</button>
-        <button class="btn btn-primary" onclick="confirmAndPrintSingleWallet()" style="background: var(--btc-gold); border-color: var(--btc-gold); color: #fff;">Confirm & Print</button>
+        <button class="btn btn-primary" onclick="confirmAndPrintSingleWallet()" style="background: var(--btc-gold); border-color: var(--btc-gold); color: #fff;">Confirm & Create</button>
       </div>
     </div>
   </div>
@@ -6261,7 +6574,7 @@
       <button onclick="closePrintSeedModal()" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
 
       <h3 style="color: var(--btc-gold); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-        🖨️ Print Backup Options
+        🖨️ Create Paper Backup
       </h3>
 
       <!-- Internet Connection Security Warning -->
@@ -6299,7 +6612,7 @@
 
       <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
         <button class="btn" onclick="closePrintSeedModal()" style="border-color: var(--card-border); color: var(--text-muted); background: transparent;">Cancel</button>
-        <button class="btn btn-primary" onclick="confirmAndPrintSeedWallet()" style="background: var(--btc-gold); border-color: var(--btc-gold); color: #fff;">Confirm & Print</button>
+        <button class="btn btn-primary" onclick="confirmAndPrintSeedWallet()" style="background: var(--btc-gold); border-color: var(--btc-gold); color: #fff;">Confirm & Create</button>
       </div>
     </div>
   </div>
