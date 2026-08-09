@@ -875,17 +875,6 @@
       gap: 0.5rem;
     }
 
-    .sensitive-blur {
-      filter: blur(5px);
-      user-select: none;
-      transition: filter 0.2s ease;
-    }
-
-    .sensitive-blur.revealed {
-      filter: none;
-      user-select: text;
-    }
-
     .btn-icon {
       background: transparent;
       border: none;
@@ -2020,24 +2009,6 @@
       }
     }
 
-    .mobile-menu-toggle {
-      display: none;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      width: calc(100% - 3rem);
-      margin: 0.75rem auto 0;
-      text-align: center;
-      transition: var(--transition);
-    }
-    .mobile-menu-toggle:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--btc-gold);
-    }
 
     /* Tools Page Accordion Styles */
     .tool-accordion {
@@ -2563,6 +2534,29 @@
         </div>
       </div>
 
+    </div>
+
+  <!-- BIP-38 Unlock Modal -->
+    <div class="modal-overlay" id="bip38UnlockModal" onclick="closeBip38Modal(event)">
+      <div class="modal-card" style="max-width: 400px; text-align: left; position: relative;" onclick="event.stopPropagation()">
+        <button onclick="closeBip38Modal()" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+
+        <h3 style="color: var(--btc-gold); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+          🔓 Unlock Encrypted Key
+        </h3>
+
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">
+          This private key (BIP-38) is encrypted. Please enter the passphrase to decrypt it and view the associated addresses.
+        </p>
+
+        <input type="text" id="bip38UnlockPassword" placeholder="Enter passphrase..." 
+          style="width: 100%; padding: 0.8rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; outline: none; margin-bottom: 1.25rem;">
+
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+          <button class="btn" onclick="closeBip38Modal()" style="border-color: var(--card-border); color: var(--text-muted); background: transparent;">Cancel</button>
+          <button class="btn btn-primary" id="btnDecryptBip38" onclick="processBip38Decryption()" style="background: var(--btc-gold); border-color: var(--btc-gold); color: #fff; width: auto; padding: 0.6rem 1.2rem;">Decrypt & Convert</button>
+        </div>
+      </div>
     </div>
 
     <!-- SEED RESULTS SECTION -->
@@ -3290,10 +3284,6 @@
 
   <script>
 
-    function toggleMobileMenu() {
-      const nav = document.getElementById('mainNav');
-      if (nav) nav.classList.toggle('menu-open');
-    }
 
     // Toggle BIP-38 Password Field Visibility in Generator
     function toggleBip38PasswordInput() {
@@ -4354,15 +4344,6 @@
       if (seedRes) seedRes.style.display = 'none';
     }
 
-    function formatMultiColumn(tokens, colsPerLine = 4) {
-      const lines = [];
-      for (let i = 0; i < tokens.length; i += colsPerLine) {
-        const chunk = tokens.slice(i, i + colsPerLine);
-        lines.push(chunk.join('    '));
-      }
-      return lines.join('\n');
-    }
-
     function updateTextareaFromState() {
       const textarea = document.getElementById('entropyInput');
 
@@ -4690,19 +4671,7 @@
       document.getElementById('resultsCard').style.display = 'none';
     }
 
-    function toggleBlur(elementId) {
-      const el = document.getElementById(elementId);
-      el.classList.toggle('revealed');
 
-      // If a WIF private key is being toggled, show/hide its QR code
-      if (elementId === 'outWifComp') {
-        const qrContainer = document.getElementById('qrContainerWifComp');
-        qrContainer.style.display = el.classList.contains('revealed') ? 'flex' : 'none';
-      } else if (elementId === 'outWifUncomp') {
-        const qrContainer = document.getElementById('qrContainerWifUncomp');
-        qrContainer.style.display = el.classList.contains('revealed') ? 'flex' : 'none';
-      }
-    }
 
     function copyText(elementId) {
       const text = document.getElementById(elementId).textContent;
@@ -6049,13 +6018,6 @@
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.M
       });
-    }
-
-    function viewCustomQR() {
-      const text = document.getElementById('qrCreatorInput').value.trim();
-      if (text) {
-        showQrModal(text, "Custom QR Code");
-      }
     }
 
     function downloadCustomQR() {
