@@ -286,6 +286,31 @@
       gap: 0.5rem;
     }
 
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .hamburger-btn {
+      display: none;
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--btc-gold);
+      font-size: 1.4rem;
+      line-height: 1;
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .hamburger-btn:hover {
+      background: rgba(247, 147, 26, 0.15);
+      border-color: var(--btc-gold);
+    }
+
     /* Dice Selector Grid */
     .dice-grid {
       display: flex;
@@ -1032,14 +1057,15 @@
 
     /* Encryption Loading Overlay */
     .encryption-overlay {
-      position: absolute;
+      position: fixed; /* Changed from absolute */
       inset: 0;
       background: rgba(9, 13, 22, 0.85);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 50;
+      z-index: 9999; /* Increased to ensure it overlays the sticky header */
+      /* ... keep your existing border-radius, opacity, transition, etc. ... */
       border-radius: var(--radius);
       opacity: 0;
       pointer-events: none;
@@ -1912,10 +1938,12 @@
     @media (max-width: 640px) {
       .header-container {
         flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 0.5rem 0.75rem;
-        gap: 0.35rem;
+        align-items: stretch;
+        gap: 0.5rem;
+      }
+
+      .hamburger-btn {
+        display: block;
       }
 
       .brand {
@@ -2092,25 +2120,39 @@
         display: block;
       }
       nav {
+        display: none; /* Hidden by default on mobile */
         flex-direction: column;
-        gap: 0;
-        display: none; 
-        padding: 0.5rem 1.5rem 0;
+        width: 100%;
+        padding: 0.5rem 0 0;
+        gap: 0.25rem;
       }
-      nav.menu-open {
+
+      nav.mobile-open {
         display: flex;
       }
+
       .nav-tab {
-        border-radius: 6px;
-        border: 1px solid transparent;
-        margin-bottom: 0.25rem;
-        padding: 0.8rem 1.2rem;
-        justify-content: center;
+        width: 100%;
+        border-radius: 8px;
+        border-bottom: 2px solid transparent;
+        justify-content: flex-start;
       }
       .nav-tab.active {
         border: 1px solid var(--btc-gold);
         background: rgba(247, 147, 26, 0.12);
       }
+
+      .dice-option {
+        min-width: calc(50% - 0.2rem);
+        flex: 1 1 calc(50% - 0.2rem);
+      }
+
+      #btnMoreDice {
+        min-width: calc(50% - 0.2rem);
+        flex: 1 1 calc(50% - 0.2rem);
+        width: auto;
+      }
+
     }
 
 
@@ -2122,13 +2164,18 @@
 
   <header>
     <div class="header-container">
-      <a href="#" class="brand" onclick="resetApp(event)">
-        <div class="brand-icon">🎲</div>
-        <div>
-          <div class="brand-title">Hybrid's Bitcoin Entropy Tools</div>
-          <div class="brand-subtitle">Offline Bitcoin Cryptographic Suite</div>
-        </div>
-      </a>
+      <div class="brand-bar">
+        <a href="#" class="brand" onclick="resetApp(event)">
+          <div class="brand-icon">🎲</div>
+          <div>
+            <div class="brand-title">Hybrid's Bitcoin Entropy Tools</div>
+            <div class="brand-subtitle">Offline Bitcoin Cryptographic Suite</div>
+          </div>
+        </a>
+        <!-- Hamburger Button for Mobile -->
+        <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileNav()" aria-label="Toggle Navigation">☰</button>
+      </div>
+
       <div style="display: flex; align-items: center; gap: 1rem;">
         <div class="offline-badge" id="offlineBadge">
           <span class="offline-pulse"></span>
@@ -2137,16 +2184,13 @@
       </div>
     </div>
 
-    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰ Menu Options</button>
     <nav id="mainNav">
       <button class="nav-tab active" id="tabBtn-entropyTab" onclick="switchTab('entropyTab')">🎲 Entropy Key Generator</button>
       <button class="nav-tab" id="tabBtn-converterTab" onclick="switchTab('converterTab')">🔄 Address & Key Converter</button>
-      <button class="nav-tab" id="tabBtn-moreToolsTab" onclick="switchTab('moreToolsTab')">🧰 More Tools</button>
       <button class="nav-tab" id="tabBtn-aboutTab" onclick="switchTab('aboutTab')">🛡️ Offline Security & Entropy</button>
+      <button class="nav-tab" id="tabBtn-otherToolsTab" onclick="switchTab('otherToolsTab')">🧰 Other Tools</button>
     </nav>
-
   </header>
-
 
 
   <main>
@@ -2185,20 +2229,20 @@
             <span class="dice-name">Touch / Mouse</span>
             <span class="dice-bits">2.0 bits/sample (128 samples)</span>
           </div>
-          <div class="dice-option" id="opt-coin" onclick="selectDice('coin')">
+          <div class="dice-option" id="btnMoreDice" onclick="toggleMoreDice()">
+            <span class="dice-icon">🎲</span>
+            <span class="dice-name">Other Methods <span class="arrow-indicator">▼</span></span>
+            <span class="dice-bits">D2, D6, D10, D12, D16, D20, Cards</span>
+          </div>
+          <div class="dice-option more-dice-option" id="opt-coin" onclick="selectDice('coin')" style="display: none;">
             <span class="dice-icon">🪙</span>
             <span class="dice-name">Coin Flip (D2)</span>
             <span class="dice-bits">1.0 bit/flip (256 flips)</span>
           </div>
-          <div class="dice-option" id="opt-d6" onclick="selectDice('d6')">
+          <div class="dice-option more-dice-option" id="opt-d6" onclick="selectDice('d6')" style="display: none;">
             <span class="dice-icon">🎲</span>
             <span class="dice-name">6-Sided Dice (D6)</span>
             <span class="dice-bits">2.585 bits/roll (100 rolls)</span>
-          </div>
-          <div class="dice-option" id="btnMoreDice" onclick="toggleMoreDice()">
-            <span class="dice-icon">🎲</span>
-            <span class="dice-name">Other Methods <span class="arrow-indicator">▼</span></span>
-            <span class="dice-bits">D10, D12, D16, D20, Cards</span>
           </div>
           <div class="dice-option more-dice-option" id="opt-d10" onclick="selectDice('d10')" style="display: none;">
             <span class="dice-icon">🎲</span>
@@ -2405,11 +2449,11 @@
           <div class="toggle-row" style="margin-top: 0; padding-top: 0; border-top: none; justify-content: flex-start; margin-bottom: 0.5rem;">
             <input type="checkbox" id="enableBip38" onchange="toggleBip38PasswordInput()">
             <label for="enableBip38" style="color: var(--text-main); font-weight: 600; cursor: pointer;">
-              🔒 Encrypt Private Key with Password (BIP-38 Paper Wallet)
+              🔒 Encrypt Private Key (BIP-38)
             </label>
           </div>
-          <div id="bip38PasswordContainer" style="display: none; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-            <input type="text" id="bip38GeneratePassword" placeholder="Enter password (plaintext) to encrypt private key..." 
+          <div id="bip38PasswordContainer" style="display: none; align-items: center; gap: 0.1rem; flex-wrap: wrap;">
+            <input type="text" id="bip38GeneratePassword" placeholder="Enter password to encrypt private key..." 
                    style="flex: 1; min-width: 200px; max-width: 380px; padding: 0.8rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; outline: none;">
             <button class="btn btn-primary" style="width: auto; padding: 0.8rem 1.5rem;" onclick="applyBip38Encryption()">Encrypt Key</button>
           </div>
@@ -3735,33 +3779,36 @@
       mouse: { name: 'Mouse Movement', sides: 'Vector', bitsPerRoll: 2.0, minRolls: 128, labels: [] }
     };
 
+    // Toggle Mobile Navigation Menu via Hamburger Button
+    function toggleMobileNav() {
+      const nav = document.getElementById('mainNav');
+      if (nav) nav.classList.toggle('mobile-open');
+    }
+
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
 
       const tabBtn = document.getElementById('tabBtn-' + tabId);
-      if (tabBtn) {
-        tabBtn.classList.add('active');
-      }
+      if (tabBtn) tabBtn.classList.add('active');
+      
+      // Auto-close mobile navigation when a tab is selected
+      const nav = document.getElementById('mainNav');
+      if (nav) nav.classList.remove('mobile-open');
+
       STATE.activeTab = tabId;
 
-      // Auto-close mobile menu if open
-      const nav = document.getElementById('mainNav');
-      if (nav) nav.classList.remove('menu-open');
-
-      // Handle visibility of entropy tab result sections when switching tabs
+      // Handle visibility of result sections when switching tabs
       const resultsCard = document.getElementById('resultsCard');
       const seedResultsCard = document.getElementById('seedResultsCard');
       const seedOptionsRow = document.getElementById('seedOptionsRow');
 
       if (tabId !== 'entropyTab') {
-        // If switching away, hide them
         if (resultsCard) resultsCard.style.display = 'none';
         if (seedResultsCard) seedResultsCard.style.display = 'none';
         if (seedOptionsRow) seedOptionsRow.style.display = 'none';
       } else {
-        // If switching back to entropy generator, restore visibility if they contain data
         const outBech32 = document.getElementById('outBech32');
         if (resultsCard && outBech32 && outBech32.textContent && !outBech32.textContent.includes('bc1q...')) {
           resultsCard.style.display = 'block';
@@ -3785,19 +3832,61 @@
 
     let STATE_MORE_DICE_OPEN = false;
 
+    function updateDiceGridDisplay(selectedType) {
+      const grid = document.querySelector('.dice-grid');
+      const btnMore = document.getElementById('btnMoreDice');
+      if (!grid || !btnMore) return;
+
+      const allDiceTypes = ['mouse', 'coin', 'd6', 'd10', 'd12', 'd16', 'd20', 'cards'];
+      
+      // 1. Position selected option at top/left
+      const selectedEl = document.getElementById(`opt-${selectedType}`);
+      if (selectedEl) {
+        grid.appendChild(selectedEl);
+        selectedEl.classList.add('selected');
+        selectedEl.style.display = 'flex';
+      }
+
+      // 2. Position "Other Methods" button second (right beside selected option)
+      grid.appendChild(btnMore);
+
+      // 3. Position remaining unselected options after btnMore
+      allDiceTypes.forEach(type => {
+        if (type !== selectedType) {
+          const el = document.getElementById(`opt-${type}`);
+          if (el) {
+            el.classList.remove('selected');
+            grid.appendChild(el);
+            el.classList.add('more-dice-option');
+            el.style.display = STATE_MORE_DICE_OPEN ? 'flex' : 'none';
+          }
+        }
+      });
+    }
+
     function toggleMoreDice(forceOpen) {
       const trigger = document.getElementById('btnMoreDice');
-      const moreOptions = document.querySelectorAll('.more-dice-option');
-
       let isOpen = forceOpen !== undefined ? forceOpen : !STATE_MORE_DICE_OPEN;
       STATE_MORE_DICE_OPEN = isOpen;
 
-      moreOptions.forEach(opt => {
-        opt.style.display = isOpen ? 'flex' : 'none';
+      const allDiceTypes = ['mouse', 'coin', 'd6', 'd10', 'd12', 'd16', 'd20', 'cards'];
+      allDiceTypes.forEach(type => {
+        if (type !== STATE.diceType) {
+          const el = document.getElementById(`opt-${type}`);
+          if (el) {
+            el.style.display = isOpen ? 'flex' : 'none';
+          }
+        }
       });
 
       if (trigger) {
-        trigger.style.display = isOpen ? 'none' : 'flex';
+        const arrow = trigger.querySelector('.arrow-indicator');
+        if (arrow) arrow.textContent = isOpen ? '▲' : '▼';
+        if (isOpen) {
+          trigger.classList.add('active-trigger');
+        } else {
+          trigger.classList.remove('active-trigger');
+        }
       }
     }
 
@@ -3827,16 +3916,12 @@
       const passphraseInput = document.getElementById('bip39Passphrase');
       if (passphraseInput) passphraseInput.value = '';
 
-      // Force open expansion if a collapsible type is selected,
-      // but keep it open if it was already expanded by the user.
-      const isMoreType = ['d10', 'd12', 'd16', 'd20', 'cards'].includes(type);
-      if (isMoreType) {
-        toggleMoreDice(true);
-      }
+      // Collapse menu back to 2 buttons
+      toggleMoreDice(false);
 
-      document.querySelectorAll('.dice-option').forEach(el => el.classList.remove('selected'));
-      const activeOpt = document.getElementById(`opt-${type}`);
-      if (activeOpt) activeOpt.classList.add('selected');
+      // Reorder DOM so Selected Option is Left, "Other Methods" is Right
+      updateDiceGridDisplay(type);
+
       renderInteractivePad();
       updateMetrics();
       updateTextareaFromState();
@@ -3846,7 +3931,6 @@
       const seedRes = document.getElementById('seedResultsCard');
       if (seedRes) seedRes.style.display = 'none';
 
-      // Clear the generated credentials below
       hideResults();
     }
 
