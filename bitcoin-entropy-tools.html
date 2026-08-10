@@ -2265,8 +2265,8 @@
 
     <nav id="mainNav">
       <button class="nav-tab active" id="tabBtn-entropyTab" onclick="switchTab('entropyTab')">🎲 Entropy Key Generator</button>
-      <button class="nav-tab" id="tabBtn-converterTab" onclick="switchTab('converterTab')">🧰 Address & Seed Tools</button>
-      <button class="nav-tab" id="tabBtn-aboutTab" onclick="switchTab('aboutTab')">🛡️ Offline Security & Entropy</button>
+      <button class="nav-tab" id="tabBtn-converterTab" onclick="switchTab('converterTab')">🧰 Wallet Utilities</button>
+      <button class="nav-tab" id="tabBtn-aboutTab" onclick="switchTab('aboutTab')">🛡️ Security & Auditing</button>
     </nav>
   </header>
 
@@ -2460,7 +2460,7 @@
               
               <span class="output-title"
                 style="font-size: 0.85rem; font-weight: 700; color: var(--btc-gold); text-transform: uppercase; letter-spacing: 0.05em; display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0.4rem;">
-                SHA-256 Entropy (256-bit Hex)
+                SHA-256 Entropy (256-bit Hex Key)
                 
                 <!-- Added Tooltip Here -->
                 <span class="tooltip-icon" data-tooltip="This is the cryptographic hash of your raw physical inputs. It acts as the mathematical master key from which all other keys and addresses are derived.">?</span>
@@ -2833,11 +2833,18 @@
     <div id="converterTab" class="tab-content">
       
       <!-- Accordion 1: Address & Key Converter -->
-      <details class="tool-accordion exclusive-accordion" id="accConverter" open>
-        <summary>🔄 Address & Key Converter</summary>
+      <details class="tool-accordion exclusive-accordion" id="accConverter">
+
+        <summary>
+          <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+            <span>🔄 Address & Key Converter</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">Derive all standard public addresses from a WIF or Hex private key</span>
+          </div>
+        </summary>
+
         <div class="tool-accordion-content">
           <p style="color: var(--text-muted); margin-bottom: 1rem; margin-top: 1rem;">
-            Paste any existing Bitcoin WIF Private Key (e.g., starting with K, L, or 5) or Hex Private Key to instantly
+            Paste any existing Bitcoin WIF Private Key (e.g., starting with K, L, or 5), BIP-38 Encrypted Private key (starting with 6), or Hex Private Key to instantly
             calculate and verify all associated public keys and address formats.
           </p>
           <div class="textarea-wrapper">
@@ -2856,7 +2863,14 @@
 
       <!-- Accordion 2: Seed Phrase Restorer -->
       <details class="tool-accordion exclusive-accordion" id="accSeedRestorer">
-        <summary>🌱 BIP-39 Seed Restorer</summary>
+
+        <summary>
+          <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+            <span>🌱 BIP-39 Seed Restorer</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">Extract master seeds and derive keys from a 12 or 24-word phrase</span>
+          </div>
+        </summary>
+
         <div class="tool-accordion-content">
           <p style="color: var(--text-muted); margin-bottom: 1rem; margin-top: 1rem;">
             Paste an existing 12 or 24-word BIP-39 mnemonic seed phrase to extract its raw entropy, master seed, and derive its associated child keys and addresses.
@@ -2945,7 +2959,14 @@
 
       <!-- Accordion 2.5: XPUB Viewer -->
       <details class="tool-accordion exclusive-accordion" id="accXpubViewer">
-        <summary>👁️ Extended Public Key (xpub) Viewer</summary>
+
+        <summary>
+          <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+            <span>👁️ Extended Public Key (xpub) Viewer</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">View watch-only child addresses without exposing private keys</span>
+          </div>
+        </summary>
+
         <div class="tool-accordion-content">
           <p style="color: var(--text-muted); margin-bottom: 1rem; margin-top: 1rem;">
             Paste an Account-Level Extended Public Key (xpub, ypub, or zpub) to view its derived child addresses. 
@@ -3001,7 +3022,14 @@
 
       <!-- Accordion 3: QR Code Creator -->
       <details class="tool-accordion exclusive-accordion" id="accQrCreator">
-        <summary>🔲 QR Code Creator</summary>
+
+        <summary>
+          <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+            <span>🔲 QR Code Creator</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">Generate standalone offline QR codes for any text, URL, or data blob</span>
+          </div>
+        </summary>
+
         <div class="tool-accordion-content">
           <p style="color: var(--text-muted); margin-top: 1rem; margin-bottom: 1rem;">
             Paste or type any text, URL, or blob of data below to generate a scannable QR code instantly.
@@ -3134,7 +3162,7 @@
           <code>A&spades;10&hearts;K&diams;</code>). <br><br>
           <strong>Step 1: Check the Hash</strong><br>
           We do not mathematically alter these symbols; we simply take the <em>exact literal text string</em> you typed
-          and run a standard SHA-256 cryptographic hash on it. Copy the string from the entropy box and hash it offline
+          and run a standard SHA-256 cryptographic hash on it. This is shown at all times underneath the entropy collection box as "SHA-256 Entropy (256-BIT HEX)"  Copy your user provided entropy and hash it offline
           to prove it matches our "SHA-256 Entropy" output exactly.
         </div>
 
@@ -3152,7 +3180,7 @@
           </ul>
 
           <strong style="color: var(--text-main);">Step 2: Verify the Bitcoin Addresses & Source Code</strong><br>
-          Once you confirm the 256-bit Hex Key matches, paste that exact Hex Key into the "Wallet Details" tab of an
+          Once you confirm the SHA-256 bit Hex Key matches your entropy, paste that exact Hex Key into the "Wallet Details" tab of an
           offline copy of <strong>BitAddress.org</strong>, or the "Entropy" field of an offline copy of
           <strong>IanColeman.io/bip39</strong>. This mathematically proves our tool derives the exact same standard
           Native
@@ -6251,11 +6279,15 @@
       else if (purpose === 49) pathName = "Nested SegWit (P2SH)";
       else if (purpose === 86) pathName = "Taproot (P2TR)";
 
+
       const derivedAddresses = [];
       for (let i = 0; i < totalCount; i++) {
         const derivationPath = `m/${purpose}'/0'/0'/0/${i}`;
-        const privKeyBytes = await deriveBIP32(STATE.hdMasterSeed, derivationPath);
+        const derived = await deriveBIP32(STATE.hdMasterSeed, derivationPath);
+        const privKeyBytes = derived.privKey;
         const privKeyBigInt = BigInt('0x' + bytesToHex(privKeyBytes)) % SECP256K1_N;
+
+
         const pubPoint = Point.G.multiply(privKeyBigInt);
         const xHex = pubPoint.x.toString(16).padStart(64, '0');
         const pubCompPrefix = (pubPoint.y % 2n === 0n) ? '02' : '03';
