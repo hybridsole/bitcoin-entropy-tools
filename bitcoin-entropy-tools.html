@@ -772,8 +772,8 @@
       align-items: center;
       gap: 0.75rem;
       width: 100%;
-      max-width: 500px;
-      padding: 0.75rem 1rem;
+      max-width: 750px; /* Increased from 500px to allow it to extend wider */
+      padding: 0.5rem 1rem; /* Reduced vertical padding from 0.75rem to save height */
       background: rgba(16, 185, 129, 0.08);
       border: 1px solid rgba(16, 185, 129, 0.25);
       border-radius: var(--radius);
@@ -809,8 +809,9 @@
 
     .mouse-success-box .success-text-content {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
+      flex-direction: row; /* Changed from column to row */
+      align-items: baseline; /* Aligns the text on the same horizontal baseline */
+      gap: 0.5rem; /* Adds a small gap between the title and description */
     }
 
     .mouse-success-box .success-title {
@@ -2129,6 +2130,41 @@
       }
 
 
+      .mouse-success-box {
+        padding: 0.4rem 0.6rem;
+        gap: 0.5rem;
+      }
+
+      .mouse-success-box .success-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 0.9rem;
+      }
+
+      .mouse-success-box .success-title {
+        font-size: 0.75rem;
+      }
+
+      .mouse-success-box .success-desc {
+        font-size: 0.65rem;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .mouse-success-box .btn {
+        font-size: 0.65rem !important;
+        padding: 0.25rem 0.4rem !important;
+      }
+
+      .mouse-success-box .success-text-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
+
+
       .dice-icon {
         font-size: 1.1rem;
         margin-bottom: 0.1rem;
@@ -2362,14 +2398,18 @@
         <!-- Mouse Movement Capture Zone -->
         <div id="mouseCaptureContainer" class="mouse-capture-container">
           <!-- Mouse Entropy Secondary Warning -->
-          <div class="warning-banner warning-yellow"
-            style="width: 100%; margin-bottom: 1rem; border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.04); color: #fbbf24; box-sizing: border-box; text-align: left;">
+          <div class="warning-banner warning-yellow" id="mouseDisclaimer"
+            style="width: 100%; margin-bottom: 1rem; border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.04); color: #fbbf24; box-sizing: border-box; text-align: left; position: relative; padding-right: 2.5rem;">
             <span class="warning-icon">⚠️</span>
             <div>
               <strong>Note:</strong> Touch/mouse movements are less random than physical
               dice/coin flips.
             </div>
+            <button onclick="document.getElementById('mouseDisclaimer').style.display='none'"
+              style="position: absolute; top: 0.75rem; right: 0.75rem; background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; line-height: 1; transition: var(--transition);"
+              onmouseover="this.style.color='var(--btc-gold)'" onmouseout="this.style.color='var(--text-muted)'">✕</button>
           </div>
+
           <div class="mouse-canvas-wrapper" id="mouseCanvasWrapper" onmouseenter="startMouseCapture()"
             onmouseleave="handleMouseLeave()" onmousemove="handleMouseMove(event)"
             onpointermove="handleMouseMove(event)">
@@ -4193,11 +4233,11 @@
         if (seedResultsCard) seedResultsCard.style.display = 'none';
         if (seedOptionsRow) seedOptionsRow.style.display = 'none';
       } else {
-        const outBech32 = document.getElementById('outBech32');
-        if (resultsCard && outBech32 && outBech32.textContent && !outBech32.textContent.includes('bc1q...')) {
+        // Use explicitly tracked state flags to remember which view was last active
+        if (resultsCard && STATE.resultsGenerated) {
           resultsCard.style.display = 'block';
         }
-        if (seedResultsCard && STATE.currentMnemonic) {
+        if (seedResultsCard && STATE.seedGenerated) {
           seedResultsCard.style.display = 'block';
           if (seedOptionsRow) seedOptionsRow.style.display = 'flex';
         }
