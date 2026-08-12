@@ -2271,6 +2271,14 @@
     }
 
 
+    /* === STEGANOGRAPHY TOOL CSS === */
+    .drop-zone { border: 2px dashed var(--card-border); border-radius: var(--radius); padding: 30px 20px; text-align: center; cursor: pointer; background-color: rgba(0, 0, 0, 0.2); transition: var(--transition); margin-bottom: 15px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100px; }
+    .drop-zone:hover, .drop-zone.dragover { border-color: var(--btc-gold); background-color: rgba(247, 147, 26, 0.05); }
+    .drop-zone input[type="file"] { display: none; }
+    .preview-img { max-width: 100%; max-height: 200px; border-radius: 6px; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+    #decodedText:empty { display: none; }
+    /* === END STEGANOGRAPHY TOOL CSS === */
+
   </style>
 
 </head>
@@ -3097,6 +3105,75 @@
           </div>
         </div>
       </details>
+
+
+
+      <!-- Accordion 4: Steganography -->
+      <details class="tool-accordion exclusive-accordion" id="accStegTool">
+        <summary>
+          <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+            <span>🖼️ Steganography Tool</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">Hide or reveal secret text invisibly within an image</span>
+          </div>
+        </summary>
+
+        <div class="tool-accordion-content">
+          <p style="color: var(--text-muted); margin-top: 1rem; margin-bottom: 1rem;">
+            Embed sensitive data like private keys or seed phrases invisibly into a PNG image using LSB (Least Significant Bit) manipulation in the Alpha channel.
+          </p>
+
+          <div style="margin-bottom: 30px;">
+            <h4 style="color: var(--btc-gold); margin-bottom: 0.5rem; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;">1. Hide Text (Encode)</h4>
+            <div class="drop-zone" id="zoneEncode">
+              <span class="placeholder-text" id="textEncode">Drag & drop, click, or paste image here</span>
+              <input type="file" id="uploadFile" accept="image/*">
+              <img id="previewEncode" class="preview-img">
+            </div>
+            
+            <div class="textarea-wrapper">
+              <textarea id="textToHide" placeholder="Enter secret message here..."></textarea>
+            </div>
+            
+            <details style="margin-top: 10px; margin-bottom: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border: 1px solid var(--card-border);">
+              <summary style="cursor:pointer; color:var(--accent-cyan); font-weight:bold;">🔒 Optional: Add Password Protection</summary>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 8px 0;">Leave blank for regular text. Add a password for AES encryption.</p>
+              <input type="password" id="passwordEncode" placeholder="Set a secure password..." style="width:100%; padding:0.8rem; background:rgba(15,23,42,0.8); color:#fff; border:1px solid var(--card-border); border-radius:6px; box-sizing: border-box;">
+            </details>
+
+            <button class="btn btn-primary" onclick="encodeSteg()">Hide Text & Download PNG</button>
+          </div>
+
+          <div style="border-top: 1px solid var(--card-border); padding-top: 1.5rem;">
+            <h4 style="color: var(--btc-gold); margin-bottom: 0.5rem; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;">2. Reveal Text (Decode)</h4>
+            <div class="drop-zone" id="zoneDecode">
+              <span class="placeholder-text" id="textDecode">Drag & drop, click, or paste encoded image</span>
+              <input type="file" id="uploadDecode" accept="image/png">
+              <img id="previewDecode" class="preview-img">
+            </div>
+            
+            <details id="decodeDetails" style="margin-top: 10px; margin-bottom: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border: 1px solid var(--card-border);">
+              <summary style="cursor:pointer; color:var(--accent-cyan); font-weight:bold;">🔒 Optional: Enter Password</summary>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin: 8px 0;">Only required if the sender encrypted the message.</p>
+              <input type="password" id="passwordDecode" placeholder="Enter password to decrypt..." style="width:100%; padding:0.8rem; background:rgba(15,23,42,0.8); color:#fff; border:1px solid var(--card-border); border-radius:6px; box-sizing: border-box;">
+            </details>
+
+            <button class="btn btn-primary" style="background: linear-gradient(135deg, #085c40, #059669);" onclick="decodeSteg()">Reveal Hidden Text</button>
+            
+            <div class="output-group" style="margin-top: 1.5rem;">
+              <div class="output-header"><span class="output-title">Secret Message</span></div>
+              <div class="value-box" style="min-height: 45px;">
+                  <span id="decodedText" style="color: var(--accent-cyan); font-weight: bold; word-break: break-word;"></span>
+              </div>
+            </div>
+          </div>
+
+          <canvas id="stegCanvas" style="display:none;"></canvas>
+        </div>
+      </details>
+
+
+
+
 
     </div>
 
@@ -6878,6 +6955,225 @@
             alert("Derivation error: " + err.message);
         }
     }
+
+
+
+    /* === STEGANOGRAPHY TOOL JS === */
+    const stegCanvas = document.getElementById('stegCanvas');
+    const stegDelimiter = '11111111111111111111111111111110'; 
+
+    function setupStegDropZone(zoneId, inputId, previewId, placeholderId) {
+      const zone = document.getElementById(zoneId);
+      const input = document.getElementById(inputId);
+      const preview = document.getElementById(previewId);
+      const placeholder = document.getElementById(placeholderId);
+
+      if(!zone) return;
+
+      zone.addEventListener('click', () => input.click());
+      input.addEventListener('change', () => handleFile(input.files[0]));
+      zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+      zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        if (e.dataTransfer.files.length && e.dataTransfer.files[0].type.startsWith('image/')) {
+          input.files = e.dataTransfer.files; 
+          handleFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      function handleFile(file) {
+        if (!file || !file.type.startsWith('image/')) return;
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+      }
+    }
+
+    setupStegDropZone('zoneEncode', 'uploadFile', 'previewEncode', 'textEncode');
+    setupStegDropZone('zoneDecode', 'uploadDecode', 'previewDecode', 'textDecode');
+
+    // Paste listener (checks if user is pasting an image while the Steg accordion is open)
+    document.addEventListener('paste', (e) => {
+      const acc = document.getElementById('accStegTool');
+      if(!acc || !acc.open) return; 
+
+      const items = e.clipboardData.items;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          const file = items[i].getAsFile();
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          const input = document.getElementById('uploadFile');
+          input.files = dataTransfer.files;
+          input.dispatchEvent(new Event('change'));
+          return; 
+        }
+      }
+    });
+
+    const stegEnc = new TextEncoder();
+    const stegDec = new TextDecoder();
+
+    async function getStegPasswordKey(password) {
+      return window.crypto.subtle.importKey(
+        "raw", stegEnc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]
+      );
+    }
+
+    async function encryptStegData(text, password) {
+      const keyMaterial = await getStegPasswordKey(password);
+      const salt = window.crypto.getRandomValues(new Uint8Array(16));
+      const iv = window.crypto.getRandomValues(new Uint8Array(12));
+      
+      const key = await window.crypto.subtle.deriveKey(
+        { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+        keyMaterial, { name: "AES-GCM", length: 256 }, true, ["encrypt"]
+      );
+
+      const ciphertext = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, stegEnc.encode(text));
+      const cipherBytes = new Uint8Array(ciphertext);
+      const payload = new Uint8Array(salt.length + iv.length + cipherBytes.length);
+      payload.set(salt, 0); payload.set(iv, 16); payload.set(cipherBytes, 28);
+      return payload;
+    }
+
+    async function decryptStegData(payload, password) {
+      const salt = payload.slice(0, 16);
+      const iv = payload.slice(16, 28);
+      const ciphertext = payload.slice(28);
+
+      const keyMaterial = await getStegPasswordKey(password);
+      const key = await window.crypto.subtle.deriveKey(
+        { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+        keyMaterial, { name: "AES-GCM", length: 256 }, true, ["decrypt"]
+      );
+
+      try {
+        const decryptedBuffer = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, ciphertext);
+        return stegDec.decode(decryptedBuffer);
+      } catch (e) { throw new Error("Incorrect password."); }
+    }
+
+    function bytesToBinaryString(bytes) {
+      let bin = '';
+      for (let i = 0; i < bytes.length; i++) { bin += bytes[i].toString(2).padStart(8, '0'); }
+      return bin + stegDelimiter;
+    }
+
+    function binaryStringToBytes(bin) {
+      const bytes = new Uint8Array(bin.length / 8);
+      for (let i = 0; i < bin.length; i += 8) { bytes[i / 8] = parseInt(bin.slice(i, i + 8), 2); }
+      return bytes;
+    }
+
+    async function encodeSteg() {
+      const fileInput = document.getElementById('uploadFile');
+      const text = document.getElementById('textToHide').value;
+      const password = document.getElementById('passwordEncode').value;
+      
+      if (!fileInput.files[0] || !text) return alert("Please provide an image and text!");
+
+      try {
+        let finalBytes;
+        if (password) {
+          const payloadBytes = await encryptStegData(text, password);
+          finalBytes = new Uint8Array(1 + payloadBytes.length);
+          finalBytes[0] = 1; finalBytes.set(payloadBytes, 1);
+        } else {
+          const textBytes = stegEnc.encode(text);
+          finalBytes = new Uint8Array(1 + textBytes.length);
+          finalBytes[0] = 0; finalBytes.set(textBytes, 1);
+        }
+
+        const binMessage = bytesToBinaryString(finalBytes);
+        const img = new Image();
+        
+        img.onload = () => {
+          const ctx = stegCanvas.getContext('2d', { willReadFrequently: true });
+          stegCanvas.width = img.width; stegCanvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          const imgData = ctx.getImageData(0, 0, stegCanvas.width, stegCanvas.height);
+          const data = imgData.data;
+
+          if (binMessage.length > (data.length / 4)) return alert("Message is too long for this image size!");
+
+          let binIndex = 0;
+          for (let i = 3; i < data.length; i += 4) {
+            if (binIndex < binMessage.length) {
+              data[i] = (data[i] & 254) | parseInt(binMessage[binIndex]);
+              binIndex++;
+            } else break;
+          }
+
+          ctx.putImageData(imgData, 0, 0);
+          const link = document.createElement('a');
+          link.download = 'secret_image.png';
+          link.href = stegCanvas.toDataURL('image/png');
+          link.click();
+        };
+        img.src = URL.createObjectURL(fileInput.files[0]);
+      } catch (e) { alert("Encoding failed: " + e.message); }
+    }
+
+    async function decodeSteg() {
+      const fileInput = document.getElementById('uploadDecode');
+      const password = document.getElementById('passwordDecode').value;
+      const outputText = document.getElementById('decodedText');
+      const decodeDetails = document.getElementById('decodeDetails');
+      
+      if (!fileInput.files[0]) return alert("Please provide an image to decode!");
+
+      const img = new Image();
+      img.onload = async () => {
+        const ctx = stegCanvas.getContext('2d', { willReadFrequently: true });
+        stegCanvas.width = img.width; stegCanvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        const imgData = ctx.getImageData(0, 0, stegCanvas.width, stegCanvas.height);
+        const data = imgData.data;
+        let binMessage = '';
+
+        for (let i = 3; i < data.length; i += 4) {
+          binMessage += (data[i] & 1).toString();
+
+          if (binMessage.endsWith(stegDelimiter)) {
+            const actualMessageBin = binMessage.slice(0, -stegDelimiter.length);
+            const allBytes = binaryStringToBytes(actualMessageBin);
+            const isEncrypted = allBytes[0] === 1;
+            const dataBytes = allBytes.slice(1);
+
+            if (isEncrypted) {
+              if (!password) {
+                outputText.style.color = "var(--accent-yellow)";
+                outputText.innerText = "This message is protected! Please open the password menu, enter the password, and click Reveal again.";
+                decodeDetails.open = true; 
+                return;
+              }
+              try {
+                outputText.style.color = "var(--accent-cyan)";
+                outputText.innerText = await decryptStegData(dataBytes, password);
+              } catch (e) {
+                outputText.style.color = "var(--accent-red)";
+                outputText.innerText = "Error: " + e.message;
+              }
+            } else {
+              outputText.style.color = "var(--accent-cyan)";
+              outputText.innerText = stegDec.decode(dataBytes);
+            }
+            return;
+          }
+        }
+        outputText.style.color = "var(--accent-red)";
+        outputText.innerText = "No hidden message found (or delimiter missing).";
+      };
+      img.src = URL.createObjectURL(fileInput.files[0]);
+    }
+    /* === END STEGANOGRAPHY TOOL JS === */
+
+
 
 
 
