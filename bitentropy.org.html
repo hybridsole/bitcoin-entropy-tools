@@ -2329,6 +2329,12 @@
 
     /* === END STEGANOGRAPHY TOOL CSS === */
 
+    /* Invert tooltips inside tables so they don't get clipped by overflow-x containers */
+    .address-table th .tooltip-icon::after {
+      bottom: auto;
+      top: 135%;
+    }
+
   </style>
 
 </head>
@@ -3081,7 +3087,7 @@
       </details>
 
 
-      <!-- Accordion 2.5: XPUB Viewer -->
+      <!-- Accordion 3: XPUB Viewer -->
       <details class="tool-accordion exclusive-accordion" id="accXpubViewer">
 
         <summary>
@@ -3150,7 +3156,150 @@
         </div>
       </details>
 
-      <!-- Accordion 3: QR Code Creator -->
+      <!-- Accordion 4: Raw Transaction Decoder -->
+      <details class="tool-accordion exclusive-accordion" id="accTxDecoder">
+
+        <summary>
+          <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+            <span>🔍 Raw Transaction Decoder</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">Inspect inputs, outputs, scripts, and nLockTime before signing or broadcasting</span>
+          </div>
+        </summary>
+
+        <div class="tool-accordion-content">
+          <p style="color: var(--text-muted); margin-bottom: 1rem; margin-top: 1rem;">
+            Paste a raw hex-encoded Bitcoin transaction below to decode it completely offline into a human-readable structure.
+          </p>
+          
+          <div class="textarea-wrapper">
+            <textarea id="txDecoderInput" placeholder="Paste raw hex-encoded transaction (e.g., 0100000001...).." 
+              style="width: 100%; height: 100px; padding: 0.8rem; background: rgba(15,23,42,0.8); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-family: monospace; resize: vertical;"
+              oninput="decodeRawTransaction()"></textarea>
+            <div id="txDecoderStatus" class="input-status-msg"></div>
+          </div>
+
+          <div id="txDecoderResults" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--card-border);">
+            
+            <div class="output-group" style="margin-bottom: 1.25rem;">
+              <div class="output-header">
+                <span class="output-title">Transaction Summary</span>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-top: 0.5rem;">
+                <div style="background: rgba(0,0,0,0.4); padding: 0.65rem 0.85rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: flex; align-items: center; gap: 0.3rem;">
+                    Version & Size
+                    <span class="tooltip-icon" data-tooltip="Transaction version number (determines features like time locks) and the total raw byte size of the transaction.">?</span>
+                  </span>
+                  <span id="txDecVersion" style="font-family: monospace; color: var(--btc-gold); font-weight: bold;">-</span>
+                </div>
+                <div style="background: rgba(0,0,0,0.4); padding: 0.65rem 0.85rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: flex; align-items: center; gap: 0.3rem;">
+                    Total Output
+                    <span class="tooltip-icon" data-tooltip="The sum of all Bitcoin being sent to the outputs in this transaction (excluding miner fees).">?</span>
+                  </span>
+                  <span id="txDecTotalOut" style="font-family: monospace; color: var(--accent-green); font-weight: bold;">-</span>
+                </div>
+                <div style="background: rgba(0,0,0,0.4); padding: 0.65rem 0.85rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: flex; align-items: center; gap: 0.3rem;">
+                    RBF Enabled
+                    <span class="tooltip-icon" data-tooltip="Replace-By-Fee: If enabled, this transaction can be replaced by a newer one with a higher miner fee before it confirms in a block.">?</span>
+                  </span>
+                  <span id="txDecRbf" style="font-family: monospace; color: var(--btc-gold); font-weight: bold;">-</span>
+                </div>
+                <div style="background: rgba(0,0,0,0.4); padding: 0.65rem 0.85rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: flex; align-items: center; gap: 0.3rem;">
+                    nLockTime
+                    <span class="tooltip-icon" data-tooltip="The earliest time or block height this transaction can be added to the blockchain. Usually 0 (immediate).">?</span>
+                  </span>
+                  <span id="txDecLockTime" style="font-family: monospace; color: var(--btc-gold); font-weight: bold;">-</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- TXID -->
+            <div class="output-group" style="margin-bottom: 1.25rem;">
+              <div class="output-header">
+                <span class="output-title">
+                  Transaction ID (TXID)
+                  <span class="tooltip-icon" data-tooltip="The unique cryptographic hash (identifier) of this transaction. Used to search for it on a block explorer.">?</span>
+                </span>
+              </div>
+              <div class="value-box">
+                <span id="txDecId" style="font-family: monospace;">-</span>
+                <button class="btn-icon" onclick="copyText('txDecId')" title="Copy">📋</button>
+              </div>
+            </div>
+
+            <!-- Inputs Table -->
+            <div class="output-group" style="margin-bottom: 1.25rem;">
+              <div class="output-header">
+                <span class="output-title">
+                  Transaction Inputs (Vin)
+                  <span class="tooltip-icon" data-tooltip="The unspent outputs (UTXOs) from previous transactions that are being consumed/spent in this transaction. Note: Input addresses cannot be calculated offline; check the Prev Outpoint TXID on a block explorer.">?</span>
+                </span>
+              </div>
+              <div style="overflow-x: auto; width: 100%; margin-top: 0.5rem;">
+                <table class="address-table" id="txDecInputsTable">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th style="min-width: 320px;">
+                        Prev Outpoint (Full TXID : Index)
+                        <span class="tooltip-icon" data-tooltip="The exact transaction ID and specific output index (e.g., 0, 1, 2) where the Bitcoin being spent originated.">?</span>
+                      </th>
+                      <th>
+                        Sequence
+                        <span class="tooltip-icon" data-tooltip="A 32-bit number used for locktime, RBF signaling, or payment channels.">?</span>
+                      </th>
+                      <th>
+                        ScriptSig / Witness
+                        <span class="tooltip-icon" data-tooltip="The cryptographic proof (signatures and public keys) that unlocks and authorizes the spending of this input.">?</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="txDecInputsBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Outputs Table -->
+            <div class="output-group">
+              <div class="output-header">
+                <span class="output-title">
+                  Transaction Outputs (Vout)
+                  <span class="tooltip-icon" data-tooltip="The new destinations and amounts where the Bitcoin is being sent.">?</span>
+                </span>
+              </div>
+              <div style="overflow-x: auto; width: 100%; margin-top: 0.5rem;">
+                <table class="address-table" id="txDecOutputsTable">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>
+                        Value (BTC)
+                        <span class="tooltip-icon" data-tooltip="The amount of Bitcoin being assigned to this specific output.">?</span>
+                      </th>
+                      <th>
+                        Decoded Address
+                        <span class="tooltip-icon" data-tooltip="The human-readable Bitcoin address derived from the ScriptPubKey.">?</span>
+                      </th>
+                      <th style="min-width: 250px;">
+                        ScriptPubKey
+                        <span class="tooltip-icon" data-tooltip="The raw mathematical locking script that specifies the conditions required to spend this output in the future.">?</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="txDecOutputsBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </details>
+
+      <!-- Accordion 5: QR Code Creator -->
       <details class="tool-accordion exclusive-accordion" id="accQrCreator">
 
         <summary>
@@ -3190,7 +3339,7 @@
 
 
 
-      <!-- Accordion 4: Steganography -->
+      <!-- Accordion 6: Steganography -->
       <details class="tool-accordion exclusive-accordion" id="accStegTool">
         <summary>
           <div style="display: flex; flex-direction: column; gap: 0.15rem;">
@@ -7961,6 +8110,206 @@ let n2 = Math.round(dist * 9999 + dt * 31 + index * 997) ^ (performance.now() * 
         if (arrow) arrow.style.transform = 'rotate(0deg)';
       }
     }
+
+
+
+    function decodeRawTransaction() {
+      const hexInput = document.getElementById('txDecoderInput').value.trim().replace(/\s+/g, '');
+      const statusEl = document.getElementById('txDecoderStatus');
+      const resultsEl = document.getElementById('txDecoderResults');
+
+      if (!hexInput) {
+        resultsEl.style.display = 'none';
+        statusEl.className = 'input-status-msg';
+        return;
+      }
+
+      try {
+        let pos = 0;
+        function readBytes(n) {
+          if (pos + n * 2 > hexInput.length) throw new Error("Unexpected end of transaction hex stream.");
+          const res = hexInput.substr(pos, n * 2);
+          pos += n * 2;
+          return res;
+        }
+
+        function readVarInt() {
+          const first = parseInt(readBytes(1), 16);
+          if (first < 253) return first;
+          if (first === 253) return parseInt(readBytes(2).match(/../g).reverse().join(''), 16);
+          if (first === 254) return parseInt(readBytes(4).match(/../g).reverse().join(''), 16);
+          return parseInt(readBytes(8).match(/../g).reverse().join(''), 16);
+        }
+
+        function scriptToAddress(scriptHex) {
+          if (!scriptHex) return "Unknown / Empty";
+          
+          // P2PKH (Legacy)
+          if (scriptHex.startsWith('76a914') && scriptHex.endsWith('88ac') && scriptHex.length === 50) {
+            const hash = hexToBytes(scriptHex.substring(6, 46));
+            const payload = new Uint8Array(21);
+            payload[0] = 0x00; // Mainnet prefix
+            payload.set(hash, 1);
+            return base58CheckEncode(payload);
+          }
+          // P2SH (Nested SegWit / Multisig)
+          if (scriptHex.startsWith('a914') && scriptHex.endsWith('87') && scriptHex.length === 46) {
+            const hash = hexToBytes(scriptHex.substring(4, 44));
+            const payload = new Uint8Array(21);
+            payload[0] = 0x05; // P2SH prefix
+            payload.set(hash, 1);
+            return base58CheckEncode(payload);
+          }
+          // P2WPKH (Native SegWit)
+          if (scriptHex.startsWith('0014') && scriptHex.length === 44) {
+            const hash = hexToBytes(scriptHex.substring(4, 44));
+            return bech32Encode('bc', 0, Array.from(hash), false);
+          }
+          // P2TR (Taproot)
+          if (scriptHex.startsWith('5120') && scriptHex.length === 68) {
+            const hash = hexToBytes(scriptHex.substring(4, 68));
+            return bech32Encode('bc', 1, Array.from(hash), true);
+          }
+          // OP_RETURN
+          if (scriptHex.startsWith('6a')) {
+            return "[OP_RETURN Data]";
+          }
+          return "[Unknown Script Type]";
+        }
+
+        // 1. Version
+        const versionHex = readBytes(4).match(/../g).reverse().join('');
+        const version = parseInt(versionHex, 16);
+
+        // Check for SegWit marker & flag (00 01)
+        let isSegwit = false;
+        if (pos < hexInput.length && hexInput.substr(pos, 4) === '0001') {
+          isSegwit = true;
+          pos += 4; // skip marker and flag
+        }
+
+        // 2. Input Count & Inputs
+        const inCount = readVarInt();
+        const inputs = [];
+        for (let i = 0; i < inCount; i++) {
+          const txidHex = readBytes(32).match(/../g).reverse().join('');
+          const voutIdx = parseInt(readBytes(4).match(/../g).reverse().join(''), 16);
+          const scriptLen = readVarInt();
+          const scriptSig = readBytes(scriptLen);
+          const sequence = readBytes(4).match(/../g).reverse().join('');
+          inputs.push({ txid: txidHex, vout: voutIdx, scriptSig, sequence });
+        }
+
+        // 3. Output Count & Outputs
+        const outCount = readVarInt();
+        const outputs = [];
+        for (let i = 0; i < outCount; i++) {
+          const valueBytes = readBytes(8).match(/../g).reverse().join('');
+          const satoshis = BigInt('0x' + valueBytes);
+          const scriptLen = readVarInt();
+          const scriptPubKey = readBytes(scriptLen);
+          outputs.push({ satoshis, scriptPubKey });
+        }
+
+        // 4. SegWit Witness Data (if present)
+        if (isSegwit) {
+          for (let i = 0; i < inCount; i++) {
+            const stackCount = readVarInt();
+            const witnessStack = [];
+            for (let j = 0; j < stackCount; j++) {
+              const itemLen = readVarInt();
+              witnessStack.push(readBytes(itemLen));
+            }
+            inputs[i].witness = witnessStack;
+          }
+        }
+
+        // 5. nLockTime
+        const lockTimeHex = readBytes(4).match(/../g).reverse().join('');
+        const lockTime = parseInt(lockTimeHex, 16);
+
+        // Calculate TXID
+        const rawTxBytes = hexToBytes(hexInput.substr(0, pos)); 
+        const txid = bytesToHex(sha256(sha256(rawTxBytes)).reverse());
+        const txSizeBytes = rawTxBytes.length;
+
+        // Check for RBF (Replace-by-Fee)
+        // If any sequence is less than 0xfffffffe, RBF is enabled
+        let isRbf = false;
+        inputs.forEach(inp => {
+          if (parseInt(inp.sequence, 16) < 0xfffffffe) isRbf = true;
+        });
+
+        // Parse LockTime
+        let lockTimeDisplay = lockTime.toString();
+        if (lockTime > 0) {
+          if (lockTime < 500000000) {
+            lockTimeDisplay = `Block Height: ${lockTime}`;
+          } else {
+            const date = new Date(lockTime * 1000);
+            lockTimeDisplay = `Timestamp: ${date.toISOString().split('T')[0]}`;
+          }
+        } else {
+          lockTimeDisplay = "0 (Immediate)";
+        }
+
+        // Calculate Total Output Value
+        let totalSats = 0n;
+        outputs.forEach(out => { totalSats += out.satoshis; });
+        const totalBtc = (Number(totalSats) / 100000000).toFixed(8);
+
+        // Populate Summary DOM Elements
+        document.getElementById('txDecVersion').textContent = `v${version} (${txSizeBytes} Bytes) ${isSegwit ? 'SegWit' : ''}`;
+        document.getElementById('txDecTotalOut').textContent = `${totalBtc} BTC`;
+        document.getElementById('txDecRbf').textContent = isRbf ? "Yes (Opt-In)" : "No";
+        document.getElementById('txDecLockTime').textContent = lockTimeDisplay;
+        document.getElementById('txDecId').textContent = txid;
+
+        // Render Inputs Table (Wider TXID, No Truncation)
+        const inBody = document.getElementById('txDecInputsBody');
+        inBody.innerHTML = '';
+        inputs.forEach((inp, idx) => {
+          const tr = document.createElement('tr');
+          const scriptDisplay = inp.witness ? `Witness items: ${inp.witness.length}` : (inp.scriptSig ? `ScriptSig: ${inp.scriptSig.substring(0, 30)}...` : 'None');
+          tr.innerHTML = `
+            <td>#${idx}</td>
+            <td style="font-family: monospace; white-space: nowrap;">${inp.txid} : ${inp.vout}</td>
+            <td style="font-family: monospace;">${inp.sequence}</td>
+            <td style="font-family: monospace;" title="${scriptDisplay}">${scriptDisplay}</td>
+          `;
+          inBody.appendChild(tr);
+        });
+
+        // Render Outputs Table (Now includes decoded addresses)
+        const outBody = document.getElementById('txDecOutputsBody');
+        outBody.innerHTML = '';
+        outputs.forEach((out, idx) => {
+          const btcVal = (Number(out.satoshis) / 100000000).toFixed(8);
+          const decodedAddress = scriptToAddress(out.scriptPubKey);
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>#${idx}</td>
+            <td style="font-family: monospace; white-space: nowrap;">${btcVal}</td>
+            <td style="font-family: monospace; color: var(--accent-cyan); font-weight: bold;">${decodedAddress}</td>
+            <td style="font-family: monospace; word-break: break-all;" title="${out.scriptPubKey}">${out.scriptPubKey}</td>
+          `;
+          outBody.appendChild(tr);
+        });
+
+        statusEl.className = 'input-status-msg';
+        resultsEl.style.display = 'block';
+
+      } catch (err) {
+        resultsEl.style.display = 'none';
+        statusEl.textContent = "Invalid raw transaction hex or parsing error: " + err.message;
+        statusEl.className = 'input-status-msg error';
+      }
+    }
+
+
+
+
+
 
 
 
