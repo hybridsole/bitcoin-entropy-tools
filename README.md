@@ -7,7 +7,7 @@
 [![Security: Air-gapped](https://img.shields.io/badge/Security-Air--Gapped_Ready-blue.svg)]()
 
 
-Live version available at https://entropy.notablespends.com/
+Live version available at https://bitentropy.org
 
 Github hosted version at https://hybridsole.github.io/bitcoin-entropy-tools/bitcoin-entropy-tools.html
 
