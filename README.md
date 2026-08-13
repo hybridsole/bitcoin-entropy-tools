@@ -9,7 +9,7 @@
 
 Live version available at https://bitentropy.org
 
-Github hosted version at https://hybridsole.github.io/bitcoin-entropy-tools/bitcoin-entropy-tools.html
+Github hosted version at https://hybridsole.github.io/bitcoin-entropy-tools/bitentropy.org.html
 
 Hybrid's Bitcoin Address Tools is engineered specifically for individuals who want complete cryptographic self-sovereignty. By relying on physical entropy (dice, coins, or mouse movements) and running entirely client-side without internet access, this tool eliminates reliance on third-party random number generators (RNGs) and network-connected wallets.
 
