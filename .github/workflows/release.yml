@@ -16,13 +16,13 @@ jobs:
 
       - name: Generate SHA-256 Checksum
         run: |
-          sha256sum bitcoin-entropy-tools.html > SHA256SUMS.txt
+          sha256sum bitentropy.org.html > SHA256SUMS.txt
 
       - name: Upload Single HTML & Checksum to Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            bitcoin-entropy-tools.html
+            bitentropy.org.html
             SHA256SUMS.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
