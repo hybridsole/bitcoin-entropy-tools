@@ -3080,16 +3080,27 @@
       <!-- Accordion 4: Multisig Setup -->
       <details class="tool-accordion exclusive-accordion" id="accMultisig">
         <summary>
-          <div style="display: flex; flex-direction: column; gap: 0.15rem;">
-            <span>🤝 Multisig Address Generator (P2SH)</span>
+          <div style="display: flex; flex-direction: column; gap: 0.15rem; width: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <span>🤝 Multisig Address Generator (P2SH)</span>
+            </div>
             <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">Create an M-of-N joint-custody Bitcoin address from public keys</span>
           </div>
         </summary>
-
         <div class="tool-accordion-content">
           <p style="color: var(--text-muted); margin-top: 1rem; margin-bottom: 1rem;">
-            A Pay-to-Multisig (P2MS) wrapped in a P2SH script allows you to lock bitcoins to multiple public keys, requiring signatures from a specific threshold (M) out of the total keys (N) to unlock them.
+            A Pay-to-Multisig (P2MS) wrapped in a P2SH script allows you to lock bitcoins to multiple public keys, requiring signatures from a specific threshold (M) out of the total keys (N) to unlock them. <a href="#" onclick="showMultisigGuideModal(event)" style="font-size: 0.75rem; color: var(--accent-cyan); text-decoration: underline; margin-right: 1rem; font-weight: 600;">How does this work?</a>
           </p>
+
+          <div style="background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.25); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1.25rem;">
+            <strong style="color: var(--accent-cyan); display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
+              💡 Public Key Formatting Guide
+            </strong>
+            <ul style="margin-left: 1.5rem; color: var(--text-muted); line-height: 1.6; margin-top: 0.25rem;">
+              <li><strong>Compressed Keys:</strong> Must be exactly 66 characters long and begin with <code style="color: var(--btc-gold); font-family: monospace;">02</code> or <code style="color: var(--btc-gold); font-family: monospace;">03</code>.</li>
+              <li><strong>Uncompressed Keys:</strong> Must be exactly 130 characters long and begin with <code style="color: var(--btc-gold); font-family: monospace;">04</code>.</li>
+            </ul>
+          </div>
 
           <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
             <div style="flex: 1; min-width: 120px;">
@@ -3112,8 +3123,15 @@
           </div>
 
           <div id="multisigResults" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--card-border);">
+            
             <div class="output-group" style="margin-bottom: 1.25rem;">
-              <div class="output-header"><span class="output-title">P2SH Multisig Address</span><span class="output-tag">Starts with 3</span></div>
+              <div class="output-header">
+                <span class="output-title">
+                  P2SH Multisig Address
+                  <span class="tooltip-icon" data-tooltip="(BIP-13 / BIP-16) Starts with 3. A Pay-to-Script-Hash address representing your multisig quorum. Funds sent here require M signatures out of N keys to spend.">?</span>
+                </span>
+                <span class="output-tag">Starts with 3</span>
+              </div>
               <div class="value-box">
                 <span id="outMultisigAddress" style="color: var(--accent-cyan); font-weight: bold;">-</span>
                 <button class="btn-icon" onclick="copyText('outMultisigAddress')" title="Copy">📋</button>
@@ -3122,15 +3140,19 @@
 
             <div class="output-group">
               <div class="output-header">
-                <span class="output-title">Raw Redeem Script (Hex)</span>
-                <span class="tooltip-icon" data-tooltip="This is the raw script containing the M opcode, the pushed public keys, the N opcode, and OP_CHECKMULTISIG. You MUST save this script to spend the funds later!">?</span>
+                <span class="output-title">
+                  Raw Redeem Script (Hex)
+                  <span class="tooltip-icon" data-tooltip="The raw mathematical locking script (M pubkeys N OP_CHECKMULTISIG). You MUST save this script; without it, wallet software cannot derive the address or construct a spending transaction!">?</span>
+                </span>
               </div>
               <div class="value-box">
                 <span id="outMultisigRedeem" style="font-size: 0.75rem; word-break: break-all;">-</span>
                 <button class="btn-icon" onclick="copyText('outMultisigRedeem')" title="Copy">📋</button>
               </div>
             </div>
+
           </div>
+
         </div>
       </details>
 
@@ -6036,6 +6058,22 @@ n2 = n2 ^ secureRandom[1];</div>
       setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
+
+    function base58CheckDecode(str) {
+      const decoded = base58Decode(str);
+      if (decoded.length < 4) throw new Error('Invalid Base58Check string (too short).');
+      
+      const payload = decoded.slice(0, -4);
+      const checksum = decoded.slice(-4);
+      const hash = sha256(sha256(payload));
+      
+      if (hash[0] !== checksum[0] || hash[1] !== checksum[1] || hash[2] !== checksum[2] || hash[3] !== checksum[3]) {
+        throw new Error('Base58Check checksum validation failed.');
+      }
+      
+      return payload;
+    }
+
     function convertPrivateKey() {
       const input = document.getElementById('converterInput').value.trim();
       if (!input) {
@@ -6051,10 +6089,11 @@ n2 = n2 ^ secureRandom[1];</div>
         } else {
           if (input.length === 64 && /^[0-9a-fA-F]+$/.test(input)) {
             privBytes = hexToBytes(input);
+
           } else {
-            const decoded = base58Decode(input);
-            if (decoded[0] !== 0x80) throw new Error('Invalid WIF prefix or network byte.');
-            privBytes = decoded.slice(1, 33);
+            const payload = base58CheckDecode(input);
+            if (payload[0] !== 0x80) throw new Error('Invalid WIF prefix or network byte.');
+            privBytes = payload.slice(1, 33);
           }
         }
 
@@ -6099,181 +6138,204 @@ n2 = n2 ^ secureRandom[1];</div>
 
         const qrSvgHtml = `<svg viewBox="0 0 336 336" width="16" height="16" fill="currentColor"><path d="m 16,16 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 128,0 0,16 0,16 16,0 0,-16 16,0 0,-16 -16,0 -16,0 z m 32,16 0,16 16,0 0,-16 -16,0 z m 16,16 0,16 16,0 16,0 0,-16 0,-16 0,-16 -16,0 0,16 0,16 -16,0 z m 0,16 -16,0 -16,0 -16,0 0,16 16,0 16,0 0,16 -16,0 0,16 16,0 0,16 16,0 0,-16 16,0 0,16 -16,0 0,16 -16,0 0,16 16,0 16,0 0,16 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 0,-16 -16,0 0,-16 z m 16,112 -16,0 0,16 -16,0 0,16 0,16 16,0 0,16 0,16 -16,0 -16,0 0,-16 16,0 0,-16 -16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,16 16,0 0,-16 0,-16 -16,0 -16,0 0,-16 -16,0 -16,0 -16,0 0,16 -16,0 0,16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,16 0,16 0,16 16,0 0,-16 16,0 16,0 16,0 0,-16 16,0 0,-16 16,0 0,16 -16,0 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,16 0,16 0,16 16,0 0,16 16,0 16,0 16,0 0,16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 0,-16 -16,0 -16,0 0,-16 -16,0 0,-16 -16,0 0,16 -16,0 -16,0 0,16 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 16,0 0,-16 -16,0 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 -16,0 0,-16 z m 48,128 0,-16 -16,0 0,16 16,0 z m 32,16 16,0 16,0 0,-16 -16,0 -16,0 0,16 z m 32,-16 16,0 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 -16,0 0,16 0,16 16,0 0,-16 16,0 0,16 0,16 16,0 16,0 0,16 z m -48,-80 0,-16 -16,0 -16,0 0,16 16,0 16,0 z m 16,0 16,0 0,-16 0,-16 0,-16 16,0 0,16 16,0 0,16 16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,-16 -16,0 0,16 -16,0 0,16 16,0 0,16 0,16 0,16 z m -16,-48 -16,0 0,16 16,0 0,-16 z m 64,32 -16,0 0,16 16,0 0,-16 z m -224,0 0,-16 -16,0 0,16 16,0 z m -16,0 -16,0 -16,0 -16,0 0,16 16,0 16,0 16,0 0,-16 z m -64,0 -16,0 0,16 16,0 0,-16 z m 0,-48 0,-16 -16,0 0,16 16,0 z m 112,-16 16,0 0,-16 0,-16 -16,0 0,16 0,16 z m 96,-128 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m -208,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 224,0 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m -208,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 224,0 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m -32,96 0,16 16,0 0,-16 -16,0 z m -224,96 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 16,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 16,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 288,48 0,16 16,0 0,-16 -16,0 z"/></svg>`;
 
+
         const grid = document.getElementById('converterResultsGrid');
         
+        // We still check if it's BIP38 so we can display it in the Advanced menu below
+        const isBip38 = STATE.bip38EncryptedInput && input.startsWith('6P');
+
         let html = `
-          <!-- ADDRESSES SECTION -->
-          <div style="grid-column: 1 / -1; margin-top: 0.5rem; margin-bottom: -0.25rem;">
-            <h4 style="color: var(--btc-gold); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--card-border); padding-bottom: 0.35rem;">📍 Addresses & Public Keys</h4>
-          </div>
+          <div class="wallet-three-col" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); margin-top: 0.5rem; margin-bottom: 0;">
+            
+            <!-- Column 1: Public Addresses (Tabbed) -->
+            <div class="wallet-col-card">
+              <div class="wallet-tab-nav">
+                <button class="wallet-tab-btn active" id="btnConvTabLegacy" onclick="switchConvAddressTab('legacy')">Legacy (P2PKH)</button>
+                <button class="wallet-tab-btn" id="btnConvTabSegWit" onclick="switchConvAddressTab('segwit')">Native SegWit</button>
+              </div>
 
-          <div class="output-group">
-            <div class="output-title">
-              Legacy Address (P2PKH)
-              <span class="tooltip-icon" data-tooltip="(BIP-44) Starts with 1. The original Bitcoin address format. Has higher fees, but maximum backwards compatibility.">?</span>
-            </div>
-            <div class="value-box">
-              <span>${addrP2pkh}</span>
-              <div style="display: flex; gap: 0; align-items: center;">
-                <button class="btn-icon" onclick="copyString('${addrP2pkh}')" title="Copy">📋</button>
-                <button class="btn-icon" onclick="showQrModal('${addrP2pkh}', 'Legacy Address (P2PKH)')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+              <!-- Legacy Content -->
+              <div id="contentConvTabLegacy" class="wallet-tab-content active">
+                <div class="wallet-col-title" style="margin-top: 0.25rem;">
+                  Public Address (Legacy)
+                  <span class="tooltip-icon" data-tooltip="(BIP-44) Starts with 1. The original Bitcoin address format. Has higher fees, but maximum backwards compatibility with ancient systems.">?</span>
+                </div>
+                <div class="qr-svg-wrapper" id="qrConvP2pkh"></div>
+                <div class="wallet-col-value" id="outConvP2pkh">${addrP2pkh}</div>
+                <button class="btn" onclick="copyString('${addrP2pkh}')" style="width: 100%;">📋 Copy Address</button>
+              </div>
+
+              <!-- Native SegWit Content -->
+              <div id="contentConvTabSegWit" class="wallet-tab-content">
+                <div class="wallet-col-title" style="margin-top: 0.25rem;">
+                  Public Address (SegWit)
+                  <span class="tooltip-icon" data-tooltip="(BIP-84 / BIP-141) Starts with bc1q. Standard modern address format offering the lowest transaction fees. Universally supported.">?</span>
+                </div>
+                <div class="qr-svg-wrapper" id="qrConvBech32"></div>
+                <div class="wallet-col-value" id="outConvBech32">${addrBech32}</div>
+                <button class="btn" onclick="copyString('${addrBech32}')" style="width: 100%;">📋 Copy Address</button>
               </div>
             </div>
-          </div>
 
-          <div class="output-group">
-            <div class="output-title">
-              Native SegWit Address (P2WPKH)
-              <span class="tooltip-icon" data-tooltip="(BIP-84 / BIP-141) Starts with bc1q. Standard modern address format offering the lowest transaction fees. Universally supported.">?</span>
-            </div>
-            <div class="value-box">
-              <span>${addrBech32}</span>
-              <div style="display: flex; gap: 0; align-items: center;">
-                <button class="btn-icon" onclick="copyString('${addrBech32}')" title="Copy">📋</button>
-                <button class="btn-icon" onclick="showQrModal('${addrBech32}', 'Native SegWit Address (P2WPKH)')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+            <!-- Column 2: Private Key -->
+            <div class="wallet-col-card" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);">
+              <div class="wallet-tab-nav" style="border-color: rgba(239, 68, 68, 0.4);">
+                <button class="wallet-tab-btn active" id="btnConvTabWifComp" onclick="switchConvWifTab('comp')">Compressed WIF</button>
+                <button class="wallet-tab-btn" id="btnConvTabWifUncomp" onclick="switchConvWifTab('uncomp')">Uncompressed WIF</button>
+              </div>
+
+              <!-- Compressed Content -->
+              <div id="contentConvTabWifComp" class="wallet-tab-content active">
+                <div class="wallet-col-title" style="color: var(--accent-red); margin-top: 0.25rem;">
+                  Private Key (WIF Compressed)
+                  <span class="tooltip-icon" data-tooltip="Starts with K or L. The base58-encoded mathematical secret that actually controls your funds. NEVER SHARE THIS!">?</span>
+                </div>
+                <div class="qr-svg-wrapper" id="qrConvWifComp"></div>
+                <div class="wallet-col-value" id="outConvWifComp">${wifComp}</div>
+                <button class="btn" onclick="copyString('${wifComp}')" style="width: 100%;">📋 Copy Private Key</button>
+              </div>
+
+              <!-- Uncompressed WIF Content -->
+              <div id="contentConvTabWifUncomp" class="wallet-tab-content">
+                <div class="wallet-col-title" style="color: var(--accent-red); margin-top: 0.25rem;">
+                  Private Key (Uncompressed)
+                  <span class="tooltip-icon" data-tooltip="Starts with 5. Legacy private key format mapping to uncompressed public keys. Rarely used today unless recovering very old wallets. NEVER SHARE THIS!">?</span>
+                </div>
+                <div class="qr-svg-wrapper" id="qrConvWifUncomp"></div>
+                <div class="wallet-col-value" id="outConvWifUncomp">${wifUncomp}</div>
+                <button class="btn" onclick="copyString('${wifUncomp}')" style="width: 100%;">📋 Copy Private Key</button>
               </div>
             </div>
+
           </div>
 
-          <div class="output-group">
-            <div class="output-title">
-              Taproot Address (P2TR)
-              <span class="tooltip-icon" data-tooltip="(BIP-86 / BIP-341) Starts with bc1p. The newest Bitcoin address standard offering enhanced privacy and advanced smart contract capabilities.">?</span>
-            </div>
-            <div class="value-box">
-              <span>${addrTaproot}</span>
-              <div style="display: flex; gap: 0; align-items: center;">
-                <button class="btn-icon" onclick="copyString('${addrTaproot}')" title="Copy">📋</button>
-                <button class="btn-icon" onclick="showQrModal('${addrTaproot}', 'Taproot Address (P2TR)')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
-              </div>
-            </div>
-          </div>
+          <!-- Advanced / Secondary Key Details Collapsed Menu -->
+          <details style="margin-top: 1.25rem; background: rgba(15, 23, 42, 0.4); border: 1px solid var(--card-border); border-radius: 8px; padding: 0.75rem 1rem;">
+            <summary style="cursor: pointer; font-weight: 600; color: var(--btc-gold); font-size: 0.9rem; user-select: none;">
+              Advanced Keys & Formats (Taproot, Nested SegWit, Hex)
+            </summary>
+            <div class="results-grid" style="margin-top: 1rem;">
 
-          <div class="output-group">
-            <div class="output-title">
-              Nested SegWit Address (P2SH-P2WPKH)
-              <span class="tooltip-icon" data-tooltip="(BIP-49) Starts with 3. A backward-compatible SegWit address used to bridge legacy wallets with modern fee savings.">?</span>
-            </div>
-            <div class="value-box">
-              <span>${addrP2sh}</span>
-              <div style="display: flex; gap: 0; align-items: center;">
-                <button class="btn-icon" onclick="copyString('${addrP2sh}')" title="Copy">📋</button>
-                <button class="btn-icon" onclick="showQrModal('${addrP2sh}', 'Nested SegWit Address (P2SH-P2WPKH)')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
-              </div>
-            </div>
-          </div>
+              ${isBip38 ? `
+              <div class="output-group">
+                <div class="output-header">
+                  <span class="output-title">Encrypted Private Key Provided (BIP-38)
+                    <span class="tooltip-icon" data-tooltip="A passphrase-protected, encrypted private key format. Starts with 6P.">?</span>
+                  </span>
+                </div>
+                <div class="value-box" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);">
+                  <span>${STATE.bip38EncryptedInput}</span>
+                  <div style="display: flex; gap: 0; align-items: center;">
+                    <button class="btn-icon" onclick="copyString('${STATE.bip38EncryptedInput}')" title="Copy">📋</button>
+                    <button class="btn-icon" onclick="showQrModal('${STATE.bip38EncryptedInput}', 'Encrypted Private Key (BIP-38)')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+                  </div>
+                </div>
+              </div>` : ''}
 
-          <div class="output-group">
-            <div class="output-title">
-              Compressed Public Key (Hex 33 bytes)
-              <span class="tooltip-icon" data-tooltip="The cryptographic public identity derived from your private key. Used to generate modern addresses and verify signatures. Starts with 02 or 03.">?</span>
-            </div>
-            <div class="value-box">
-              <span>${pubCompHex}</span>
-              <div style="display: flex; gap: 0; align-items: center;">
-                <button class="btn-icon" onclick="copyString('${pubCompHex}')" title="Copy">📋</button>
-                <button class="btn-icon" onclick="showQrModal('${pubCompHex}', 'Compressed Public Key')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="output-group">
-            <div class="output-title">
-              Uncompressed Public Key (Hex 65 bytes)
-              <span class="tooltip-icon" data-tooltip="The older, uncompressed format of the public key. Starts with 04 and includes both the full X and Y coordinates on the elliptic curve.">?</span>
-            </div>
-            <div class="value-box">
-              <span>${pubUncompHex}</span>
-              <div style="display: flex; gap: 0; align-items: center;">
-                <button class="btn-icon" onclick="copyString('${pubUncompHex}')" title="Copy">📋</button>
-                <button class="btn-icon" onclick="showQrModal('${pubUncompHex}', 'Uncompressed Public Key')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- PRIVATE KEYS SECTION -->
-          <div style="grid-column: 1 / -1; margin-top: 1rem; margin-bottom: -0.25rem;">
-            <h4 style="color: var(--accent-red); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--card-border); padding-bottom: 0.35rem;">🔑 Private Keys</h4>
-          </div>
-        `;
-
-        if (STATE.bip38EncryptedInput && input.startsWith('6P')) {
-          html += `
-            <div class="output-group" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);">
-              <div class="output-title" style="color: var(--accent-red);">
-                Encrypted Private Key Provided (BIP-38)
-                <span class="tooltip-icon" data-tooltip="A passphrase-protected, encrypted private key format. Starts with 6P.">?</span>
-              </div>
-              <div class="value-box">
-                <span>${STATE.bip38EncryptedInput}</span>
-                <div style="display: flex; gap: 0; align-items: center;">
-                  <button class="btn-icon" onclick="copyString('${STATE.bip38EncryptedInput}')" title="Copy">📋</button>
-                  <button class="btn-icon" onclick="showQrModal('${STATE.bip38EncryptedInput}', 'Encrypted Private Key (BIP-38)')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+              <div class="output-group">
+                <div class="output-header">
+                  <span class="output-title">Taproot Address (P2TR)
+                    <span class="tooltip-icon" data-tooltip="(BIP-86 / BIP-341) Starts with bc1p. The newest Bitcoin address standard offering enhanced privacy and advanced smart contract capabilities.">?</span>
+                  </span>
+                </div>
+                <div class="value-box">
+                  <span>${addrTaproot}</span>
+                  <div style="display: flex; gap: 0; align-items: center;">
+                    <button class="btn-icon" onclick="copyString('${addrTaproot}')" title="Copy">📋</button>
+                    <button class="btn-icon" onclick="showQrModal('${addrTaproot}', 'Taproot Address (P2TR)')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+                  </div>
                 </div>
               </div>
-            </div>
-          `;
-        }
 
-        html += `
-          <div class="output-group">
-            <div class="output-title">
-              WIF Compressed Private Key
-              <span class="tooltip-icon" data-tooltip="Starts with K or L. The base58-encoded mathematical secret that actually controls your funds. NEVER SHARE THIS!">?</span>
-            </div>
-            <div class="value-box">
-              <span>${wifComp}</span>
-              <div style="display: flex; gap: 0; align-items: center;">
-                <button class="btn-icon" onclick="copyString('${wifComp}')" title="Copy">📋</button>
-                <button class="btn-icon" onclick="showQrModal('${wifComp}', 'WIF Compressed Private Key')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+              <div class="output-group">
+                <div class="output-header">
+                  <span class="output-title">Nested SegWit Address (P2SH-P2WPKH)
+                    <span class="tooltip-icon" data-tooltip="(BIP-49) Starts with 3. A backward-compatible SegWit address used to bridge legacy wallets with modern fee savings.">?</span>
+                  </span>
+                </div>
+                <div class="value-box">
+                  <span>${addrP2sh}</span>
+                  <div style="display: flex; gap: 0; align-items: center;">
+                    <button class="btn-icon" onclick="copyString('${addrP2sh}')" title="Copy">📋</button>
+                    <button class="btn-icon" onclick="showQrModal('${addrP2sh}', 'Nested SegWit Address (P2SH-P2WPKH)')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <div class="output-group">
-            <div class="output-title">
-              WIF Uncompressed Private Key
-              <span class="tooltip-icon" data-tooltip="Starts with 5. Legacy private key format mapping to uncompressed public keys. Rarely used today. NEVER SHARE THIS!">?</span>
-            </div>
-            <div class="value-box">
-              <span>${wifUncomp}</span>
-              <div style="display: flex; gap: 0; align-items: center;">
-                <button class="btn-icon" onclick="copyString('${wifUncomp}')" title="Copy">📋</button>
-                <button class="btn-icon" onclick="showQrModal('${wifUncomp}', 'WIF Uncompressed Private Key')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+              <div class="output-group">
+                <div class="output-header">
+                  <span class="output-title">Compressed Public Key (Hex 33 bytes)
+                    <span class="tooltip-icon" data-tooltip="The cryptographic public identity derived from your private key. Used to generate addresses and verify your signatures. Starts with 02 or 03.">?</span>
+                  </span>
+                </div>
+                <div class="value-box">
+                  <span>${pubCompHex}</span>
+                  <div style="display: flex; gap: 0; align-items: center;">
+                    <button class="btn-icon" onclick="copyString('${pubCompHex}')" title="Copy">📋</button>
+                    <button class="btn-icon" onclick="showQrModal('${pubCompHex}', 'Compressed Public Key')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <div class="output-group">
-            <div class="output-title">
-              Private Key Hex
-              <span class="tooltip-icon" data-tooltip="The raw 256-bit hexadecimal representation of your private key. NEVER SHARE THIS!">?</span>
-            </div>
-            <div class="value-box">
-              <span>${privHex}</span>
-              <div style="display: flex; gap: 0; align-items: center;">
-                <button class="btn-icon" onclick="copyString('${privHex}')" title="Copy">📋</button>
-                <button class="btn-icon" onclick="showQrModal('${privHex}', 'Private Key Hex')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+              <div class="output-group">
+                <div class="output-header">
+                  <span class="output-title">Uncompressed Public Key (Hex 65 bytes)
+                    <span class="tooltip-icon" data-tooltip="The older, uncompressed format of the public key. Starts with 04 and includes both the full X and Y coordinates on the elliptic curve.">?</span>
+                  </span>
+                </div>
+                <div class="value-box">
+                  <span>${pubUncompHex}</span>
+                  <div style="display: flex; gap: 0; align-items: center;">
+                    <button class="btn-icon" onclick="copyString('${pubUncompHex}')" title="Copy">📋</button>
+                    <button class="btn-icon" onclick="showQrModal('${pubUncompHex}', 'Uncompressed Public Key')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+                  </div>
+                </div>
               </div>
+
+              <div class="output-group">
+                <div class="output-header">
+                  <span class="output-title">Private Key Hex
+                    <span class="tooltip-icon" data-tooltip="The raw 256-bit hexadecimal representation of your private key. NEVER SHARE THIS!">?</span>
+                  </span>
+                </div>
+                <div class="value-box">
+                  <span>${privHex}</span>
+                  <div style="display: flex; gap: 0; align-items: center;">
+                    <button class="btn-icon" onclick="copyString('${privHex}')" title="Copy">📋</button>
+                    <button class="btn-icon" onclick="showQrModal('${privHex}', 'Private Key Hex')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">${qrSvgHtml}</button>
+                  </div>
+                </div>
+              </div>
+
             </div>
-          </div>
+          </details>
         `;
 
+        grid.innerHTML = html;
+        document.getElementById('converterResults').style.display = 'block';
+        const statusEl = document.getElementById('converterStatus');
+        if (statusEl) statusEl.className = 'input-status-msg'; // Hide on success
+
+        // Render the physical QR code canvases for the Converter tool
+        renderQRCode('qrConvP2pkh', addrP2pkh);
+        renderQRCode('qrConvBech32', addrBech32);
+        renderQRCode('qrConvWifComp', wifComp);
+        renderQRCode('qrConvWifUncomp', wifUncomp);
+        
+
+        // Force reset the tabs to the default view on every generation
+        switchConvAddressTab('legacy');
+        switchConvWifTab('comp');
 
 
-          grid.innerHTML = html;
-          document.getElementById('converterResults').style.display = 'block';
-          const statusEl = document.getElementById('converterStatus');
-          if (statusEl) statusEl.className = 'input-status-msg'; // Hide on success
-
-        } catch (err) {
-          document.getElementById('converterResults').style.display = 'none';
-          const statusEl = document.getElementById('converterStatus');
-          if (statusEl) {
-            statusEl.textContent = "Invalid key format or base58 checksum failed.";
-            statusEl.className = 'input-status-msg error';
-          }
+      } catch (err) {
+        document.getElementById('converterResults').style.display = 'none';
+        const statusEl = document.getElementById('converterStatus');
+        if (statusEl) {
+          statusEl.textContent = "Invalid key format or base58 checksum failed.";
+          statusEl.className = 'input-status-msg error';
         }
+      }
     }
 
 
@@ -8142,13 +8204,13 @@ n2 = n2 ^ secureRandom[1];</div>
           document.getElementById('xpubViewerResults').style.display = 'none';
           return;
         }
-        
+
         try {
-            const decoded = base58Decode(input);
-            if (decoded.length !== 82) throw new Error("Invalid decoded length for an extended key.");
+            const payload = base58CheckDecode(input);
+            if (payload.length !== 78) throw new Error("Invalid decoded length for an extended key.");
             
-            const payload = decoded.slice(0, 78);
             const versionHex = bytesToHex(payload.slice(0, 4)).toLowerCase();
+
             const type = XPUB_VERSIONS[versionHex];
             
             if (!type) throw new Error("Unknown extended key prefix (not recognized as standard xpub, ypub, or zpub).");
@@ -8739,21 +8801,43 @@ n2 = n2 ^ secureRandom[1];</div>
       const m = parseInt(document.getElementById('multisigM').value, 10);
       const inputs = document.querySelectorAll('.multisig-pubkey-input');
       const pubkeys = [];
+      let errorMsg = null;
 
-      inputs.forEach(input => {
+      // 1. Gather and Validate Public Keys
+      inputs.forEach((input, index) => {
         const val = input.value.trim().replace(/[^0-9a-fA-F]/g, '');
-        if (val) pubkeys.push(val);
+        if (val) {
+          // Check for valid compressed (66 chars) or uncompressed (130 chars) lengths
+          if (val.length !== 66 && val.length !== 130) {
+            errorMsg = `Public Key ${index + 1} is invalid. It must be exactly 66 hex characters (compressed) or 130 hex characters (uncompressed).`;
+          } 
+          // Check for valid compressed prefixes (02 or 03)
+          else if (val.length === 66 && !val.startsWith('02') && !val.startsWith('03')) {
+            errorMsg = `Public Key ${index + 1} has an invalid prefix. Compressed keys must start with '02' or '03'.`;
+          } 
+          // Check for valid uncompressed prefix (04)
+          else if (val.length === 130 && !val.startsWith('04')) {
+            errorMsg = `Public Key ${index + 1} has an invalid prefix. Uncompressed keys must start with '04'.`;
+          }
+          
+          pubkeys.push(val);
+        }
       });
+
+      if (errorMsg) {
+        alert(errorMsg);
+        return;
+      }
 
       if (pubkeys.length < inputs.length) {
         alert("Please enter all public keys.");
         return;
       }
 
-      // Sort public keys lexicographically (BIP-67 standard practice)
+      // 2. Sort public keys lexicographically (BIP-67 standard practice)
       pubkeys.sort();
 
-      // Construct Redeem Script: M {pubkeys...} N OP_CHECKMULTISIG
+      // 3. Construct Redeem Script: M {pubkeys...} N OP_CHECKMULTISIG
       // OP_1 to OP_16 correspond to 0x51 to 0x60
       const OP_M = 0x50 + m; 
       const OP_N = 0x50 + pubkeys.length;
@@ -8771,7 +8855,7 @@ n2 = n2 ^ secureRandom[1];</div>
       scriptHex += OP_N.toString(16).padStart(2, '0');
       scriptHex += OP_CHECKMULTISIG.toString(16).padStart(2, '0');
 
-      // Hash the redeem script to get the P2SH address
+      // 4. Hash the redeem script to get the P2SH address
       const scriptBytes = hexToBytes(scriptHex);
       const scriptHash = hash160(scriptBytes);
       
@@ -8780,6 +8864,7 @@ n2 = n2 ^ secureRandom[1];</div>
       p2shPayload.set(scriptHash, 1);
       const multisigAddress = base58CheckEncode(p2shPayload);
 
+      // 5. Render Output
       document.getElementById('outMultisigAddress').textContent = multisigAddress;
       document.getElementById('outMultisigRedeem').textContent = scriptHex;
       document.getElementById('multisigResults').style.display = 'block';
@@ -9495,6 +9580,73 @@ n2 = n2 ^ secureRandom[1];</div>
     }
 
 
+    function switchConvAddressTab(tabId) {
+      document.getElementById('btnConvTabSegWit').classList.remove('active');
+      document.getElementById('btnConvTabLegacy').classList.remove('active');
+      document.getElementById('contentConvTabSegWit').classList.remove('active');
+      document.getElementById('contentConvTabLegacy').classList.remove('active');
+
+      if (tabId === 'segwit') {
+        document.getElementById('btnConvTabSegWit').classList.add('active');
+        document.getElementById('contentConvTabSegWit').classList.add('active');
+      } else {
+        document.getElementById('btnConvTabLegacy').classList.add('active');
+        document.getElementById('contentConvTabLegacy').classList.add('active');
+      }
+    }
+
+    function switchConvWifTab(tabId) {
+      document.getElementById('btnConvTabWifComp').classList.remove('active');
+      document.getElementById('btnConvTabWifUncomp').classList.remove('active');
+      document.getElementById('contentConvTabWifComp').classList.remove('active');
+      document.getElementById('contentConvTabWifUncomp').classList.remove('active');
+
+      if (tabId === 'comp') {
+        document.getElementById('btnConvTabWifComp').classList.add('active');
+        document.getElementById('contentConvTabWifComp').classList.add('active');
+      } else {
+        document.getElementById('btnConvTabWifUncomp').classList.add('active');
+        document.getElementById('contentConvTabWifUncomp').classList.add('active');
+      }
+    }
+
+
+
+
+    function showMultisigGuideModal(e) {
+      if (e) e.preventDefault();
+      // Ensure the accordion itself doesn't toggle when clicking the link
+      e.stopPropagation(); 
+      document.getElementById('multisigGuideModal').classList.add('open');
+    }
+
+    function closeMultisigGuideModal(e) {
+      // Close only if clicking the background overlay or the X button
+      if (e && e.target.id !== 'multisigGuideModal') return;
+      document.getElementById('multisigGuideModal').classList.remove('open');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -9792,6 +9944,60 @@ n2 = n2 ^ secureRandom[1];</div>
       </div>
     </div>
   </div>
+
+
+  <!-- Multisig Guide Modal -->
+  <div class="modal-overlay" id="multisigGuideModal" onclick="closeMultisigGuideModal(event)">
+    <div class="modal-card" style="max-width: 650px; text-align: left; position: relative; max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation()">
+      <button onclick="closeMultisigGuideModal()" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+
+      <h3 style="color: var(--btc-gold); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+        🤝 The Multisig Guide: How It Actually Works
+      </h3>
+
+      <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin-bottom: 1rem;">
+        Think of a multisig address like a digital safety deposit box with multiple keyholes. To open it, you need a specific number of keys. Here is exactly how a 2-of-3 scenario works in the real world.
+      </p>
+
+      <strong style="color: var(--text-main); font-size: 0.95rem;">Step 1: Gathering the Public Keys</strong>
+      <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-top: 0.25rem; margin-bottom: 1rem;">
+        Imagine Alice, Bob, and Charlie are business partners. Each person generates their own secure Bitcoin wallet (using dice, hardware wallets, etc.) and keeps their <strong>Private Key</strong> completely secret. They each extract their <strong>Public Key</strong> and share it with each other. 
+      </p>
+
+      <strong style="color: var(--text-main); font-size: 0.95rem;">Step 2: Building the Vault (The Redeem Script)</strong>
+      <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-top: 0.25rem; margin-bottom: 1rem;">
+        They put all three Public Keys into a tool like this one and select "2 signatures required". The tool combines them into a long hexadecimal string called a <strong>Raw Redeem Script</strong>. This script is the literal "blueprint" of the vault. The tool then hashes that blueprint to create a standard <strong>P2SH Address</strong> (starting with a '3').
+      </p>
+
+      <strong style="color: var(--text-main); font-size: 0.95rem;">Step 3: Funding the Vault</strong>
+      <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-top: 0.25rem; margin-bottom: 1rem;">
+        Funding is easy. Anyone can send Bitcoin to the P2SH address just like a normal transaction. The Bitcoin network locks the funds inside, and they can be monitored on any block explorer.
+      </p>
+
+      <strong style="color: var(--text-main); font-size: 0.95rem;">Step 4: Managing & Spending (Recombining)</strong>
+      <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-top: 0.25rem; margin-bottom: 1rem;">
+        To spend the funds, the network requires the <strong>Redeem Script (the blueprint)</strong> PLUS exactly two valid signatures. Here is how they coordinate using trusted open-source tools like <strong>Sparrow Wallet</strong> or <strong>Electrum</strong>:
+      </p>
+      
+      <ul style="color: var(--text-muted); font-size: 0.85rem; margin-left: 1.5rem; margin-bottom: 1.25rem; line-height: 1.6;">
+        <li>Alice opens Sparrow Wallet on an internet-connected computer and creates a "Watch-Only Multisig" wallet by pasting in the Redeem Script (or the 3 public keys).</li>
+        <li>Sparrow locates the funds on the blockchain. Alice creates a transaction sending the Bitcoin to a vendor, but she can't broadcast it because it has zero signatures.</li>
+        <li>Sparrow saves this unsigned transaction as a <strong>PSBT (Partially Signed Bitcoin Transaction)</strong> file.</li>
+        <li>Alice loads the PSBT onto a USB drive, plugs it into her completely offline, air-gapped computer, and signs it with her Private Key. The PSBT now has 1 of 2 signatures.</li>
+        <li>Alice emails the PSBT file to Bob. Bob loads it into his offline computer, verifies the transaction details, and signs it with his Private Key. The PSBT now has 2 of 2 signatures!</li>
+        <li>Bob plugs the fully signed PSBT back into Sparrow Wallet (online) and clicks "Broadcast". The network verifies the signatures against the Redeem Script and moves the funds. Charlie never had to wake up.</li>
+      </ul>
+
+      <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 0.75rem; border-radius: 6px; margin-top: 1rem;">
+        <strong style="color: var(--accent-red); font-size: 0.85rem; display: block; margin-bottom: 0.25rem;">⚠️ The Redeem Script Warning</strong>
+        <p style="color: var(--text-main); font-size: 0.8rem; margin: 0; line-height: 1.4;">
+          You <strong>must</strong> safely backup the Raw Redeem Script (or the exact sequence of Public Keys). If you lose the Redeem Script, it is mathematically impossible to spend the funds, even if you have all the Private Keys! The network needs the blueprint to verify the signatures.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
 
 </body>
 
