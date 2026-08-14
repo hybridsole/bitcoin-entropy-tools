@@ -22,6 +22,7 @@ Everything—including the SECP256K1 elliptic curve math, SHA-256 hashing, and Q
 *   **True Physical Entropy:** Generate your 256-bit root secret using:
     *   🪙 Coin Flips (D2)
     *   🎲 Dice Rolls (D6, D10, D12, D16 Hex, D20)
+    *   🃏 Deck of Cards (52-card deck)
     *   🖱️ Micro-timing Mouse Movement Vectors
 *   **All Major Address Formats:** Automatically derive:
     *   Native SegWit / P2WPKH (`bc1q...`)
@@ -31,6 +32,7 @@ Everything—including the SECP256K1 elliptic curve math, SHA-256 hashing, and Q
 *   **BIP-39 HD Wallets:** Generate 12-word or 24-word seed phrases with optional passphrase protection, calculating the 512-bit master seed and derivation paths (m/84', m/44', m/86', etc.).
 *   **WIF & Public Keys:** View compressed and uncompressed Wallet Import Formats (WIF) and exact 33-byte hex public keys.
 *   **Paper Wallet Generation:** Includes a built-in, printer-friendly CSS layout designed specifically for creating cold-storage paper backups.
+*   **Wallet Utilities:** Convert private keys, create multisig addresses, xpub viewer, raw transaction decoder, key typo resolver, air-gapped webcam qr scanner, and more.
 *   **Zero Dependencies:** No external scripts, CDNs, or web calls. Inspect the code yourself.
 
 ---
