@@ -3052,6 +3052,7 @@
 
           <div class="sidebar-category">🚑 Recovery & Legacy</div>
           <button class="sidebar-btn" id="btn-toolWifTypo" onclick="switchUtilityTool('toolWifTypo')"><span style="font-size: 1.1rem;">🚑</span> WIF Typo Resolver</button>
+          <button class="sidebar-btn" id="btn-toolWalletDat" onclick="switchUtilityTool('toolWalletDat')"><span style="font-size: 1.1rem;">📁</span> Wallet.dat Extractor</button>
           <button class="sidebar-btn" id="btn-toolMinikey" onclick="switchUtilityTool('toolMinikey')"><span style="font-size: 1.1rem;">🪙</span> Minikey Decoder</button>
 
           <div class="sidebar-category">🛠️ Offline Utilities</div>
@@ -3709,6 +3710,57 @@
                   <button class="btn-icon" onclick="copyText('outWifCorrected')" title="Copy">📋</button>
                 </div>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;" id="wifTypoExplanation"></p>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- ==============================
+               TOOL 10.5: WALLET.DAT EXTRACTOR
+               ============================== -->
+          <div id="toolWalletDat" class="tool-section">
+            <h3 style="color: var(--text-main); margin-bottom: 0.25rem; font-size: 1.15rem;">📁 Wallet.dat Extractor</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Extract raw private keys from legacy Bitcoin Core BDB wallet files</p>
+
+            <div class="warning-banner" style="margin-bottom: 1.25rem;">
+              <span class="warning-icon">⚠️</span>
+              <div>
+                <strong>Experimental & Offline Only:</strong> This tool carves unencrypted private keys from binary BDB files directly in your browser's memory. Encrypted wallets cannot be unlocked here. Always sweep recovered funds to a new seed phrase immediately.
+              </div>
+            </div>
+
+            <div class="drop-zone" id="zoneWalletDat" onclick="document.getElementById('uploadWalletDat').click()" 
+                 ondragover="this.classList.add('dragover'); event.preventDefault();" 
+                 ondragleave="this.classList.remove('dragover')" 
+                 ondrop="this.classList.remove('dragover'); event.preventDefault(); handleWalletDatDrop(event)">
+              <span class="placeholder-text" id="textWalletDat" style="font-weight: bold; color: var(--text-main);">Drag & drop wallet.dat file here, or click to browse</span>
+              <input type="file" id="uploadWalletDat" style="display: none;" onchange="processWalletDatFile(this.files[0])">
+            </div>
+            
+            <button class="btn btn-danger" onclick="resetWalletDatTool()" style="margin-top: 0.5rem; display: none;">🗑️ Reset Tool</button>
+
+            <div id="walletDatStatus" class="input-status-msg" style="margin-top: 0.75rem; display: none;"></div>
+
+            <div id="walletDatResults" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--card-border);">
+              <div class="output-group">
+                <div class="output-header">
+                  <span class="output-title">Extracted Raw Private Keys (Hex)</span>
+                </div>
+                <div style="overflow-x: auto; width: 100%; margin-top: 0.5rem;">
+                  <table class="address-table" id="walletDatTable">
+                    <thead>
+                      <tr>
+                        <th style="width: 50px;">#</th>
+                        <th>Private Key (Hex 32-bytes)</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="walletDatTableBody"></tbody>
+                  </table>
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem; line-height: 1.5;">
+                  <strong>Note:</strong> Because Legacy BDB files do not specify which coin they belong to, we extract the raw 256-bit Hex. Click <strong>Convert</strong> next to any key to automatically push it into the Address & Key Converter to generate its WIF and Public Addresses.
+                </p>
               </div>
             </div>
           </div>
@@ -5061,6 +5113,16 @@ n2 = n2 ^ secureRandom[1];</div>
 
       STATE.activeTab = tabId;
 
+
+      // --- ADDED: Update URL Hash cleanly without reloading ---
+      if (tabId === 'converterTab') {
+        history.replaceState(null, '', '#tools');
+      } else if (tabId === 'aboutTab') {
+        history.replaceState(null, '', '#about');
+      } else {
+        history.replaceState(null, '', window.location.pathname);
+      }
+
       // Handle visibility of result sections when switching tabs
       const resultsCard = document.getElementById('resultsCard');
       const seedResultsCard = document.getElementById('seedResultsCard');
@@ -5081,6 +5143,64 @@ n2 = n2 ^ secureRandom[1];</div>
         }
       }
     }
+
+
+    // --- URL ROUTING & DEEP LINKING ---
+    function handleUrlRouting() {
+      const hash = window.location.hash.toLowerCase().replace(/^#\/?/, '');
+      const path = window.location.pathname.toLowerCase().replace(/^\/|\/$/g, '');
+
+      // 1. Direct match for Wallet Utilities (supports #tools, #utilities, /tools, etc.)
+      if (
+        hash === 'tools' || hash === 'utilities' || hash === 'converter' || hash === 'convertertab' ||
+        path === 'tools' || path === 'utilities'
+      ) {
+        switchTab('converterTab');
+        return;
+      }
+
+      // 2. Direct match for Security & Auditing
+      if (hash === 'about' || hash === 'security' || hash === 'audit' || hash === 'abouttab' || path === 'about') {
+        switchTab('aboutTab');
+        return;
+      }
+
+      // 3. Support deep linking to specific sidebar tools (e.g., #tools/xpub or #toolxpub)
+      const toolMap = {
+        'xpub': 'toolXpub',
+        'multisig': 'toolMultisig',
+        'vanity': 'toolVanity',
+        'restorer': 'toolRestorer',
+        'bip85': 'toolBip85',
+        'shamir': 'toolShamir',
+        'txdecoder': 'toolTxDecoder',
+        'psbt': 'toolPsbt',
+        'wiftypo': 'toolWifTypo',
+        'minikey': 'toolMinikey',
+        'qr': 'toolQrCreator',
+        'scanner': 'toolQrScanner',
+        'steg': 'toolSteg'
+      };
+
+      for (const [key, toolId] of Object.entries(toolMap)) {
+        if (hash.includes(key)) {
+          switchTab('converterTab');
+          if (typeof switchUtilityTool === 'function') {
+            switchUtilityTool(toolId);
+          }
+          return;
+        }
+      }
+
+      // Default to Entropy Generator if no route or #generator
+      if (hash === 'generator' || hash === 'entropytab') {
+        switchTab('entropyTab');
+      }
+    }
+
+    // Listen for page load and hash changes
+    window.addEventListener('DOMContentLoaded', handleUrlRouting);
+    window.addEventListener('hashchange', handleUrlRouting);
 
     function switchAboutVerifyTab(tabId) {
       // Hide all about VTab contents and buttons
@@ -9669,6 +9789,163 @@ n2 = n2 ^ secureRandom[1];</div>
       const statusEl = document.getElementById('minikeyStatus');
       if (statusEl) statusEl.className = 'input-status-msg';
     }
+
+
+
+    // ==============================
+    // WALLET.DAT CARVING LOGIC
+    // ==============================
+
+    function handleWalletDatDrop(e) {
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        processWalletDatFile(e.dataTransfer.files[0]);
+      }
+    }
+
+    function processWalletDatFile(file) {
+      const statusEl = document.getElementById('walletDatStatus');
+      const resultsDiv = document.getElementById('walletDatResults');
+      const textDisplay = document.getElementById('textWalletDat');
+      
+      if (!file) return;
+      
+      // 1. Set the initial loading state
+      textDisplay.textContent = `Processing: ${file.name} (${(file.size / 1024).toFixed(1)} KB)...`;
+      statusEl.className = 'input-status-msg';
+      statusEl.textContent = 'Scanning BDB file binary data...';
+      statusEl.style.display = 'block';
+      resultsDiv.style.display = 'none';
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const arrayBuffer = e.target.result;
+          const scanResult = carveWalletDat(arrayBuffer);
+          const extractedHexKeys = scanResult.keys;
+          const isEncrypted = scanResult.isEncrypted;
+          
+          // 2. Clear the "Processing" state and show scan completion
+          textDisplay.textContent = `File Scanned: ${file.name}`;
+          
+          const resetBtn = document.querySelector('#toolWalletDat .btn-danger');
+          if (resetBtn) resetBtn.style.display = 'inline-flex';
+          
+          if (extractedHexKeys.length > 0) {
+            // Success: Keys found
+            renderWalletDatTable(extractedHexKeys);
+            resultsDiv.style.display = 'block';
+            
+            // Edge case: Wallet has unencrypted keys BUT also contains a Master Key
+            if (isEncrypted) {
+               statusEl.className = 'input-status-msg warning';
+               statusEl.textContent = `Note: We recovered ${extractedHexKeys.length} unencrypted key(s), but an 'mkey' record was also found. This means part of this wallet is password-protected and those keys could not be extracted.`;
+               statusEl.style.display = 'block';
+            } else {
+               statusEl.style.display = 'none'; // Clean success
+            }
+            
+          } else {
+            // Failure: No keys found, give specific feedback
+            statusEl.style.display = 'block';
+            if (isEncrypted) {
+              statusEl.className = 'input-status-msg warning';
+              statusEl.textContent = "🔒 Wallet is Encrypted: We detected a Master Key ('mkey') record. There are no unencrypted private keys available to extract. You must use the original QT wallet to unlock it.";
+            } else {
+              statusEl.className = 'input-status-msg error';
+              statusEl.textContent = "📭 Empty Wallet: No private keys or encryption records found. The wallet appears to be entirely empty or corrupted.";
+            }
+          }
+        } catch (err) {
+          textDisplay.textContent = `Error scanning: ${file.name}`;
+          statusEl.className = 'input-status-msg error';
+          statusEl.textContent = "Error parsing file: " + err.message;
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function carveWalletDat(arrayBuffer) {
+      const bytes = new Uint8Array(arrayBuffer);
+      const keysSet = new Set();
+      let isEncrypted = false;
+      
+      // Pattern 1: ASN.1 DER sequence for unencrypted keys
+      const patternUnencrypted = [0x02, 0x01, 0x01, 0x04, 0x20];
+      
+      // Pattern 2: 'mkey' in hex (0x6d, 0x6b, 0x65, 0x79) - indicates wallet encryption
+      const patternMkey = [0x6d, 0x6b, 0x65, 0x79];
+      
+      for (let i = 0; i < bytes.length - 37; i++) {
+        
+        // Check for unencrypted key signatures
+        if (bytes[i] === patternUnencrypted[0] &&
+            bytes[i+1] === patternUnencrypted[1] &&
+            bytes[i+2] === patternUnencrypted[2] &&
+            bytes[i+3] === patternUnencrypted[3] &&
+            bytes[i+4] === patternUnencrypted[4]) {
+            
+          const privKeyBytes = bytes.slice(i + 5, i + 37);
+          keysSet.add(bytesToHex(privKeyBytes));
+        }
+        
+        // Concurrently check for the 'mkey' signature to definitively flag encryption
+        if (!isEncrypted && 
+            bytes[i] === patternMkey[0] && 
+            bytes[i+1] === patternMkey[1] && 
+            bytes[i+2] === patternMkey[2] && 
+            bytes[i+3] === patternMkey[3]) {
+          isEncrypted = true;
+        }
+      }
+      
+      return {
+        keys: Array.from(keysSet),
+        isEncrypted: isEncrypted
+      };
+    }
+
+    function renderWalletDatTable(hexKeys) {
+      const tbody = document.getElementById('walletDatTableBody');
+      tbody.innerHTML = '';
+      
+      hexKeys.forEach((hex, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td style="font-family: monospace; color: var(--btc-gold); font-weight: bold; font-size: 0.9rem;">${hex}</td>
+          <td>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <button class="btn-icon" style="background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem;" onclick="copyString('${hex}')" title="Copy Hex">📋</button>
+              <button class="btn-icon" style="color: var(--accent-cyan); font-weight: bold; background: rgba(6, 182, 212, 0.1); padding: 0.3rem 0.6rem; border: 1px solid rgba(6, 182, 212, 0.3);" onclick="sendWalletDatToConverter('${hex}')">🔄 Convert</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function sendWalletDatToConverter(hexKey) {
+      // Push the hex key directly to your existing Converter tool
+      switchUtilityTool('toolConverter');
+      const inputEl = document.getElementById('converterInput');
+      inputEl.value = hexKey;
+      onConvertInput();
+      
+      // Scroll to top to ensure the user sees the output
+      document.querySelector('.tool-display-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetWalletDatTool() {
+      document.getElementById('uploadWalletDat').value = '';
+      document.getElementById('textWalletDat').textContent = 'Drag & drop wallet.dat file here, or click to browse';
+      document.getElementById('walletDatResults').style.display = 'none';
+      document.getElementById('walletDatStatus').style.display = 'none';
+    }
+
+
+
+
+
 
     /* ==========================================================================
        WIF TYPO RESOLVER
