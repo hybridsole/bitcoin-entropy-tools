@@ -3240,31 +3240,41 @@
 
             <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
               <div style="flex: 2; min-width: 250px;">
-                <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Starting Entropy (WIF or Hex)</label>
+                <div style="display: flex; align-items: center; margin-bottom: 0.25rem;">
+                  <label style="font-size: 0.8rem; color: var(--text-muted);">Starting Entropy (WIF or Hex)</label>
+                  <span class="tooltip-icon" data-tooltip="Gather physical randomness on the Entropy Key Generator tab (dice rolls, coin flips, or mouse movements) and copy the 64-character 'SHA-256 Entropy Hex Key' or a generated WIF Private Key (starts with K, L, or 5). Leave blank to auto-generate a secure random starting point.">?</span>
+                </div>
                 <input type="text" id="vanityEntropyInput" placeholder="Leave blank for random start..." 
                   style="width: 100%; padding: 0.8rem; background: rgba(15,23,42,0.8); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-family: monospace;">
               </div>
             </div>
 
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: stretch;">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: flex-start;">
+              <!-- Column 1: Address Type (Pinned to natural height) -->
               <div style="flex: 1; min-width: 150px; display: flex; flex-direction: column;">
                 <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Address Type</label>
-                <div class="wallet-tab-nav" style="margin: 0; width: 100%; flex: 1;">
+                <div class="wallet-tab-nav" style="margin: 0; width: 100%; height: 42px;">
                   <button class="wallet-tab-btn active" id="btnVanityTabLegacy" onclick="switchVanityAddressTab('legacy')">Legacy (1...)</button>
                   <button class="wallet-tab-btn" id="btnVanityTabSegWit" onclick="switchVanityAddressTab('segwit')">Native SegWit (bc1q...)</button>
                 </div>
                 <input type="hidden" id="vanityTypeSelect" value="legacy">
               </div>
 
+              <!-- Column 2: Desired Sequence(s) -->
               <div style="flex: 1; min-width: 150px; display: flex; flex-direction: column;">
-                <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Desired Sequence</label>
-                <div style="display: flex; align-items: stretch; background: rgba(15,23,42,0.8); border: 1px solid var(--card-border); border-radius: 8px; overflow: hidden; flex: 1;">
-                  <span id="vanityPrefixLabel" style="display: flex; align-items: center; padding: 0 0.5rem 0 0.8rem; color: var(--btc-gold); font-family: monospace; font-weight: bold; background: rgba(0,0,0,0.4);">1</span>
-                  <input type="text" id="vanitySequenceInput" placeholder="sats..." 
-                    style="width: 100%; padding: 0.8rem; border: none; background: transparent; color: #fff; font-family: monospace; outline: none; box-sizing: border-box;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                  <label style="font-size: 0.8rem; color: var(--text-muted);">Desired Sequence(s)</label>
+                  <button class="btn-icon" onclick="addVanitySequenceInput()" title="Add another sequence" style="font-size: 0.75rem; padding: 0.15rem 0.5rem; color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 4px; background: rgba(6, 182, 212, 0.1); cursor: pointer;">➕ Add</button>
+                </div>
+                <div id="vanitySequencesContainer" style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                  <div class="vanity-seq-row" style="display: flex; align-items: stretch; background: rgba(15,23,42,0.8); border: 1px solid var(--card-border); border-radius: 8px; overflow: hidden; min-height: 42px;">
+                    <span class="vanityPrefixLabel" style="display: flex; align-items: center; padding: 0 0.5rem 0 0.8rem; color: var(--btc-gold); font-family: monospace; font-weight: bold; background: rgba(0,0,0,0.4);">1</span>
+                    <input type="text" class="vanitySequenceInput" placeholder="sats..." style="width: 100%; padding: 0.6rem 0.8rem; border: none; background: transparent; color: #fff; font-family: monospace; outline: none; box-sizing: border-box;">
+                  </div>
                 </div>
               </div>
             </div>
+
 
             <!-- Checkbox Options Row (Case Sensitive + Continuous Search) -->
             <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.25rem;">
@@ -3274,10 +3284,9 @@
               </div>
               <div style="display: flex; gap: 0.5rem; align-items: center;">
                 <input type="checkbox" id="vanityContinuous" style="width: 16px; height: 16px; accent-color: var(--btc-gold); cursor: pointer;">
-                <label for="vanityContinuous" style="font-size: 0.85rem; color: var(--text-main); cursor: pointer;">Continue Searching (Find Multiple)</label>
+                <label for="vanityContinuous" style="font-size: 0.85rem; color: var(--text-main); cursor: pointer;">Continue Searching (Find multiple of each sequence)</label>
               </div>
             </div>
-
             <div id="vanityStatus" class="input-status-msg" style="margin-bottom: 1rem;"></div>
 
 
@@ -7572,7 +7581,7 @@ n2 = n2 ^ secureRandom[1];</div>
             html += `<div class="print-page" style="padding-top: 0; font-family: monospace; width: 8.5in; margin: 0 auto;">`;
             html += `<div class="cutout-scissors-top" style="margin-bottom: 4px; font-size: 0.65rem;">✂--------------------- Cut along dashed line ---------------------✂</div>`;
             html += simWarningHTML;
-            html += `<h2 style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 4px; margin-top: 0; margin-bottom: 6px; font-size: 1.1rem;">Minimalist Key Backup (Keys ${i+1} to ${i+chunk.length})</h2>`;
+            html += `<h2 style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 4px; margin-top: 0; margin-bottom: 6px; font-size: 1.1rem;">Printed Key Backup (Keys ${i+1} to ${i+chunk.length})</h2>`;
             
             chunk.forEach(k => {
                const wifTitle = k.isBip38 ? "BIP-38 Encrypted" : "Private Key";
@@ -10339,17 +10348,33 @@ n2 = n2 ^ secureRandom[1];</div>
 
     // Extended STATE specifically for Vanity Generator
     STATE.vanityMining = false;
+    STATE.vanityTimeout = null;
     STATE.vanityFoundKeys = [];
     STATE.vanityAttempts = 0;
     STATE.vanityStartTime = 0;
     STATE.vanityCurrentPrivInt = 0n;
     STATE.vanityCurrentPubPoint = null;
-    STATE.vanityDesiredPrefix = "";
     STATE.vanityType = "legacy";
     STATE.vanityCaseSensitive = true;
     STATE.vanityContinuous = false;
     STATE.vanitySequenceLen = 0;
     STATE.lastVanityInput = null;
+    STATE.vanityTargets = [];
+
+    function addVanitySequenceInput() {
+      const container = document.getElementById('vanitySequencesContainer');
+      const prefix = document.getElementById('vanityTypeSelect').value === 'legacy' ? '1' : 'bc1q';
+      const row = document.createElement('div');
+      row.className = 'vanity-seq-row';
+      row.style.cssText = 'display: flex; align-items: stretch; background: rgba(15,23,42,0.8); border: 1px solid var(--card-border); border-radius: 8px; overflow: hidden; min-height: 42px; width: 100%;';
+      row.innerHTML = `
+        <span class="vanityPrefixLabel" style="display: flex; align-items: center; padding: 0 0.5rem 0 0.8rem; color: var(--btc-gold); font-family: monospace; font-weight: bold; background: rgba(0,0,0,0.4);">${prefix}</span>
+        <input type="text" class="vanitySequenceInput" placeholder="next..." style="width: 100%; padding: 0.6rem 0.8rem; border: none; background: transparent; color: #fff; font-family: monospace; outline: none; box-sizing: border-box;">
+        <button class="btn-icon" onclick="this.parentElement.remove()" style="padding: 0 0.8rem; color: var(--accent-red); background: rgba(0,0,0,0.4); border-left: 1px solid var(--card-border); border-radius: 0; cursor: pointer;">✕</button>
+      `;
+      container.appendChild(row);
+    }
+
 
     function switchVanityAddressTab(type) {
       document.getElementById('btnVanityTabLegacy').classList.toggle('active', type === 'legacy');
@@ -10358,14 +10383,14 @@ n2 = n2 ^ secureRandom[1];</div>
       const typeSelect = document.getElementById('vanityTypeSelect');
       if (typeSelect) typeSelect.value = type;
 
-      const label = document.getElementById('vanityPrefixLabel');
+      const labels = document.querySelectorAll('.vanityPrefixLabel');
       const caseToggle = document.getElementById('vanityCaseSensitive');
       
       if (type === 'legacy') {
-        if (label) label.textContent = '1';
+        labels.forEach(l => l.textContent = '1');
         if (caseToggle) caseToggle.disabled = false;
       } else {
-        if (label) label.textContent = 'bc1q';
+        labels.forEach(l => l.textContent = 'bc1q');
         if (caseToggle) {
           caseToggle.disabled = true;
           caseToggle.checked = false; 
@@ -10400,12 +10425,25 @@ n2 = n2 ^ secureRandom[1];</div>
 
     function resetVanityTool() {
       STATE.vanityMining = false;
+      if (STATE.vanityTimeout) clearTimeout(STATE.vanityTimeout);
+      
       STATE.vanityFoundKeys = [];
       STATE.vanityAttempts = 0;
       STATE.lastVanityInput = null;
+      STATE.vanityTargets = [];
       
       document.getElementById('vanityEntropyInput').value = '';
-      document.getElementById('vanitySequenceInput').value = '';
+      
+      // Reset sequence inputs back to a single empty row
+      const container = document.getElementById('vanitySequencesContainer');
+      if (container) {
+        const rows = container.querySelectorAll('.vanity-seq-row');
+        rows.forEach((row, i) => {
+          if (i === 0) row.querySelector('.vanitySequenceInput').value = '';
+          else row.remove();
+        });
+      }
+
       document.getElementById('vanityResults').style.display = 'none';
       
       const statusEl = document.getElementById('vanityStatus');
@@ -10433,7 +10471,6 @@ n2 = n2 ^ secureRandom[1];</div>
       const speedElement = document.getElementById('vanitySpeed');
       if (speedElement) speedElement.textContent = "0 keys/s";
 
-      // --- NEW: Reset the Metric Counters in the UI ---
       const foundCount = document.getElementById('vanityFoundCount');
       if (foundCount) foundCount.textContent = '0';
 
@@ -10450,6 +10487,7 @@ n2 = n2 ^ secureRandom[1];</div>
       if (STATE.vanityMining) {
         // STOP MINING
         STATE.vanityMining = false;
+        if (STATE.vanityTimeout) clearTimeout(STATE.vanityTimeout);
         const btn = document.getElementById('btnStartVanity');
         btn.textContent = '⛏️ Resume Mining';
         btn.classList.remove('btn-danger');
@@ -10468,55 +10506,70 @@ n2 = n2 ^ secureRandom[1];</div>
       // START MINING PREPARATIONS
       STATE.vanityStartTime = performance.now();
       const inputEntropy = document.getElementById('vanityEntropyInput').value.trim();
-      const seqInput = document.getElementById('vanitySequenceInput').value.trim();
       const statusEl = document.getElementById('vanityStatus');
       
-      STATE.vanitySequenceLen = seqInput.length;
       STATE.vanityType = document.getElementById('vanityTypeSelect').value;
       STATE.vanityCaseSensitive = document.getElementById('vanityCaseSensitive').checked;
       
       const continuousCheckbox = document.getElementById('vanityContinuous');
       STATE.vanityContinuous = continuousCheckbox ? continuousCheckbox.checked : false;
 
-      const prefixLabel = STATE.vanityType === 'legacy' ? '1' : 'bc1q';
-      STATE.vanityDesiredPrefix = prefixLabel + seqInput;
+      // Extract all populated sequence inputs
+      const inputs = document.querySelectorAll('.vanitySequenceInput');
+      let rawPrefixes = [];
+      inputs.forEach(input => {
+        const val = input.value.trim();
+        if (val) rawPrefixes.push(val);
+      });
 
-      if (STATE.vanityType === 'segwit') {
-        STATE.vanityCaseSensitive = false;
-        STATE.vanityDesiredPrefix = STATE.vanityDesiredPrefix.toLowerCase();
-      }
-
-      if (!STATE.vanityCaseSensitive) {
-        STATE.vanityDesiredPrefix = STATE.vanityDesiredPrefix.toLowerCase();
-      }
-
-      if (!seqInput) {
-        statusEl.textContent = 'Please enter a desired vanity prefix sequence.';
+      if (rawPrefixes.length === 0) {
+        statusEl.textContent = 'Please enter at least one desired vanity prefix sequence.';
         statusEl.className = 'input-status-msg error';
         statusEl.style.display = 'block';
         return;
       }
 
-      // Validation
-      if (STATE.vanityType === 'legacy') {
-        const invalidChars = seqInput.match(/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]/g);
-        if (invalidChars) {
-          statusEl.textContent = `Invalid Base58 characters in sequence: ${invalidChars.join(', ')} (0, O, I, l are not allowed).`;
-          statusEl.className = 'input-status-msg error';
-          statusEl.style.display = 'block';
-          return;
+      STATE.vanityTargets = [];
+      let hasLongSequence = false;
+
+      // Validate and build targets
+      for (let seqInput of rawPrefixes) {
+        if (STATE.vanityType === 'legacy') {
+          const invalidChars = seqInput.match(/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]/g);
+          if (invalidChars) {
+            statusEl.textContent = `Invalid Base58 character in sequence "${seqInput}": ${invalidChars.join(', ')} (0, O, I, l are not allowed).`;
+            statusEl.className = 'input-status-msg error';
+            statusEl.style.display = 'block';
+            return;
+          }
+        } else if (STATE.vanityType === 'segwit') {
+          const invalidChars = seqInput.match(/[^qpzry9x8gf2tvdw0s3jn54khce6mua7l]/gi);
+          if (invalidChars) {
+            statusEl.textContent = `Invalid Bech32 character in sequence "${seqInput}": ${invalidChars.join(', ')} (1, b, i, o are not allowed).`;
+            statusEl.className = 'input-status-msg error';
+            statusEl.style.display = 'block';
+            return;
+          }
         }
-      } else if (STATE.vanityType === 'segwit') {
-        const invalidChars = seqInput.match(/[^qpzry9x8gf2tvdw0s3jn54khce6mua7l]/gi);
-        if (invalidChars) {
-          statusEl.textContent = `Invalid Bech32 characters in sequence: ${invalidChars.join(', ')} (1, b, i, o are not allowed in the data part).`;
-          statusEl.className = 'input-status-msg error';
-          statusEl.style.display = 'block';
-          return;
+
+        if (seqInput.length > 5) hasLongSequence = true;
+
+        const prefixLabel = STATE.vanityType === 'legacy' ? '1' : 'bc1q';
+        let desiredPrefix = prefixLabel + seqInput;
+
+        if (STATE.vanityType === 'segwit' || !STATE.vanityCaseSensitive) {
+          desiredPrefix = desiredPrefix.toLowerCase();
         }
+
+        // Store the exact target string we will evaluate against
+        STATE.vanityTargets.push({
+          original: seqInput,
+          target: STATE.vanityType === 'legacy' ? desiredPrefix.substring(1) : desiredPrefix.substring(4),
+          foundCount: 0
+        });
       }
 
-      if (seqInput.length > 5) {
+      if (hasLongSequence) {
         statusEl.textContent = 'Warning: Sequences longer than 5 characters may take days to find in the browser.';
         statusEl.className = 'input-status-msg warning';
         statusEl.style.display = 'block';
@@ -10524,7 +10577,10 @@ n2 = n2 ^ secureRandom[1];</div>
         statusEl.style.display = 'none';
       }
 
-      // Check if we need to generate a new key sequence
+      // Use the shortest sequence length as a baseline for the ETA calculation
+      STATE.vanitySequenceLen = Math.min(...rawPrefixes.map(s => s.length));
+
+      // Check if we need to generate a new starting seed
       let requiresNewSeed = false;
       if (inputEntropy === "") {
         requiresNewSeed = true;
@@ -10565,6 +10621,9 @@ n2 = n2 ^ secureRandom[1];</div>
         if (STATE.vanityCurrentPrivInt === 0n) STATE.vanityCurrentPrivInt = 1n;
         STATE.vanityCurrentPubPoint = Point.G.multiply(STATE.vanityCurrentPrivInt);
         STATE.vanityAttempts = 0; 
+        
+        // Reset found counts on targets if we are starting a fresh sweep
+        STATE.vanityTargets.forEach(t => t.foundCount = 0);
       }
 
       STATE.vanityMining = true;
@@ -10580,7 +10639,7 @@ n2 = n2 ^ secureRandom[1];</div>
       document.getElementById('vanityMiningDot').style.display = 'inline-block';
       
       updateVanityPaperWalletBtnState();
-      setTimeout(mineVanityBatch, 10);
+      STATE.vanityTimeout = setTimeout(mineVanityBatch, 10);
     }
 
     function mineVanityBatch() {
@@ -10612,11 +10671,22 @@ n2 = n2 ^ secureRandom[1];</div>
         }
 
         let testStr = (STATE.vanityType === 'legacy' && !STATE.vanityCaseSensitive) ? leadTrim.toLowerCase() : leadTrim;
-        let matchTarget = (STATE.vanityType === 'legacy' && !STATE.vanityCaseSensitive) ? STATE.vanityDesiredPrefix.substring(1).toLowerCase() : STATE.vanityDesiredPrefix.substring(STATE.vanityType === 'legacy' ? 1 : 4);
+        let matchTargetObj = null;
 
+        // 3. Check for match against all active targets
+        for (let j = 0; j < STATE.vanityTargets.length; j++) {
+          const t = STATE.vanityTargets[j];
+          // Skip if already found and not continuous
+          if (!STATE.vanityContinuous && t.foundCount > 0) continue; 
 
-        // 3. Check for match
-        if (testStr.startsWith(matchTarget)) {
+          if (testStr.startsWith(t.target)) {
+            matchTargetObj = t;
+            t.foundCount++;
+            break;
+          }
+        }
+
+        if (matchTargetObj) {
           newlyFound = true;
           
           const finalPrivHex = STATE.vanityCurrentPrivInt.toString(16).padStart(64, '0');
@@ -10632,13 +10702,18 @@ n2 = n2 ^ secureRandom[1];</div>
             address: address,
             wif: wifComp,
             addressType: STATE.vanityType,
+            matchedSequence: matchTargetObj.original,
             timestamp: new Date().toLocaleTimeString()
           };
 
           STATE.vanityFoundKeys.push(foundKey);
           
           if (!STATE.vanityContinuous) {
-            break; 
+            // Check if every target has been found at least once
+            const allFound = STATE.vanityTargets.every(t => t.foundCount > 0);
+            if (allFound) {
+              break; 
+            }
           }
         }
 
@@ -10650,15 +10725,17 @@ n2 = n2 ^ secureRandom[1];</div>
       STATE.vanityAttempts += BATCH_SIZE;
       
       document.getElementById('vanityAttempts').textContent = STATE.vanityAttempts.toLocaleString();
-      
-      // Update both ETA and Speed Metrics
       updateVanityETA(STATE.vanityAttempts, STATE.vanityStartTime, STATE.vanitySequenceLen, STATE.vanityType === 'legacy');
 
       if (newlyFound) {
         renderVanityFoundResults();
 
-        if (!STATE.vanityContinuous) {
+        const allFound = !STATE.vanityContinuous && STATE.vanityTargets.every(t => t.foundCount > 0);
+
+        if (allFound) {
           STATE.vanityMining = false;
+          if (STATE.vanityTimeout) clearTimeout(STATE.vanityTimeout);
+
           const btn = document.getElementById('btnStartVanity');
           btn.textContent = '⛏️ Start Mining';
           btn.classList.remove('btn-danger');
@@ -10672,10 +10749,10 @@ n2 = n2 ^ secureRandom[1];</div>
           
           updateVanityPaperWalletBtnState();
         } else {
-          setTimeout(mineVanityBatch, 0);
+          STATE.vanityTimeout = setTimeout(mineVanityBatch, 0);
         }
       } else {
-        setTimeout(mineVanityBatch, 0);
+        STATE.vanityTimeout = setTimeout(mineVanityBatch, 0);
       }
     }
 
@@ -10705,7 +10782,7 @@ n2 = n2 ^ secureRandom[1];</div>
           
           <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
             <div>
-              <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Public Address:</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Public Address (Matched "${item.matchedSequence}"):</span>
               <div class="value-box" style="margin-top: 0.2rem;">
                 <span style="color: var(--accent-green); font-weight: bold;">${item.address}</span>
                 <button class="btn-icon" onclick="copyString('${item.address}')" title="Copy Address">📋</button>
@@ -10789,13 +10866,11 @@ n2 = n2 ^ secureRandom[1];</div>
           html += `
             <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; padding: 5px 0; align-items: center; page-break-inside: avoid; gap: 10px; width: 100%; box-sizing: border-box;">
               
-              <!-- Address QR Wrapper -->
               <div style="text-align: center; flex-shrink: 0; width: 60px;">
                 <div id="qr_v_nd_a_${k.index}" class="print-qr" style="width: 50px; height: 50px; margin: 0 auto;"></div>
                 <span style="font-size: 0.55rem; color: #666; font-weight: bold; letter-spacing: 0.5px; display: block; margin-top: 4px;">ADDRESS</span>
               </div>
 
-              <!-- Text Content -->
               <div style="flex: 1; min-width: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 5px; gap: 10px;">
                 <div style="text-align: left; flex: 1;">
                   <div style="font-weight: bold; margin-bottom: 2px; font-size: 0.72rem;">#${k.index} - Vanity Address</div>
@@ -10807,7 +10882,6 @@ n2 = n2 ^ secureRandom[1];</div>
                 </div>
               </div>
 
-              <!-- Secret QR Wrapper -->
               <div style="text-align: center; flex-shrink: 0; width: 60px;">
                 <div id="qr_v_nd_w_${k.index}" class="print-qr" style="width: 50px; height: 50px; margin: 0 auto;"></div>
                 <span style="font-size: 0.55rem; color: #dc2626; font-weight: bold; letter-spacing: 0.5px; display: block; margin-top: 4px;">SECRET</span>
@@ -10825,7 +10899,6 @@ n2 = n2 ^ secureRandom[1];</div>
 
       container.innerHTML = html;
 
-      // Draw high-res canvas (128x128) so it stays crisp when CSS scales it down to 50px
       const qrOptions = { width: 128, height: 128, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M };
 
       keys.forEach(k => {
@@ -10833,7 +10906,6 @@ n2 = n2 ^ secureRandom[1];</div>
         new QRCode(document.getElementById(`qr_v_nd_w_${k.index}`), { ...qrOptions, text: k.wif });
       });
 
-      // INJECT CSS TO OVERRIDE THE GLOBAL !IMPORTANT QR SIZES
       const style = document.createElement('style');
       style.innerHTML = `
         .print-qr canvas, .print-qr img { width: 100% !important; height: 100% !important; display: block; }
@@ -10855,6 +10927,12 @@ n2 = n2 ^ secureRandom[1];</div>
 
       window.print();
     }
+
+
+
+
+
+
 
 
 
