@@ -2403,6 +2403,175 @@
       top: 135%;
     }
 
+
+    /* Mobile App-Launcher Tool Grid */
+    .mobile-tools-grid {
+      display: none;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .mobile-tool-card {
+      background: #111827;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      color: var(--text-main);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .mobile-tool-card:active,
+    .mobile-tool-card:hover {
+      border-color: var(--btc-gold);
+      background: rgba(247, 147, 26, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .mobile-tool-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    .mobile-tool-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.25;
+      margin-bottom: 0.2rem;
+    }
+
+    .mobile-tool-desc {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      line-height: 1.2;
+    }
+
+    /* Mobile Expandable Tool Switcher Bar */
+    .mobile-tool-header-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .mobile-tool-current {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--btc-gold);
+    }
+
+    .mobile-tool-menu-btn {
+      background: rgba(247, 147, 26, 0.12);
+      border: 1px solid rgba(247, 147, 26, 0.3);
+      color: var(--btc-gold);
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* Expandable Drawer / Dropdown on Mobile */
+    .mobile-tools-drawer {
+      display: none;
+      background: #111827;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 0.75rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .mobile-tools-drawer.open {
+      display: block;
+      animation: toolFadeIn 0.2s ease;
+    }
+
+    .mobile-drawer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+
+    .mobile-drawer-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .mobile-drawer-btn.active {
+      border-color: var(--btc-gold);
+      color: var(--btc-gold);
+      background: rgba(247, 147, 26, 0.1);
+    }
+
+    /* Mobile Breakpoint Adjustments (<= 850px) */
+    @media (max-width: 850px) {
+      /* Hide the desktop sidebar on mobile */
+      .sidebar-nav {
+        display: none !important;
+      }
+
+      .utilities-layout {
+        display: block;
+      }
+
+      .tool-display-area {
+        padding: 1.25rem 1rem;
+      }
+
+      /* Show the mobile tool top bar when inside a tool */
+      .mobile-tool-header-bar {
+        display: flex;
+      }
+
+      /* When on Tools tab and no tool selected (hub mode), show grid */
+      body.mobile-view-tools-hub .mobile-tools-grid {
+        display: grid;
+      }
+
+      body.mobile-view-tools-hub .tool-display-area {
+        display: none;
+      }
+
+      /* When inside a tool on mobile */
+      body.mobile-view-tool-active .mobile-tools-grid {
+        display: none;
+      }
+
+      body.mobile-view-tool-active .tool-display-area {
+        display: block;
+      }
+    }
+
   </style>
 
 </head>
@@ -2432,9 +2601,9 @@
     </div>
 
     <nav id="mainNav">
-      <button class="nav-tab active" id="tabBtn-entropyTab" onclick="switchTab('entropyTab')">🎲 Entropy Key Generator</button>
-      <button class="nav-tab" id="tabBtn-converterTab" onclick="switchTab('converterTab')">🧰 Wallet Utilities</button>
-      <button class="nav-tab" id="tabBtn-aboutTab" onclick="switchTab('aboutTab')">🛡️ Security & Auditing</button>
+      <button class="nav-tab active" id="tabBtn-entropyTab" onclick="switchTab('entropyTab')">🎲 Entropy Generator</button>
+      <button class="nav-tab" id="tabBtn-converterTab" onclick="switchTab('converterTab')">🧰 Wallet Tools</button>
+      <button class="nav-tab" id="tabBtn-aboutTab" onclick="switchTab('aboutTab')">🛡️ About</button>
     </nav>
   </header>
 
@@ -3030,17 +3199,97 @@
 
 
     <!-- TAB 2: MORE TOOLS -->
+<!-- TAB 2: WALLET TOOLS -->
     <div id="converterTab" class="tab-content">
+
+      <!-- MOBILE APP-LAUNCHER HUB (Default on Mobile) -->
+      <div class="mobile-tools-grid" id="mobileToolsGrid">
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolConverter')">
+          <span class="mobile-tool-icon">🔄</span>
+          <span class="mobile-tool-title">Key Converter</span>
+          <span class="mobile-tool-desc">WIF, Hex, & Formats</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolXpub')">
+          <span class="mobile-tool-icon">👁️</span>
+          <span class="mobile-tool-title">XPUB Viewer</span>
+          <span class="mobile-tool-desc">Watch-Only Addresses</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolMultisig')">
+          <span class="mobile-tool-icon">🤝</span>
+          <span class="mobile-tool-title">Multisig</span>
+          <span class="mobile-tool-desc">M-of-N Joint Custody</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolVanity')">
+          <span class="mobile-tool-icon">💎</span>
+          <span class="mobile-tool-title">Vanity Generator</span>
+          <span class="mobile-tool-desc">Custom Prefixes</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolRestorer')">
+          <span class="mobile-tool-icon">🌱</span>
+          <span class="mobile-tool-title">Seed Restorer</span>
+          <span class="mobile-tool-desc">BIP-39 Extraction</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolBip85')">
+          <span class="mobile-tool-icon">🌳</span>
+          <span class="mobile-tool-title">BIP-85 Child Seeds</span>
+          <span class="mobile-tool-desc">Deterministic Sub-Seeds</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolShamir')">
+          <span class="mobile-tool-icon">🧩</span>
+          <span class="mobile-tool-title">Shamir's SSS</span>
+          <span class="mobile-tool-desc">Split Secret Shares</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolTxDecoder')">
+          <span class="mobile-tool-icon">🔍</span>
+          <span class="mobile-tool-title">TX Decoder</span>
+          <span class="mobile-tool-desc">Raw Hex Inspector</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolPsbt')">
+          <span class="mobile-tool-icon">📦</span>
+          <span class="mobile-tool-title">PSBT Extractor</span>
+          <span class="mobile-tool-desc">Inspect Base64 PSBTs</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolWifTypo')">
+          <span class="mobile-tool-icon">🚑</span>
+          <span class="mobile-tool-title">WIF Typo Fixer</span>
+          <span class="mobile-tool-desc">Recover Broken WIFs</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolWalletDat')">
+          <span class="mobile-tool-icon">📁</span>
+          <span class="mobile-tool-title">Wallet.dat</span>
+          <span class="mobile-tool-desc">Carve BDB Dump Keys</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolMinikey')">
+          <span class="mobile-tool-icon">🪙</span>
+          <span class="mobile-tool-title">Minikey Decoder</span>
+          <span class="mobile-tool-desc">Casascius Sweeper</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolQrCreator')">
+          <span class="mobile-tool-icon">🔲</span>
+          <span class="mobile-tool-title">QR Creator</span>
+          <span class="mobile-tool-desc">Offline Custom QR</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolQrScanner')">
+          <span class="mobile-tool-icon">📷</span>
+          <span class="mobile-tool-title">Air-Gap Scanner</span>
+          <span class="mobile-tool-desc">Optical Webcam Scan</span>
+        </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolSteg')" style="grid-column: span 2;">
+          <span class="mobile-tool-icon">🖼️</span>
+          <span class="mobile-tool-title">Steganography</span>
+          <span class="mobile-tool-desc">Hide Encrypted Secrets in Images</span>
+        </div>
+      </div>
+
       <div class="utilities-layout">
         
-        <!-- SIDEBAR NAVIGATION -->
+        <!-- DESKTOP SIDEBAR NAVIGATION -->
         <div class="sidebar-nav">
           <div class="sidebar-category">🔑 Keys & Addresses</div>
           <button class="sidebar-btn active" id="btn-toolConverter" onclick="switchUtilityTool('toolConverter')"><span style="font-size: 1.1rem;">🔄</span> Address & Key Converter</button>
+          <button class="sidebar-btn" id="btn-toolXpub" onclick="switchUtilityTool('toolXpub')"><span style="font-size: 1.1rem;">👁️</span> XPUB Viewer</button>
           <button class="sidebar-btn" id="btn-toolMultisig" onclick="switchUtilityTool('toolMultisig')"><span style="font-size: 1.1rem;">🤝</span> Multisig Generator</button>
           <button class="sidebar-btn" id="btn-toolVanity" onclick="switchUtilityTool('toolVanity')"><span style="font-size: 1.1rem;">💎</span> Vanity Generator</button>
-          <button class="sidebar-btn" id="btn-toolXpub" onclick="switchUtilityTool('toolXpub')"><span style="font-size: 1.1rem;">👁️</span> XPUB Viewer</button>
-
 
           <div class="sidebar-category">🌱 Seeds & Backups</div>
           <button class="sidebar-btn" id="btn-toolRestorer" onclick="switchUtilityTool('toolRestorer')"><span style="font-size: 1.1rem;">🌱</span> BIP-39 Seed Restorer</button>
@@ -3064,6 +3313,43 @@
 
         <!-- MAIN DISPLAY AREA -->
         <div class="tool-display-area">
+          
+          <!-- MOBILE TOP SWITCHER & DRAWER -->
+          <div class="mobile-tool-header-bar">
+            <div class="mobile-tool-current" id="mobileActiveToolLabel">
+              <span>🔄</span> Address Converter
+            </div>
+            <div style="display: flex; gap: 0.4rem;">
+              <button class="mobile-tool-menu-btn" onclick="toggleMobileToolDrawer()">
+                ☰ All Tools ▾
+              </button>
+              <button class="mobile-tool-menu-btn" onclick="returnToMobileToolsGrid()" style="background: transparent; color: var(--text-muted); border-color: var(--card-border);">
+                ✕ Grid
+              </button>
+            </div>
+          </div>
+
+          <!-- Expandable Drawer for quick in-tool switching -->
+          <div class="mobile-tools-drawer" id="mobileToolsDrawer">
+            <div class="mobile-drawer-grid">
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolConverter')">🔄 Converter</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolXpub')">👁️ XPUB Viewer</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolMultisig')">🤝 Multisig</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolVanity')">💎 Vanity Gen</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolRestorer')">🌱 Restorer</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolBip85')">🌳 BIP-85</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolShamir')">🧩 Shamir SSS</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolTxDecoder')">🔍 TX Decoder</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolPsbt')">📦 PSBT</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolWifTypo')">🚑 WIF Typo</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolWalletDat')">📁 Wallet.dat</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolMinikey')">🪙 Minikey</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolQrCreator')">🔲 QR Creator</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolQrScanner')">📷 Scanner</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolSteg')" style="grid-column: span 2;">🖼️ Steganography</button>
+            </div>
+          </div>
+
           
           <!-- ==============================
                TOOL 1: CONVERTER
@@ -5129,6 +5415,24 @@ n2 = n2 ^ secureRandom[1];</div>
       if (nav) nav.classList.toggle('mobile-open');
     }
 
+    const TOOL_META = {
+      'toolConverter': { icon: '🔄', name: 'Address & Key Converter' },
+      'toolXpub': { icon: '👁️', name: 'XPUB Viewer' },
+      'toolMultisig': { icon: '🤝', name: 'Multisig Generator' },
+      'toolVanity': { icon: '💎', name: 'Vanity Generator' },
+      'toolRestorer': { icon: '🌱', name: 'BIP-39 Seed Restorer' },
+      'toolBip85': { icon: '🌳', name: 'BIP-85 Generator' },
+      'toolShamir': { icon: '🧩', name: "Shamir's SSS" },
+      'toolTxDecoder': { icon: '🔍', name: 'Raw TX Decoder' },
+      'toolPsbt': { icon: '📦', name: 'PSBT Extractor' },
+      'toolWifTypo': { icon: '🚑', name: 'WIF Typo Resolver' },
+      'toolWalletDat': { icon: '📁', name: 'Wallet.dat Extractor' },
+      'toolMinikey': { icon: '🪙', name: 'Minikey Decoder' },
+      'toolQrCreator': { icon: '🔲', name: 'QR Code Creator' },
+      'toolQrScanner': { icon: '📷', name: 'Air-Gap Scanner' },
+      'toolSteg': { icon: '🖼️', name: 'Steganography' }
+    };
+
     function switchTab(tabId) {
       window.scrollTo({ top: 0, behavior: 'auto' });
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -5138,23 +5442,24 @@ n2 = n2 ^ secureRandom[1];</div>
       const tabBtn = document.getElementById('tabBtn-' + tabId);
       if (tabBtn) tabBtn.classList.add('active');
       
-      // Auto-close mobile navigation when a tab is selected
       const nav = document.getElementById('mainNav');
       if (nav) nav.classList.remove('mobile-open');
 
       STATE.activeTab = tabId;
 
-
-      // --- ADDED: Update URL Hash cleanly without reloading ---
       if (tabId === 'converterTab') {
         history.replaceState(null, '', '#tools');
+        // If entering tools tab on mobile and no tool was explicitly opened, show launcher hub
+        if (window.innerWidth <= 850 && !document.body.classList.contains('mobile-view-tool-active')) {
+          document.body.classList.add('mobile-view-tools-hub');
+        }
       } else if (tabId === 'aboutTab') {
         history.replaceState(null, '', '#about');
       } else {
         history.replaceState(null, '', window.location.pathname);
       }
 
-      // Handle visibility of result sections when switching tabs
+      // Handle visibility of entropy results
       const resultsCard = document.getElementById('resultsCard');
       const seedResultsCard = document.getElementById('seedResultsCard');
       const seedOptionsRow = document.getElementById('seedOptionsRow');
@@ -5164,10 +5469,7 @@ n2 = n2 ^ secureRandom[1];</div>
         if (seedResultsCard) seedResultsCard.style.display = 'none';
         if (seedOptionsRow) seedOptionsRow.style.display = 'none';
       } else {
-        // Use explicitly tracked state flags to remember which view was last active
-        if (resultsCard && STATE.resultsGenerated) {
-          resultsCard.style.display = 'block';
-        }
+        if (resultsCard && STATE.resultsGenerated) resultsCard.style.display = 'block';
         if (seedResultsCard && STATE.seedGenerated) {
           seedResultsCard.style.display = 'block';
           if (seedOptionsRow) seedOptionsRow.style.display = 'flex';
@@ -5179,21 +5481,21 @@ n2 = n2 ^ secureRandom[1];</div>
     // --- URL ROUTING & DEEP LINKING ---
     function handleUrlRouting() {
       const hash = window.location.hash.toLowerCase().replace(/^#\/?/, '');
-      
-      // Safely extract the last segment of the path (ignores host subfolders)
       const pathSegments = window.location.pathname.toLowerCase().split('/').filter(Boolean);
       const lastPathSegment = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] : '';
 
-      // 1. Direct match for Wallet Utilities
+      // Direct match for Wallet Tools (hub view on mobile)
       if (
         hash === 'tools' || hash === 'utilities' || hash === 'convertertab' ||
         lastPathSegment === 'tools' || lastPathSegment === 'utilities'
       ) {
         switchTab('converterTab');
+        if (window.innerWidth <= 850) {
+          returnToMobileToolsGrid();
+        }
         return;
       }
 
-      // 2. Direct match for Security & Auditing
       if (
         hash === 'about' || hash === 'security' || hash === 'audit' || hash === 'abouttab' || 
         lastPathSegment === 'about' || lastPathSegment === 'security'
@@ -5202,40 +5504,36 @@ n2 = n2 ^ secureRandom[1];</div>
         return;
       }
 
-      // 3. Support deep linking to specific sidebar tools with extended aliases
       const toolMap = {
         'converter': 'toolConverter',
         'xpub': 'toolXpub',
         'multisig': 'toolMultisig',
-        'vanitygen': 'toolVanity', // Alias
+        'vanitygen': 'toolVanity',
         'vanity': 'toolVanity',
         'restorer': 'toolRestorer',
-        'bip39': 'toolRestorer',   // Alias
+        'bip39': 'toolRestorer',
         'bip85': 'toolBip85',
         'shamir': 'toolShamir',
-        'sss': 'toolShamir',       // Alias
+        'sss': 'toolShamir',
         'txdecoder': 'toolTxDecoder',
         'psbt': 'toolPsbt',
         'wiftypo': 'toolWifTypo',
-        'casascius': 'toolMinikey',// Alias
+        'walletdat': 'toolWalletDat',
+        'casascius': 'toolMinikey',
         'minikey': 'toolMinikey',
         'qr': 'toolQrCreator',
         'scanner': 'toolQrScanner',
         'steg': 'toolSteg'
       };
 
-      // Check if the hash or the final path segment contains any of our tool keys
       for (const [key, toolId] of Object.entries(toolMap)) {
         if (hash.includes(key) || lastPathSegment.includes(key)) {
           switchTab('converterTab');
-          if (typeof switchUtilityTool === 'function') {
-            switchUtilityTool(toolId);
-          }
+          switchUtilityTool(toolId);
           return;
         }
       }
 
-      // Default to Entropy Generator if no route or #generator is found
       if (hash === 'generator' || hash === 'entropytab') {
         switchTab('entropyTab');
       }
@@ -7893,20 +8191,25 @@ n2 = n2 ^ secureRandom[1];</div>
 
 
     function switchUtilityTool(toolId) {
-      // Hide all tools
+      // Hide all tools & remove highlights
       document.querySelectorAll('.tool-section').forEach(el => el.classList.remove('active'));
-      // Remove highlight from all buttons
       document.querySelectorAll('.sidebar-btn').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.mobile-drawer-btn').forEach(el => el.classList.remove('active'));
       
-      // Show targeted tool
       const toolEl = document.getElementById(toolId);
       if (toolEl) toolEl.classList.add('active');
       
-      // Highlight sidebar button
       const btnEl = document.getElementById('btn-' + toolId);
       if (btnEl) btnEl.classList.add('active');
 
-      // --- NEW: Update URL hash cleanly without reloading ---
+      // Update mobile tool active label
+      const meta = TOOL_META[toolId] || { icon: '🧰', name: 'Wallet Tool' };
+      const mobileLabel = document.getElementById('mobileActiveToolLabel');
+      if (mobileLabel) {
+        mobileLabel.innerHTML = `<span>${meta.icon}</span> ${meta.name}`;
+      }
+
+      // Update URL hash
       const reverseToolMap = {
         'toolConverter': 'converter',
         'toolXpub': 'xpub',
@@ -7926,16 +8229,38 @@ n2 = n2 ^ secureRandom[1];</div>
       };
 
       if (reverseToolMap[toolId]) {
-        // Use replaceState to update the URL without adding clutter to the browser's back button
         history.replaceState(null, '', '#' + reverseToolMap[toolId]);
       }
 
-      // On mobile, auto-scroll to the top of the display area so the tool is in view
+      // Transition mobile state from Grid Hub to Active Tool View
+      document.body.classList.remove('mobile-view-tools-hub');
+      document.body.classList.add('mobile-view-tool-active');
+
+      // Close drawer if open
+      const drawer = document.getElementById('mobileToolsDrawer');
+      if (drawer) drawer.classList.remove('open');
+
       if (window.innerWidth <= 850 && toolEl) {
         document.querySelector('.tool-display-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
 
+    /* Mobile specific helpers */
+    function selectMobileTool(toolId) {
+      switchUtilityTool(toolId);
+    }
+
+    function returnToMobileToolsGrid() {
+      document.body.classList.remove('mobile-view-tool-active');
+      document.body.classList.add('mobile-view-tools-hub');
+      history.replaceState(null, '', '#tools');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleMobileToolDrawer() {
+      const drawer = document.getElementById('mobileToolsDrawer');
+      if (drawer) drawer.classList.toggle('open');
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       // Detect hosting environment
