@@ -7897,6 +7897,30 @@ n2 = n2 ^ secureRandom[1];</div>
       const btnEl = document.getElementById('btn-' + toolId);
       if (btnEl) btnEl.classList.add('active');
 
+      // --- NEW: Update URL hash cleanly without reloading ---
+      const reverseToolMap = {
+        'toolConverter': 'converter',
+        'toolXpub': 'xpub',
+        'toolMultisig': 'multisig',
+        'toolVanity': 'vanity',
+        'toolRestorer': 'restorer',
+        'toolBip85': 'bip85',
+        'toolShamir': 'shamir',
+        'toolTxDecoder': 'txdecoder',
+        'toolPsbt': 'psbt',
+        'toolWifTypo': 'wiftypo',
+        'toolWalletDat': 'walletdat',
+        'toolMinikey': 'minikey',
+        'toolQrCreator': 'qr',
+        'toolQrScanner': 'scanner',
+        'toolSteg': 'steg'
+      };
+
+      if (reverseToolMap[toolId]) {
+        // Use replaceState to update the URL without adding clutter to the browser's back button
+        history.replaceState(null, '', '#' + reverseToolMap[toolId]);
+      }
+
       // On mobile, auto-scroll to the top of the display area so the tool is in view
       if (window.innerWidth <= 850 && toolEl) {
         document.querySelector('.tool-display-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
