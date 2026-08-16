@@ -3037,9 +3037,10 @@
         <div class="sidebar-nav">
           <div class="sidebar-category">🔑 Keys & Addresses</div>
           <button class="sidebar-btn active" id="btn-toolConverter" onclick="switchUtilityTool('toolConverter')"><span style="font-size: 1.1rem;">🔄</span> Address & Key Converter</button>
-          <button class="sidebar-btn" id="btn-toolXpub" onclick="switchUtilityTool('toolXpub')"><span style="font-size: 1.1rem;">👁️</span> XPUB Viewer</button>
           <button class="sidebar-btn" id="btn-toolMultisig" onclick="switchUtilityTool('toolMultisig')"><span style="font-size: 1.1rem;">🤝</span> Multisig Generator</button>
           <button class="sidebar-btn" id="btn-toolVanity" onclick="switchUtilityTool('toolVanity')"><span style="font-size: 1.1rem;">💎</span> Vanity Generator</button>
+          <button class="sidebar-btn" id="btn-toolXpub" onclick="switchUtilityTool('toolXpub')"><span style="font-size: 1.1rem;">👁️</span> XPUB Viewer</button>
+
 
           <div class="sidebar-category">🌱 Seeds & Backups</div>
           <button class="sidebar-btn" id="btn-toolRestorer" onclick="switchUtilityTool('toolRestorer')"><span style="font-size: 1.1rem;">🌱</span> BIP-39 Seed Restorer</button>
@@ -3265,48 +3266,48 @@
               </div>
             </div>
 
-            <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.25rem;">
-              <input type="checkbox" id="vanityCaseSensitive" style="width: 16px; height: 16px; accent-color: var(--btc-gold); cursor: pointer;">
-              <label for="vanityCaseSensitive" style="font-size: 0.85rem; color: var(--text-main); cursor: pointer;">Case Sensitive (Legacy Only)</label>
+            <!-- Checkbox Options Row (Case Sensitive + Continuous Search) -->
+            <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.25rem;">
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input type="checkbox" id="vanityCaseSensitive" style="width: 16px; height: 16px; accent-color: var(--btc-gold); cursor: pointer;">
+                <label for="vanityCaseSensitive" style="font-size: 0.85rem; color: var(--text-main); cursor: pointer;">Case Sensitive (Legacy Only)</label>
+              </div>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input type="checkbox" id="vanityContinuous" style="width: 16px; height: 16px; accent-color: var(--btc-gold); cursor: pointer;">
+                <label for="vanityContinuous" style="font-size: 0.85rem; color: var(--text-main); cursor: pointer;">Continue Searching (Find Multiple)</label>
+              </div>
             </div>
 
             <div id="vanityStatus" class="input-status-msg" style="margin-bottom: 1rem;"></div>
 
+
+            <!-- Action Buttons -->
             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
               <button class="btn btn-primary" id="btnStartVanity" onclick="toggleVanityMining()" style="flex: 1; min-width: 200px;">⛏️ Start Mining</button>
+              <button class="btn" id="btnVanityPaperWallet" onclick="showVanityPaperWalletPopup()" style="display: none; width: auto;" disabled>🖨️ Create Paper Wallet</button>
               <button class="btn btn-danger" onclick="resetVanityTool()" style="width: auto;">🗑️ Reset</button>
             </div>
 
+
+            <!-- VANITY RESULTS SECTION -->
             <div id="vanityResults" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--card-border);">
-              <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
                   <span style="font-size: 0.85rem; color: var(--text-muted);">Keys Searched: <strong id="vanityAttempts" style="color: var(--btc-gold);">0</strong></span>
-                  <span style="display: flex; align-items: center; gap: 0.5rem;">
-                      <span id="vanityMiningDot" style="display: none; width: 8px; height: 8px; border-radius: 50%; background-color: var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan);" class="offline-pulse"></span>
-                      <span id="vanityMiningIndicator" style="font-size: 0.85rem; color: var(--accent-cyan); font-weight: bold;"></span>
-                  </span>
+                  <span style="font-size: 0.85rem; color: var(--text-muted);">Found: <strong id="vanityFoundCount" style="color: var(--accent-green);">0</strong></span>
+                  <span style="font-size: 0.85rem; color: var(--text-muted);">Speed: <strong id="vanitySpeed" style="color: var(--text-main);">0 keys/s</strong></span>
                   <span style="font-size: 0.85rem; color: var(--text-muted);">ETA: <strong id="vanityETA" style="color: var(--btc-gold);">Calculating...</strong></span>
-              </div>
-
-              <div class="output-group" style="margin-bottom: 1.25rem;">
-                <div class="output-header">
-                  <span class="output-title" id="outVanityAddrTitle">Found Vanity Address</span>
-                </div>
-                <div class="value-box">
-                  <span id="outVanityAddress" style="color: var(--accent-green); font-weight: bold; font-size: 1rem; word-break: break-all;">-</span>
-                  <button class="btn-icon" onclick="copyText('outVanityAddress')" title="Copy">📋</button>
+                  <span style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span id="vanityMiningDot" style="display: none; width: 8px; height: 8px; border-radius: 50%; background-color: var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan);" class="offline-pulse"></span>
+                    <span id="vanityMiningIndicator" style="font-size: 0.85rem; color: var(--accent-cyan); font-weight: bold;"></span>
+                  </span>
                 </div>
               </div>
 
-              <div class="output-group">
-                <div class="output-header">
-                  <span class="output-title">Private Key (WIF Compressed)</span>
-                </div>
-                <div class="value-box" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);">
-                  <span id="outVanityWif" style="color: var(--text-main); word-break: break-all;">-</span>
-                  <button class="btn-icon" onclick="copyText('outVanityWif')" title="Copy">📋</button>
-                </div>
-              </div>
+              <!-- Dynamic results list / table -->
+              <div id="vanityFoundListContainer" style="display: flex; flex-direction: column; gap: 1rem;"></div>
             </div>
+
           </div>
 
 
@@ -3720,13 +3721,35 @@
                ============================== -->
           <div id="toolWalletDat" class="tool-section">
             <h3 style="color: var(--text-main); margin-bottom: 0.25rem; font-size: 1.15rem;">📁 Wallet.dat Extractor</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Extract raw private keys from legacy Bitcoin Core BDB wallet files</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Extract private keys and derive legacy addresses from BDB wallet files</p>
 
             <div class="warning-banner" style="margin-bottom: 1.25rem;">
               <span class="warning-icon">⚠️</span>
               <div>
-                <strong>Experimental & Offline Only:</strong> This tool carves unencrypted private keys from binary BDB files directly in your browser's memory. Encrypted wallets cannot be unlocked here. Always sweep recovered funds to a new seed phrase immediately.
+                <strong>Experimental & Offline Only:</strong> This tool carves unencrypted private keys from binary BDB files directly in your browser's memory. Encrypted wallets cannot be unlocked here.
               </div>
+            </div>
+
+            <!-- NEW: Coin Network Selector -->
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Select Original Wallet Network:</label>
+              <select id="walletDatNetwork" style="width: 100%; max-width: 300px; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;" onchange="recalculateWalletDatTable()">
+                <option value="BTC" selected>Bitcoin (BTC)</option>
+                <option value="LTC">Litecoin (LTC)</option>
+                <option value="DOGE">Dogecoin (DOGE)</option>
+                <option value="DASH">Dash (DASH)</option>
+                <option value="PPC">Peercoin (PPC)</option>
+                <option value="NMC">Namecoin (NMC)</option>
+                <option value="VTC">Vertcoin (VTC)</option>
+                <option value="NVC">Novacoin (NVC)</option>
+                <option value="MEC">Megacoin (MEC)</option>
+                <option value="NLG">Gulden (NLG)</option>
+                <option value="AUR">Auroracoin (AUR)</option>
+                <option value="GRC">Gridcoin (GRC)</option>
+                <option value="VIA">Viacoin (VIA)</option>
+                <option value="RVN">Ravencoin (RVN)</option>
+                <option value="QTUM">Qtum (QTUM)</option>
+              </select>
             </div>
 
             <div class="drop-zone" id="zoneWalletDat" onclick="document.getElementById('uploadWalletDat').click()" 
@@ -3744,23 +3767,21 @@
             <div id="walletDatResults" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--card-border);">
               <div class="output-group">
                 <div class="output-header">
-                  <span class="output-title">Extracted Raw Private Keys (Hex)</span>
+                  <span class="output-title">Recovered Keys & Addresses</span>
                 </div>
                 <div style="overflow-x: auto; width: 100%; margin-top: 0.5rem;">
                   <table class="address-table" id="walletDatTable">
                     <thead>
                       <tr>
-                        <th style="width: 50px;">#</th>
-                        <th>Private Key (Hex 32-bytes)</th>
-                        <th>Action</th>
+                        <th style="width: 40px;">#</th>
+                        <th>Derived Address</th>
+                        <th>Private Key (WIF)</th>
+                        <th>Raw Hex</th>
                       </tr>
                     </thead>
                     <tbody id="walletDatTableBody"></tbody>
                   </table>
                 </div>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem; line-height: 1.5;">
-                  <strong>Note:</strong> Because Legacy BDB files do not specify which coin they belong to, we extract the raw 256-bit Hex. Click <strong>Convert</strong> next to any key to automatically push it into the Address & Key Converter to generate its WIF and Public Addresses.
-                </p>
               </div>
             </div>
           </div>
@@ -5038,7 +5059,8 @@ n2 = n2 ^ secureRandom[1];</div>
       converterPrivBytes: null,
       restoreMasterSeed: null,       // NEW
       restoreDerivationIndex: 0,     // NEW
-      restoreDerivationPurpose: 44   // NEW
+      restoreDerivationPurpose: 44,   // NEW
+      derivationGeneration: 0
 
     };
 
@@ -5148,42 +5170,54 @@ n2 = n2 ^ secureRandom[1];</div>
     // --- URL ROUTING & DEEP LINKING ---
     function handleUrlRouting() {
       const hash = window.location.hash.toLowerCase().replace(/^#\/?/, '');
-      const path = window.location.pathname.toLowerCase().replace(/^\/|\/$/g, '');
+      
+      // Safely extract the last segment of the path (ignores host subfolders)
+      const pathSegments = window.location.pathname.toLowerCase().split('/').filter(Boolean);
+      const lastPathSegment = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] : '';
 
-      // 1. Direct match for Wallet Utilities (supports #tools, #utilities, /tools, etc.)
+      // 1. Direct match for Wallet Utilities
       if (
-        hash === 'tools' || hash === 'utilities' || hash === 'converter' || hash === 'convertertab' ||
-        path === 'tools' || path === 'utilities'
+        hash === 'tools' || hash === 'utilities' || hash === 'convertertab' ||
+        lastPathSegment === 'tools' || lastPathSegment === 'utilities'
       ) {
         switchTab('converterTab');
         return;
       }
 
       // 2. Direct match for Security & Auditing
-      if (hash === 'about' || hash === 'security' || hash === 'audit' || hash === 'abouttab' || path === 'about') {
+      if (
+        hash === 'about' || hash === 'security' || hash === 'audit' || hash === 'abouttab' || 
+        lastPathSegment === 'about' || lastPathSegment === 'security'
+      ) {
         switchTab('aboutTab');
         return;
       }
 
-      // 3. Support deep linking to specific sidebar tools (e.g., #tools/xpub or #toolxpub)
+      // 3. Support deep linking to specific sidebar tools with extended aliases
       const toolMap = {
+        'converter': 'toolConverter',
         'xpub': 'toolXpub',
         'multisig': 'toolMultisig',
+        'vanitygen': 'toolVanity', // Alias
         'vanity': 'toolVanity',
         'restorer': 'toolRestorer',
+        'bip39': 'toolRestorer',   // Alias
         'bip85': 'toolBip85',
         'shamir': 'toolShamir',
+        'sss': 'toolShamir',       // Alias
         'txdecoder': 'toolTxDecoder',
         'psbt': 'toolPsbt',
         'wiftypo': 'toolWifTypo',
+        'casascius': 'toolMinikey',// Alias
         'minikey': 'toolMinikey',
         'qr': 'toolQrCreator',
         'scanner': 'toolQrScanner',
         'steg': 'toolSteg'
       };
 
+      // Check if the hash or the final path segment contains any of our tool keys
       for (const [key, toolId] of Object.entries(toolMap)) {
-        if (hash.includes(key)) {
+        if (hash.includes(key) || lastPathSegment.includes(key)) {
           switchTab('converterTab');
           if (typeof switchUtilityTool === 'function') {
             switchUtilityTool(toolId);
@@ -5192,7 +5226,7 @@ n2 = n2 ^ secureRandom[1];</div>
         }
       }
 
-      // Default to Entropy Generator if no route or #generator
+      // Default to Entropy Generator if no route or #generator is found
       if (hash === 'generator' || hash === 'entropytab') {
         switchTab('entropyTab');
       }
@@ -6921,6 +6955,10 @@ n2 = n2 ^ secureRandom[1];</div>
       derivationTimeout = setTimeout(async () => {
         if (!STATE.currentMnemonic) return;
 
+        // --- ADDED: Increment generation token to abort overlapping async tasks ---
+        STATE.derivationGeneration++;
+        const currentGen = STATE.derivationGeneration;
+
         // 4. PBKDF2 HMAC-SHA512 (BIP-39 Mnemonic to 512-bit Seed)
         const passphrase = document.getElementById('bip39Passphrase').value || "";
         const saltBuffer = new TextEncoder().encode("mnemonic" + passphrase);
@@ -6935,6 +6973,9 @@ n2 = n2 ^ secureRandom[1];</div>
           importedKey, 512
         );
 
+        // --- ADDED: Abort if user typed a new character while we were hashing ---
+        if (currentGen !== STATE.derivationGeneration) return;
+
         STATE.hdMasterSeed = new Uint8Array(seedBuffer);
         document.getElementById('masterSeedHex').textContent = bytesToHex(STATE.hdMasterSeed);
 
@@ -6942,6 +6983,9 @@ n2 = n2 ^ secureRandom[1];</div>
         document.getElementById('hdAddressTableBody').innerHTML = "";
         STATE.currentDerivationIndex = 0;
         await loadMoreAddresses();
+        
+        // --- ADDED: Final check before updating XPUB ---
+        if (currentGen !== STATE.derivationGeneration) return;
         updateAccountXpubDisplay(STATE.hdMasterSeed, STATE.activeDerivationPurpose, 'accountXpubStr');
       }, 300);
     }
@@ -7046,6 +7090,114 @@ n2 = n2 ^ secureRandom[1];</div>
       STATE.currentDerivationIndex = end;
     }
 
+
+    async function loadMoreAddresses() {
+      const tbody = document.getElementById('hdAddressTableBody');
+      const start = STATE.currentDerivationIndex;
+      const end = start + 10;
+      const purpose = STATE.activeDerivationPurpose;
+
+      // --- ADDED: Capture current generation ---
+      const currentGen = STATE.derivationGeneration;
+
+      for (let i = start; i < end; i++) {
+        // --- ADDED: Abort loop if generation changed (user typed or clicked tab) ---
+        if (currentGen !== STATE.derivationGeneration) return;
+
+        const derivationPath = `m/${purpose}'/0'/0'/0/${i}`;
+
+        // 1. Derive proper BIP-32 HD Private Key
+        const derived = await deriveBIP32(STATE.hdMasterSeed, derivationPath);
+        const privKeyBytes = derived.privKey;
+
+        // 2. Derive WIF Private Key
+        const wifPayload = new Uint8Array(34);
+        wifPayload[0] = 0x80;
+        wifPayload.set(privKeyBytes, 1);
+        wifPayload[33] = 0x01; // Compressed flag
+        const derivedWif = base58CheckEncode(wifPayload);
+
+        // 3. Derive Public Key via Elliptic Curve Point Multiplication (P = k * G)
+        const privKeyBigInt = BigInt('0x' + bytesToHex(privKeyBytes)) % SECP256K1_N;
+        const pubPoint = Point.G.multiply(privKeyBigInt);
+        const xHex = pubPoint.x.toString(16).padStart(64, '0');
+        const pubCompPrefix = (pubPoint.y % 2n === 0n) ? '02' : '03';
+        const pubCompBytes = hexToBytes(pubCompPrefix + xHex);
+        const hashP2pkh = hash160(pubCompBytes);
+
+        // 4. Encode Address based on User's Dropdown Selection
+        let derivedAddress = "";
+        if (purpose === 84) {
+          derivedAddress = bech32Encode('bc', 0, Array.from(hashP2pkh), false);
+        } else if (purpose === 44) {
+          const p2pkhPayload = new Uint8Array(21);
+          p2pkhPayload[0] = 0x00;
+          p2pkhPayload.set(hashP2pkh, 1);
+          derivedAddress = base58CheckEncode(p2pkhPayload);
+        } else if (purpose === 49) {
+          const redeemScript = new Uint8Array(22);
+          redeemScript[0] = 0x00;
+          redeemScript[1] = 0x14;
+          redeemScript.set(hashP2pkh, 2);
+          const scriptHash = hash160(redeemScript);
+          const p2shPayload = new Uint8Array(21);
+          p2shPayload[0] = 0x05;
+          p2shPayload.set(scriptHash, 1);
+          derivedAddress = base58CheckEncode(p2shPayload);
+        } else if (purpose === 86) {
+          derivedAddress = bech32Encode('bc', 1, Array.from(hexToBytes(xHex)), true);
+        }
+
+        // Display the full address without truncation
+        const displayAddress = derivedAddress;
+
+        // 5. Append to Table (Store the full address in data-full attribute)
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>#${i}</td>
+          <td><code style="color: var(--text-muted);">${derivationPath}</code></td>
+
+
+          <td style="font-family: monospace;" title="${derivedAddress}">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; width: 100%;">
+              <span data-full="${derivedAddress}">${displayAddress}</span>
+              <div style="display: flex; gap: 0; align-items: center;">
+                <button class="btn-icon" onclick="copyString('${derivedAddress}')" title="Copy Address">📋</button>
+                <button class="btn-icon" onclick="showQrModal('${derivedAddress}', 'Public Address')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">
+                  <svg viewBox="0 0 336 336" width="16" height="16" fill="currentColor">
+                    <path d="m 16,16 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 128,0 0,16 0,16 16,0 0,-16 16,0 0,-16 -16,0 -16,0 z m 32,16 0,16 16,0 0,-16 -16,0 z m 16,16 0,16 16,0 16,0 0,-16 0,-16 0,-16 -16,0 0,16 0,16 -16,0 z m 0,16 -16,0 -16,0 -16,0 0,16 16,0 16,0 0,16 -16,0 0,16 16,0 0,16 16,0 0,-16 16,0 0,16 -16,0 0,16 -16,0 0,16 16,0 16,0 0,16 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 0,-16 -16,0 0,-16 z m 16,112 -16,0 0,16 -16,0 0,16 0,16 16,0 0,16 0,16 -16,0 -16,0 0,-16 16,0 0,-16 -16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,16 16,0 0,-16 0,-16 -16,0 -16,0 0,-16 -16,0 -16,0 -16,0 0,16 -16,0 0,16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,16 0,16 0,16 16,0 0,-16 16,0 16,0 16,0 0,-16 16,0 0,-16 16,0 0,16 -16,0 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,16 0,16 0,16 16,0 0,16 16,0 16,0 16,0 0,16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 0,-16 -16,0 -16,0 0,-16 -16,0 0,-16 -16,0 0,16 -16,0 -16,0 0,16 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 16,0 0,-16 -16,0 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 -16,0 0,-16 z m 48,128 0,-16 -16,0 0,16 16,0 z m 32,16 16,0 16,0 0,-16 -16,0 -16,0 0,16 z m 32,-16 16,0 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 -16,0 0,16 0,16 16,0 0,-16 16,0 0,16 0,16 16,0 16,0 0,16 z m -48,-80 0,-16 -16,0 -16,0 0,16 16,0 16,0 z m 16,0 16,0 0,-16 0,-16 0,-16 16,0 0,16 16,0 0,16 16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,-16 -16,0 0,16 -16,0 0,16 16,0 0,16 0,16 0,16 z m -16,-48 -16,0 0,16 16,0 0,-16 z m 64,32 -16,0 0,16 16,0 0,-16 z m -224,0 0,-16 -16,0 0,16 16,0 z m -16,0 -16,0 -16,0 -16,0 0,16 16,0 16,0 16,0 0,-16 z m -64,0 -16,0 0,16 16,0 0,-16 z m 0,-48 0,-16 -16,0 0,16 16,0 z m 112,-16 16,0 0,-16 0,-16 -16,0 0,16 0,16 z m 96,-128 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m -208,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 224,0 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m -208,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 224,0 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m -32,96 0,16 16,0 0,-16 -16,0 z m -224,96 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 16,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 16,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 288,48 0,16 16,0 0,-16 -16,0 z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </td>
+          
+
+          <td style="font-family: monospace;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; width: 100%;">
+              <span data-full="${derivedWif}">${derivedWif}</span>
+              
+              <div style="display: flex; gap: 0; align-items: center;">
+                <button class="btn-icon" onclick="copyString('${derivedWif}')" title="Copy WIF" style="display: inline-flex; align-items: center; justify-content: center;">📋</button>
+
+                <button class="btn-icon" onclick="showQrModal('${derivedWif}', 'WIF Private Key')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">
+                  <svg viewBox="0 0 336 336" width="16" height="16" fill="currentColor">
+                    <path d="m 16,16 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 128,0 0,16 0,16 16,0 0,-16 16,0 0,-16 -16,0 -16,0 z m 32,16 0,16 16,0 0,-16 -16,0 z m 16,16 0,16 16,0 16,0 0,-16 0,-16 0,-16 -16,0 0,16 0,16 -16,0 z m 0,16 -16,0 -16,0 -16,0 0,16 16,0 16,0 0,16 -16,0 0,16 16,0 0,16 16,0 0,-16 16,0 0,16 -16,0 0,16 -16,0 0,16 16,0 16,0 0,16 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 0,-16 -16,0 0,-16 z m 16,112 -16,0 0,16 -16,0 0,16 0,16 16,0 0,16 0,16 -16,0 -16,0 0,-16 16,0 0,-16 -16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,16 16,0 0,-16 0,-16 -16,0 -16,0 0,-16 -16,0 -16,0 -16,0 0,16 -16,0 0,16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,16 0,16 0,16 16,0 0,-16 16,0 16,0 16,0 0,-16 16,0 0,-16 16,0 0,16 -16,0 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,16 0,16 0,16 16,0 0,16 16,0 16,0 16,0 0,16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 0,-16 -16,0 -16,0 0,-16 -16,0 0,-16 -16,0 0,16 -16,0 -16,0 0,16 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 16,0 0,-16 -16,0 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 -16,0 0,-16 z m 48,128 0,-16 -16,0 0,16 16,0 z m 32,16 16,0 16,0 0,-16 -16,0 -16,0 0,16 z m 32,-16 16,0 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 -16,0 0,16 0,16 16,0 0,-16 16,0 0,16 0,16 16,0 16,0 0,16 z m -48,-80 0,-16 -16,0 -16,0 0,16 16,0 16,0 z m 16,0 16,0 0,-16 0,-16 0,-16 16,0 0,16 16,0 0,16 16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,-16 -16,0 0,16 -16,0 0,16 16,0 0,16 0,16 0,16 z m -16,-48 -16,0 0,16 16,0 0,-16 z m 64,32 -16,0 0,16 16,0 0,-16 z m -224,0 0,-16 -16,0 0,16 16,0 z m -16,0 -16,0 -16,0 -16,0 0,16 16,0 16,0 16,0 0,-16 z m -64,0 -16,0 0,16 16,0 0,-16 z m 0,-48 0,-16 -16,0 0,16 16,0 z m 112,-16 16,0 0,-16 0,-16 -16,0 0,16 0,16 z m 96,-128 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m -208,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 224,0 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m -208,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 224,0 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m -32,96 0,16 16,0 0,-16 -16,0 z m -224,96 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 16,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 16,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 288,48 0,16 16,0 0,-16 -16,0 z"/>
+                  </svg>
+                </button>
+              </div>
+
+
+            </div>
+          </td>
+
+        `;
+        tbody.appendChild(row);
+      }
+      STATE.currentDerivationIndex = end;
+    }
+
+
     function copyMnemonic() {
       triggerButtonFeedback(window.event); // Immediate inline feedback
       navigator.clipboard.writeText(STATE.currentMnemonic).then(showToast);
@@ -7076,8 +7228,12 @@ n2 = n2 ^ secureRandom[1];</div>
       if (displayEl) displayEl.textContent = xpubString;
     }
 
+
     function changeDerivationPath(purpose) {
       STATE.activeDerivationPurpose = purpose;
+
+      // --- ADDED: Increment generation token to abort any running derivation loops ---
+      STATE.derivationGeneration++;
 
       // Update toggle button UI states
       const group = document.getElementById('derivationToggleGroup');
@@ -8326,7 +8482,6 @@ n2 = n2 ^ secureRandom[1];</div>
         const entropyBitsLength = words.length === 12 ? 128 : 256;
         const entropyBits = bitString.slice(0, entropyBitsLength);
         
-        // Validate the checksum here to ensure the phrase is mathematically valid
         let entropyHex = "";
         for (let i = 0; i < entropyBits.length; i += 8) {
           const byte = parseInt(entropyBits.slice(i, i+8), 2);
@@ -8344,7 +8499,7 @@ n2 = n2 ^ secureRandom[1];</div>
         }
         
         document.getElementById('restoredEntropyHex').textContent = entropyHex;
-        statusEl.className = 'input-status-msg'; // Hide status on success
+        statusEl.className = 'input-status-msg'; 
         
       } catch (err) {
         statusEl.textContent = "Invalid checksum. The phrase combination is mathematically incorrect.";
@@ -8353,12 +8508,19 @@ n2 = n2 ^ secureRandom[1];</div>
         return;
       }
 
+      // --- ADDED: Increment generation token to abort overlapping async tasks ---
+      STATE.derivationGeneration++;
+      const currentGen = STATE.derivationGeneration;
+
       // Derive the seed
       const saltBuffer = new TextEncoder().encode("mnemonic" + passphrase);
       const passwordBuffer = new TextEncoder().encode(phrase);
       const importedKey = await crypto.subtle.importKey("raw", passwordBuffer, { name: "PBKDF2" }, false, ["deriveBits"]);
       const seedBuffer = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: saltBuffer, iterations: 2048, hash: "SHA-512" }, importedKey, 512);
       
+      // --- ADDED: Abort if user typed a new character while we were hashing ---
+      if (currentGen !== STATE.derivationGeneration) return;
+
       STATE.restoreMasterSeed = new Uint8Array(seedBuffer);
       document.getElementById('restoredMasterSeedHex').textContent = bytesToHex(STATE.restoreMasterSeed);
 
@@ -8368,6 +8530,9 @@ n2 = n2 ^ secureRandom[1];</div>
 
     function changeRestoreDerivation(purpose) {
       STATE.restoreDerivationPurpose = purpose;
+
+      // --- ADDED: Increment generation token to abort any running derivation loops ---
+      STATE.derivationGeneration++;
 
       const group = document.getElementById('restorerToggleGroup');
       if (group) {
@@ -8395,7 +8560,13 @@ n2 = n2 ^ secureRandom[1];</div>
       const end = start + 10;
       const purpose = STATE.restoreDerivationPurpose;
 
+      // --- ADDED: Capture current generation ---
+      const currentGen = STATE.derivationGeneration;
+
       for (let i = start; i < end; i++) {
+        // --- ADDED: Abort loop if generation changed (user typed or clicked tab) ---
+        if (currentGen !== STATE.derivationGeneration) return;
+
         const derivationPath = `m/${purpose}'/0'/0'/0/${i}`;
 
         const derived = await deriveBIP32(STATE.restoreMasterSeed, derivationPath);
@@ -9793,8 +9964,11 @@ n2 = n2 ^ secureRandom[1];</div>
 
 
     // ==============================
-    // WALLET.DAT CARVING LOGIC
+    // WALLET.DAT CARVING & DERIVATION
     // ==============================
+
+    // Store extracted keys in memory for on-the-fly network switching
+    let carvedWalletDatKeys = [];
 
     function handleWalletDatDrop(e) {
       if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -9809,7 +9983,6 @@ n2 = n2 ^ secureRandom[1];</div>
       
       if (!file) return;
       
-      // 1. Set the initial loading state
       textDisplay.textContent = `Processing: ${file.name} (${(file.size / 1024).toFixed(1)} KB)...`;
       statusEl.className = 'input-status-msg';
       statusEl.textContent = 'Scanning BDB file binary data...';
@@ -9821,38 +9994,33 @@ n2 = n2 ^ secureRandom[1];</div>
         try {
           const arrayBuffer = e.target.result;
           const scanResult = carveWalletDat(arrayBuffer);
-          const extractedHexKeys = scanResult.keys;
+          carvedWalletDatKeys = scanResult.keys; // Save to global state
           const isEncrypted = scanResult.isEncrypted;
           
-          // 2. Clear the "Processing" state and show scan completion
           textDisplay.textContent = `File Scanned: ${file.name}`;
-          
           const resetBtn = document.querySelector('#toolWalletDat .btn-danger');
           if (resetBtn) resetBtn.style.display = 'inline-flex';
           
-          if (extractedHexKeys.length > 0) {
-            // Success: Keys found
-            renderWalletDatTable(extractedHexKeys);
+          if (carvedWalletDatKeys.length > 0) {
+            recalculateWalletDatTable(); // Render table with calculated addresses
             resultsDiv.style.display = 'block';
             
-            // Edge case: Wallet has unencrypted keys BUT also contains a Master Key
             if (isEncrypted) {
                statusEl.className = 'input-status-msg warning';
-               statusEl.textContent = `Note: We recovered ${extractedHexKeys.length} unencrypted key(s), but an 'mkey' record was also found. This means part of this wallet is password-protected and those keys could not be extracted.`;
+               statusEl.textContent = `Note: We recovered ${carvedWalletDatKeys.length} unencrypted key(s), but an 'mkey' record was also found. Part of this wallet is password-protected.`;
                statusEl.style.display = 'block';
             } else {
-               statusEl.style.display = 'none'; // Clean success
+               statusEl.style.display = 'none';
             }
             
           } else {
-            // Failure: No keys found, give specific feedback
             statusEl.style.display = 'block';
             if (isEncrypted) {
               statusEl.className = 'input-status-msg warning';
-              statusEl.textContent = "🔒 Wallet is Encrypted: We detected a Master Key ('mkey') record. There are no unencrypted private keys available to extract. You must use the original QT wallet to unlock it.";
+              statusEl.textContent = "🔒 Wallet is Encrypted: We detected a Master Key ('mkey') record. There are no unencrypted private keys available to extract.";
             } else {
               statusEl.className = 'input-status-msg error';
-              statusEl.textContent = "📭 Empty Wallet: No private keys or encryption records found. The wallet appears to be entirely empty or corrupted.";
+              statusEl.textContent = "📭 Empty Wallet: No private keys or encryption records found.";
             }
           }
         } catch (err) {
@@ -9869,54 +10037,114 @@ n2 = n2 ^ secureRandom[1];</div>
       const keysSet = new Set();
       let isEncrypted = false;
       
-      // Pattern 1: ASN.1 DER sequence for unencrypted keys
       const patternUnencrypted = [0x02, 0x01, 0x01, 0x04, 0x20];
-      
-      // Pattern 2: 'mkey' in hex (0x6d, 0x6b, 0x65, 0x79) - indicates wallet encryption
       const patternMkey = [0x6d, 0x6b, 0x65, 0x79];
       
       for (let i = 0; i < bytes.length - 37; i++) {
-        
-        // Check for unencrypted key signatures
         if (bytes[i] === patternUnencrypted[0] &&
             bytes[i+1] === patternUnencrypted[1] &&
             bytes[i+2] === patternUnencrypted[2] &&
             bytes[i+3] === patternUnencrypted[3] &&
             bytes[i+4] === patternUnencrypted[4]) {
-            
           const privKeyBytes = bytes.slice(i + 5, i + 37);
           keysSet.add(bytesToHex(privKeyBytes));
         }
         
-        // Concurrently check for the 'mkey' signature to definitively flag encryption
         if (!isEncrypted && 
-            bytes[i] === patternMkey[0] && 
-            bytes[i+1] === patternMkey[1] && 
-            bytes[i+2] === patternMkey[2] && 
-            bytes[i+3] === patternMkey[3]) {
+            bytes[i] === patternMkey[0] && bytes[i+1] === patternMkey[1] && 
+            bytes[i+2] === patternMkey[2] && bytes[i+3] === patternMkey[3]) {
           isEncrypted = true;
         }
       }
-      
-      return {
-        keys: Array.from(keysSet),
-        isEncrypted: isEncrypted
-      };
+      return { keys: Array.from(keysSet), isEncrypted: isEncrypted };
     }
 
-    function renderWalletDatTable(hexKeys) {
+    // Triggered on file load OR when the user changes the network dropdown
+    function recalculateWalletDatTable() {
       const tbody = document.getElementById('walletDatTableBody');
       tbody.innerHTML = '';
       
-      hexKeys.forEach((hex, index) => {
+      const network = document.getElementById('walletDatNetwork').value;
+      
+      // Define Altcoin Network Magic Bytes
+      let addrPrefix = 0x00; // Bitcoin Default
+      let wifPrefix = 0x80;  // Bitcoin Default
+      
+      if (network === 'LTC') {
+        addrPrefix = 0x30; wifPrefix = 0xB0;
+      } else if (network === 'DOGE') {
+        addrPrefix = 0x1E; wifPrefix = 0x9E;
+      } else if (network === 'DASH') {
+        addrPrefix = 0x4C; wifPrefix = 0xCC;
+      } else if (network === 'PPC') {
+        addrPrefix = 0x37; wifPrefix = 0xB7;
+      } else if (network === 'NMC') {
+        addrPrefix = 0x34; wifPrefix = 0xB4;
+      } else if (network === 'VTC') {
+        addrPrefix = 0x47; wifPrefix = 0xC7;
+      } else if (network === 'NVC') {
+        addrPrefix = 0x08; wifPrefix = 0x88;
+      } else if (network === 'MEC') {
+        addrPrefix = 0x32; wifPrefix = 0xB2;
+      } else if (network === 'NLG') {
+        addrPrefix = 0x26; wifPrefix = 0xA6;
+      } else if (network === 'AUR') {
+        addrPrefix = 0x17; wifPrefix = 0x97;
+      } else if (network === 'GRC') {
+        addrPrefix = 0x3E; wifPrefix = 0xBE;
+      } else if (network === 'VIA') {
+        addrPrefix = 0x47; wifPrefix = 0xC7;
+      } else if (network === 'RVN') {
+        addrPrefix = 0x3C; wifPrefix = 0x80; // RVN uses BTC WIF prefix
+      } else if (network === 'QTUM') {
+        addrPrefix = 0x3A; wifPrefix = 0x80; // QTUM uses BTC WIF prefix
+      }
+
+      carvedWalletDatKeys.forEach((hex, index) => {
+        // 1. Math Setup
+        const privKeyBytes = hexToBytes(hex);
+        const privKeyBigInt = BigInt('0x' + hex) % SECP256K1_N;
+        
+        // 2. Calculate Public Key (Assuming Compressed for UI standard)
+        const pubPoint = Point.G.multiply(privKeyBigInt);
+        const xHex = pubPoint.x.toString(16).padStart(64, '0');
+        const pubCompPrefix = (pubPoint.y % 2n === 0n) ? '02' : '03';
+        const pubCompBytes = hexToBytes(pubCompPrefix + xHex);
+        
+        // 3. Derive Address with Network Prefix
+        const hashP2pkh = hash160(pubCompBytes);
+        const p2pkhPayload = new Uint8Array(21);
+        p2pkhPayload[0] = addrPrefix;
+        p2pkhPayload.set(hashP2pkh, 1);
+        const derivedAddr = base58CheckEncode(p2pkhPayload);
+        
+        // 4. Derive WIF with Network Prefix
+        const wifPayload = new Uint8Array(34);
+        wifPayload[0] = wifPrefix;
+        wifPayload.set(privKeyBytes, 1);
+        wifPayload[33] = 0x01; // Compressed flag
+        const derivedWif = base58CheckEncode(wifPayload);
+
+        // 5. Render Row
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${index + 1}</td>
-          <td style="font-family: monospace; color: var(--btc-gold); font-weight: bold; font-size: 0.9rem;">${hex}</td>
-          <td>
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
-              <button class="btn-icon" style="background: rgba(255,255,255,0.08); padding: 0.3rem 0.6rem;" onclick="copyString('${hex}')" title="Copy Hex">📋</button>
-              <button class="btn-icon" style="color: var(--accent-cyan); font-weight: bold; background: rgba(6, 182, 212, 0.1); padding: 0.3rem 0.6rem; border: 1px solid rgba(6, 182, 212, 0.3);" onclick="sendWalletDatToConverter('${hex}')">🔄 Convert</button>
+          <td style="font-family: monospace; color: var(--accent-cyan); font-weight: bold;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span>${derivedAddr}</span>
+              <button class="btn-icon" onclick="copyString('${derivedAddr}')" title="Copy Address">📋</button>
+            </div>
+          </td>
+          <td style="font-family: monospace; color: var(--accent-red);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span>${derivedWif}</span>
+              <button class="btn-icon" onclick="copyString('${derivedWif}')" title="Copy WIF">📋</button>
+            </div>
+          </td>
+          <td style="font-family: monospace; font-size: 0.8rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span>${hex.substring(0, 10)}...${hex.substring(54)}</span>
+              <button class="btn-icon" onclick="copyString('${hex}')" title="Copy Hex">📋</button>
             </div>
           </td>
         `;
@@ -9924,25 +10152,13 @@ n2 = n2 ^ secureRandom[1];</div>
       });
     }
 
-    function sendWalletDatToConverter(hexKey) {
-      // Push the hex key directly to your existing Converter tool
-      switchUtilityTool('toolConverter');
-      const inputEl = document.getElementById('converterInput');
-      inputEl.value = hexKey;
-      onConvertInput();
-      
-      // Scroll to top to ensure the user sees the output
-      document.querySelector('.tool-display-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
     function resetWalletDatTool() {
       document.getElementById('uploadWalletDat').value = '';
       document.getElementById('textWalletDat').textContent = 'Drag & drop wallet.dat file here, or click to browse';
       document.getElementById('walletDatResults').style.display = 'none';
       document.getElementById('walletDatStatus').style.display = 'none';
+      carvedWalletDatKeys = [];
     }
-
-
 
 
 
@@ -10097,93 +10313,168 @@ n2 = n2 ^ secureRandom[1];</div>
        VANITY ADDRESS GENERATOR
        ========================================================================== */
 
-    let isVanityMining = false;
-    let vanityAttemptCount = 0;
-    let vanityCurrentPrivInt = 0n;
-    let vanityCurrentPubPoint = null;
-    let vanityDesiredPrefix = "";
-    let vanityType = "legacy";
-    let vanityCaseSensitive = true;
+    // Extended STATE specifically for Vanity Generator
+    STATE.vanityMining = false;
+    STATE.vanityFoundKeys = [];
+    STATE.vanityAttempts = 0;
+    STATE.vanityStartTime = 0;
+    STATE.vanityCurrentPrivInt = 0n;
+    STATE.vanityCurrentPubPoint = null;
+    STATE.vanityDesiredPrefix = "";
+    STATE.vanityType = "legacy";
+    STATE.vanityCaseSensitive = true;
+    STATE.vanityContinuous = false;
+    STATE.vanitySequenceLen = 0;
+    STATE.lastVanityInput = null;
 
-    function updateVanityPrefixLabel() {
-      const type = document.getElementById('vanityTypeSelect').value;
+    function switchVanityAddressTab(type) {
+      document.getElementById('btnVanityTabLegacy').classList.toggle('active', type === 'legacy');
+      document.getElementById('btnVanityTabSegWit').classList.toggle('active', type === 'segwit');
+      
+      const typeSelect = document.getElementById('vanityTypeSelect');
+      if (typeSelect) typeSelect.value = type;
+
       const label = document.getElementById('vanityPrefixLabel');
       const caseToggle = document.getElementById('vanityCaseSensitive');
       
       if (type === 'legacy') {
-        label.textContent = '1';
-        caseToggle.disabled = false;
+        if (label) label.textContent = '1';
+        if (caseToggle) caseToggle.disabled = false;
       } else {
-        label.textContent = 'bc1q';
-        caseToggle.disabled = true;
-        caseToggle.checked = false; // SegWit addresses are fundamentally lowercase
+        if (label) label.textContent = 'bc1q';
+        if (caseToggle) {
+          caseToggle.disabled = true;
+          caseToggle.checked = false; 
+        }
+      }
+    }
+
+    function showVanityPaperWalletPopup() {
+      if (STATE.vanityMining || STATE.vanityFoundKeys.length === 0) return;
+      document.getElementById('vanityModalKeyCount').textContent = STATE.vanityFoundKeys.length;
+      document.getElementById('vanityPaperWalletModal').classList.add('open');
+    }
+
+    function closeVanityPaperWalletModal(e) {
+      if (e && e.target.id !== 'vanityPaperWalletModal') return;
+      document.getElementById('vanityPaperWalletModal').classList.remove('open');
+    }
+
+    function updateVanityPaperWalletBtnState() {
+      const btn = document.getElementById('btnVanityPaperWallet');
+      if (!btn) return;
+      
+      if (!STATE.vanityMining && STATE.vanityFoundKeys.length > 0) {
+        btn.style.display = 'inline-flex';
+        btn.disabled = false;
+        btn.textContent = `🖨️ Create Paper Wallet (${STATE.vanityFoundKeys.length})`;
+      } else {
+        btn.style.display = 'none';
+        btn.disabled = true;
       }
     }
 
     function resetVanityTool() {
-      isVanityMining = false;
-      vanityAttemptCount = 0;
+      STATE.vanityMining = false;
+      STATE.vanityFoundKeys = [];
+      STATE.vanityAttempts = 0;
+      STATE.lastVanityInput = null;
+      
       document.getElementById('vanityEntropyInput').value = '';
       document.getElementById('vanitySequenceInput').value = '';
       document.getElementById('vanityResults').style.display = 'none';
       
       const statusEl = document.getElementById('vanityStatus');
-      statusEl.className = 'input-status-msg';
-      statusEl.style.display = 'none';
+      if (statusEl) {
+        statusEl.className = 'input-status-msg';
+        statusEl.style.display = 'none';
+      }
       
-      const btn = document.getElementById('btnStartVanity');
-      btn.textContent = '⛏️ Start Mining';
-      btn.classList.remove('btn-danger');
-      btn.classList.add('btn-primary');
-
+      const startBtn = document.getElementById('btnStartVanity');
+      if (startBtn) {
+        startBtn.textContent = '⛏️ Start Mining';
+        startBtn.classList.remove('btn-danger');
+        startBtn.classList.add('btn-primary');
+      }
+      
+      const miningDot = document.getElementById('vanityMiningDot');
+      if (miningDot) miningDot.style.display = 'none';
+      
+      const indicator = document.getElementById('vanityMiningIndicator');
+      if (indicator) indicator.textContent = '';
+      
       const etaElement = document.getElementById('vanityETA');
       if (etaElement) etaElement.textContent = "Calculating...";
+
+      const speedElement = document.getElementById('vanitySpeed');
+      if (speedElement) speedElement.textContent = "0 keys/s";
+
+      // --- NEW: Reset the Metric Counters in the UI ---
+      const foundCount = document.getElementById('vanityFoundCount');
+      if (foundCount) foundCount.textContent = '0';
+
+      const attemptsCount = document.getElementById('vanityAttempts');
+      if (attemptsCount) attemptsCount.textContent = '0';
+
+      const foundList = document.getElementById('vanityFoundListContainer');
+      if (foundList) foundList.innerHTML = '';
+      
+      updateVanityPaperWalletBtnState();
     }
 
     function toggleVanityMining() {
-      if (isVanityMining) {
-        // Stop mining
-        isVanityMining = false;
+      if (STATE.vanityMining) {
+        // STOP MINING
+        STATE.vanityMining = false;
         const btn = document.getElementById('btnStartVanity');
-        btn.textContent = '⛏️ Start Mining';
+        btn.textContent = '⛏️ Resume Mining';
         btn.classList.remove('btn-danger');
         btn.classList.add('btn-primary');
-        document.getElementById('vanityMiningIndicator').textContent = 'Stopped';
+        document.getElementById('vanityMiningIndicator').textContent = 'Paused';
+        document.getElementById('vanityMiningIndicator').style.color = 'var(--text-muted)';
         document.getElementById('vanityMiningDot').style.display = 'none';
         
         const etaElement = document.getElementById('vanityETA');
-        if (etaElement) etaElement.textContent = "Stopped";
+        if (etaElement) etaElement.textContent = "Paused";
+        
+        updateVanityPaperWalletBtnState();
         return;
       }
 
-      // Start mining preparations
-      window.vanityStartTime = performance.now();
-      window.vanitySequenceLen = document.getElementById('vanitySequenceInput').value.length;
-      window.vanityIsLegacy = document.getElementById('vanityTypeSelect').value === 'legacy';
-      
-      const etaElement = document.getElementById('vanityETA');
-      if (etaElement) etaElement.textContent = "Calculating...";
-
+      // START MINING PREPARATIONS
+      STATE.vanityStartTime = performance.now();
       const inputEntropy = document.getElementById('vanityEntropyInput').value.trim();
       const seqInput = document.getElementById('vanitySequenceInput').value.trim();
-      vanityType = document.getElementById('vanityTypeSelect').value;
-      vanityCaseSensitive = document.getElementById('vanityCaseSensitive').checked;
       const statusEl = document.getElementById('vanityStatus');
+      
+      STATE.vanitySequenceLen = seqInput.length;
+      STATE.vanityType = document.getElementById('vanityTypeSelect').value;
+      STATE.vanityCaseSensitive = document.getElementById('vanityCaseSensitive').checked;
+      
+      const continuousCheckbox = document.getElementById('vanityContinuous');
+      STATE.vanityContinuous = continuousCheckbox ? continuousCheckbox.checked : false;
 
-      const prefixLabel = vanityType === 'legacy' ? '1' : 'bc1q';
-      vanityDesiredPrefix = prefixLabel + seqInput;
+      const prefixLabel = STATE.vanityType === 'legacy' ? '1' : 'bc1q';
+      STATE.vanityDesiredPrefix = prefixLabel + seqInput;
 
-      if (vanityType === 'segwit') {
-        vanityCaseSensitive = false; // Force false for Bech32
-        vanityDesiredPrefix = vanityDesiredPrefix.toLowerCase();
+      if (STATE.vanityType === 'segwit') {
+        STATE.vanityCaseSensitive = false;
+        STATE.vanityDesiredPrefix = STATE.vanityDesiredPrefix.toLowerCase();
       }
 
-      if (!vanityCaseSensitive) {
-        vanityDesiredPrefix = vanityDesiredPrefix.toLowerCase();
+      if (!STATE.vanityCaseSensitive) {
+        STATE.vanityDesiredPrefix = STATE.vanityDesiredPrefix.toLowerCase();
+      }
+
+      if (!seqInput) {
+        statusEl.textContent = 'Please enter a desired vanity prefix sequence.';
+        statusEl.className = 'input-status-msg error';
+        statusEl.style.display = 'block';
+        return;
       }
 
       // Validation
-      if (vanityType === 'legacy') {
+      if (STATE.vanityType === 'legacy') {
         const invalidChars = seqInput.match(/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]/g);
         if (invalidChars) {
           statusEl.textContent = `Invalid Base58 characters in sequence: ${invalidChars.join(', ')} (0, O, I, l are not allowed).`;
@@ -10191,7 +10482,7 @@ n2 = n2 ^ secureRandom[1];</div>
           statusEl.style.display = 'block';
           return;
         }
-      } else if (vanityType === 'segwit') {
+      } else if (STATE.vanityType === 'segwit') {
         const invalidChars = seqInput.match(/[^qpzry9x8gf2tvdw0s3jn54khce6mua7l]/gi);
         if (invalidChars) {
           statusEl.textContent = `Invalid Bech32 characters in sequence: ${invalidChars.join(', ')} (1, b, i, o are not allowed in the data part).`;
@@ -10209,88 +10500,102 @@ n2 = n2 ^ secureRandom[1];</div>
         statusEl.style.display = 'none';
       }
 
-      // Parse starting entropy
-      let privBytes;
-      try {
-        if (inputEntropy.length === 64 && /^[0-9a-fA-F]+$/.test(inputEntropy)) {
-          privBytes = hexToBytes(inputEntropy);
-        } else if (inputEntropy.length > 50) {
-          const payload = base58CheckDecode(inputEntropy);
-          privBytes = payload.slice(1, 33);
-        } else {
-          // If empty or invalid, generate a random starting point
-          privBytes = new Uint8Array(32);
-          window.crypto.getRandomValues(privBytes);
-          document.getElementById('vanityEntropyInput').value = bytesToHex(privBytes);
-        }
-      } catch (err) {
-        statusEl.textContent = 'Invalid starting entropy format.';
-        statusEl.className = 'input-status-msg error';
-        statusEl.style.display = 'block';
-        return;
+      // Check if we need to generate a new key sequence
+      let requiresNewSeed = false;
+      if (inputEntropy === "") {
+        requiresNewSeed = true;
+      } else if (inputEntropy !== STATE.lastVanityInput) {
+        requiresNewSeed = true;
       }
 
-      vanityCurrentPrivInt = BigInt('0x' + bytesToHex(privBytes)) % SECP256K1_N;
-      if (vanityCurrentPrivInt === 0n) vanityCurrentPrivInt = 1n;
-      vanityCurrentPubPoint = Point.G.multiply(vanityCurrentPrivInt);
+      if (requiresNewSeed) {
+        let privBytes;
+        try {
+          if (inputEntropy === "") {
+            privBytes = new Uint8Array(32);
+            window.crypto.getRandomValues(privBytes);
+            const newHex = bytesToHex(privBytes);
+            document.getElementById('vanityEntropyInput').value = newHex;
+            STATE.lastVanityInput = newHex; 
+          } else if (inputEntropy.length === 64 && /^[0-9a-fA-F]+$/.test(inputEntropy)) {
+            privBytes = hexToBytes(inputEntropy);
+            STATE.lastVanityInput = inputEntropy;
+          } else if (inputEntropy.length > 50) {
+            const payload = base58CheckDecode(inputEntropy);
+            privBytes = payload.slice(1, 33);
+            STATE.lastVanityInput = inputEntropy;
+          } else {
+            statusEl.textContent = 'Invalid starting entropy format. Use 64-char Hex or WIF.';
+            statusEl.className = 'input-status-msg error';
+            statusEl.style.display = 'block';
+            return;
+          }
+        } catch (err) {
+          statusEl.textContent = 'Invalid starting entropy format.';
+          statusEl.className = 'input-status-msg error';
+          statusEl.style.display = 'block';
+          return;
+        }
+
+        STATE.vanityCurrentPrivInt = BigInt('0x' + bytesToHex(privBytes)) % SECP256K1_N;
+        if (STATE.vanityCurrentPrivInt === 0n) STATE.vanityCurrentPrivInt = 1n;
+        STATE.vanityCurrentPubPoint = Point.G.multiply(STATE.vanityCurrentPrivInt);
+        STATE.vanityAttempts = 0; 
+      }
+
+      STATE.vanityMining = true;
       
-      vanityAttemptCount = 0;
-      isVanityMining = true;
-      
-      // UI Updates
       const btn = document.getElementById('btnStartVanity');
       btn.textContent = '⏹️ Stop Mining';
       btn.classList.remove('btn-primary');
       btn.classList.add('btn-danger');
       
       document.getElementById('vanityResults').style.display = 'block';
-      document.getElementById('outVanityAddress').textContent = '-';
-      document.getElementById('outVanityWif').textContent = '-';
-      document.getElementById('outVanityAddrTitle').textContent = vanityType === 'legacy' ? 'Found Legacy Address' : 'Found SegWit Address';
-      document.getElementById('vanityMiningIndicator').textContent = 'Mining...';
+      document.getElementById('vanityMiningIndicator').textContent = 'Mining Active...';
+      document.getElementById('vanityMiningIndicator').style.color = 'var(--accent-cyan)';
       document.getElementById('vanityMiningDot').style.display = 'inline-block';
-      document.getElementById('vanityAttempts').textContent = '0';
-
-      // Kick off the mining loop
+      
+      updateVanityPaperWalletBtnState();
       setTimeout(mineVanityBatch, 10);
     }
 
     function mineVanityBatch() {
-      if (!isVanityMining) return;
+      if (!STATE.vanityMining) return;
 
-      const BATCH_SIZE = 2000; // Increased throughput
-      let found = false;
+      const BATCH_SIZE = 2000; 
+      let newlyFound = false;
 
       for (let i = 0; i < BATCH_SIZE; i++) {
         // 1. Get compressed public key hex from current point
-        const prefix = (vanityCurrentPubPoint.y % 2n === 0n) ? '02' : '03';
-        const xHex = vanityCurrentPubPoint.x.toString(16).padStart(64, '0');
+        const prefix = (STATE.vanityCurrentPubPoint.y % 2n === 0n) ? '02' : '03';
+        const xHex = STATE.vanityCurrentPubPoint.x.toString(16).padStart(64, '0');
         const pubCompBytes = hexToBytes(prefix + xHex);
         const hashP2pkh = hash160(pubCompBytes);
         
         let address = '';
+        let leadTrim = '';
         
         // 2. Encode format based on selection
-        if (vanityType === 'legacy') {
+        if (STATE.vanityType === 'legacy') {
           const p2pkhPayload = new Uint8Array(21);
           p2pkhPayload[0] = 0x00;
           p2pkhPayload.set(hashP2pkh, 1);
           address = base58CheckEncode(p2pkhPayload);
+          leadTrim = address.substring(1); 
         } else {
           address = bech32Encode('bc', 0, Array.from(hashP2pkh), false);
+          leadTrim = address.substring(4); 
         }
 
-        let checkAddr = address;
-        if (!vanityCaseSensitive) {
-          checkAddr = checkAddr.toLowerCase();
-        }
+        let testStr = (STATE.vanityType === 'legacy' && !STATE.vanityCaseSensitive) ? leadTrim.toLowerCase() : leadTrim;
+        let matchTarget = (STATE.vanityType === 'legacy' && !STATE.vanityCaseSensitive) ? STATE.vanityDesiredPrefix.substring(1).toLowerCase() : STATE.vanityDesiredPrefix.substring(STATE.vanityType === 'legacy' ? 1 : 4);
+
 
         // 3. Check for match
-        if (checkAddr.startsWith(vanityDesiredPrefix)) {
-          found = true;
+        if (testStr.startsWith(matchTarget)) {
+          newlyFound = true;
           
-          // Calculate final WIF
-          const finalPrivHex = vanityCurrentPrivInt.toString(16).padStart(64, '0');
+          const finalPrivHex = STATE.vanityCurrentPrivInt.toString(16).padStart(64, '0');
           const finalPrivBytes = hexToBytes(finalPrivHex);
           const wifPayload = new Uint8Array(34);
           wifPayload[0] = 0x80;
@@ -10298,76 +10603,120 @@ n2 = n2 ^ secureRandom[1];</div>
           wifPayload[33] = 0x01;
           const wifComp = base58CheckEncode(wifPayload);
 
-          document.getElementById('outVanityAddress').textContent = address;
-          document.getElementById('outVanityWif').textContent = wifComp;
-          break;
+          const foundKey = {
+            index: STATE.vanityFoundKeys.length + 1,
+            address: address,
+            wif: wifComp,
+            addressType: STATE.vanityType,
+            timestamp: new Date().toLocaleTimeString()
+          };
+
+          STATE.vanityFoundKeys.push(foundKey);
+          
+          if (!STATE.vanityContinuous) {
+            break; 
+          }
         }
 
-        // 4. Increment Private Key and Public Key Point
-        vanityCurrentPrivInt = (vanityCurrentPrivInt + 1n) % SECP256K1_N;
-        vanityCurrentPubPoint = vanityCurrentPubPoint.add(Point.G);
+        // 4. Increment Private Key and Public Key Point efficiently
+        STATE.vanityCurrentPrivInt = (STATE.vanityCurrentPrivInt + 1n) % SECP256K1_N;
+        STATE.vanityCurrentPubPoint = STATE.vanityCurrentPubPoint.add(Point.G);
       }
 
-      vanityAttemptCount += BATCH_SIZE;
-      document.getElementById('vanityAttempts').textContent = vanityAttemptCount.toLocaleString();
+      STATE.vanityAttempts += BATCH_SIZE;
       
-      // Update the ETA
-      updateVanityETA(vanityAttemptCount, window.vanityStartTime, window.vanitySequenceLen, window.vanityIsLegacy);
+      document.getElementById('vanityAttempts').textContent = STATE.vanityAttempts.toLocaleString();
+      
+      // Update both ETA and Speed Metrics
+      updateVanityETA(STATE.vanityAttempts, STATE.vanityStartTime, STATE.vanitySequenceLen, STATE.vanityType === 'legacy');
 
-      if (found) {
-        isVanityMining = false;
-        const btn = document.getElementById('btnStartVanity');
-        btn.textContent = '⛏️ Start Mining';
-        btn.classList.remove('btn-danger');
-        btn.classList.add('btn-primary');
-        document.getElementById('vanityMiningIndicator').textContent = 'Found!';
-        document.getElementById('vanityMiningDot').style.display = 'none';
-        
-        const etaElement = document.getElementById('vanityETA');
-        if (etaElement) etaElement.textContent = "Done";
+      if (newlyFound) {
+        renderVanityFoundResults();
+
+        if (!STATE.vanityContinuous) {
+          STATE.vanityMining = false;
+          const btn = document.getElementById('btnStartVanity');
+          btn.textContent = '⛏️ Start Mining';
+          btn.classList.remove('btn-danger');
+          btn.classList.add('btn-primary');
+          document.getElementById('vanityMiningIndicator').textContent = 'Found & Completed!';
+          document.getElementById('vanityMiningIndicator').style.color = 'var(--accent-green)';
+          document.getElementById('vanityMiningDot').style.display = 'none';
+          
+          const etaElement = document.getElementById('vanityETA');
+          if (etaElement) etaElement.textContent = "Done";
+          
+          updateVanityPaperWalletBtnState();
+        } else {
+          setTimeout(mineVanityBatch, 0);
+        }
       } else {
-        // Schedule next batch
         setTimeout(mineVanityBatch, 0);
       }
     }
 
-    // Handles the new button toggle logic for Legacy/SegWit
-    function switchVanityAddressTab(type) {
-      document.getElementById('btnVanityTabLegacy').classList.remove('active');
-      document.getElementById('btnVanityTabSegWit').classList.remove('active');
-      
-      if (type === 'legacy') {
-        document.getElementById('btnVanityTabLegacy').classList.add('active');
-        document.getElementById('vanityTypeSelect').value = 'legacy';
-      } else {
-        document.getElementById('btnVanityTabSegWit').classList.add('active');
-        document.getElementById('vanityTypeSelect').value = 'segwit';
-      }
-      
-      // Trigger your existing prefix update function
-      if (typeof updateVanityPrefixLabel === 'function') {
-        updateVanityPrefixLabel();
-      }
+    function renderVanityFoundResults() {
+      const container = document.getElementById('vanityFoundListContainer');
+      if (!container) return;
+
+      container.innerHTML = '';
+      const countEl = document.getElementById('vanityFoundCount');
+      if (countEl) countEl.textContent = STATE.vanityFoundKeys.length;
+
+      // Render cards in reverse chronological order
+      [...STATE.vanityFoundKeys].reverse().forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'output-group';
+        card.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        card.style.background = 'rgba(16, 185, 129, 0.04)';
+        card.style.marginBottom = '0.75rem';
+
+        card.innerHTML = `
+          <div class="output-header">
+            <span class="output-title" style="color: var(--accent-green);">
+              Result #${item.index} (${item.addressType.toUpperCase()})
+            </span>
+            <span class="output-tag" style="color: var(--text-muted);">${item.timestamp}</span>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+            <div>
+              <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Public Address:</span>
+              <div class="value-box" style="margin-top: 0.2rem;">
+                <span style="color: var(--accent-green); font-weight: bold;">${item.address}</span>
+                <button class="btn-icon" onclick="copyString('${item.address}')" title="Copy Address">📋</button>
+              </div>
+            </div>
+
+            <div>
+              <span style="font-size: 0.72rem; color: var(--accent-red); font-weight: bold; text-transform: uppercase;">Private Key (WIF Compressed):</span>
+              <div class="value-box" style="margin-top: 0.2rem; border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05);">
+                <span style="color: var(--text-main);">${item.wif}</span>
+                <button class="btn-icon" onclick="copyString('${item.wif}')" title="Copy Private Key">📋</button>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
     }
 
-    // ETA Calculation Helper (Call this inside your vanity mining loop, e.g., every 1000 keys)
     function updateVanityETA(keysSearched, startTimeMs, sequenceLength, isLegacy) {
       const etaElement = document.getElementById('vanityETA');
-      if (!etaElement) return;
+      const speedElement = document.getElementById('vanitySpeed');
+      if (!etaElement || !speedElement) return;
 
       const elapsedSeconds = (performance.now() - startTimeMs) / 1000;
+      
+      const keysPerSecond = keysSearched / (elapsedSeconds || 1);
+      speedElement.textContent = Math.round(keysPerSecond).toLocaleString() + " keys/sec";
+
       if (elapsedSeconds < 2 || keysSearched < 500) {
           etaElement.textContent = "Calculating...";
           return;
       }
 
-      const keysPerSecond = keysSearched / elapsedSeconds;
-      
-      // Calculate probability space
-      // Base58 has 58 characters, Bech32 has 32 characters
       const base = isLegacy ? 58 : 32;
-      
-      // Note: This is a rough estimation. Case-insensitive legacy is highly complex to estimate accurately.
       const totalExpectedKeys = Math.pow(base, sequenceLength);
       
       const remainingKeys = Math.max(0, totalExpectedKeys - keysSearched);
@@ -10384,19 +10733,104 @@ n2 = n2 ^ secureRandom[1];</div>
       }
     }
 
+    function printVanityWallets() {
+      const keys = STATE.vanityFoundKeys;
+      if (!keys || keys.length === 0) return;
 
+      closeVanityPaperWalletModal();
 
+      const container = document.getElementById('paperWalletPrint');
+      container.innerHTML = '';
+      let html = '';
 
+      const simWarningHTML = STATE.hasSimulatedEntropy ? `
+        <div class="warning-banner" style="width: 100%; box-sizing: border-box; margin-bottom: 10px; background: #fee2e2 !important; border: 2px solid #ef4444 !important; color: #b91c1c !important; padding: 6px !important; text-align: center !important; justify-content: center !important; font-family: -apple-system, sans-serif !important; font-weight: bold !important; border-radius: 4px !important;">
+          ⚠️ WARNING: SIMULATED ENTROPY - FOR TESTING/LEARNING ONLY.
+        </div>` : '';
 
+      // Minimalist Text Mode (10 keys per page)
+      const chunkSize = 10;
+      for (let i = 0; i < keys.length; i += chunkSize) {
+        const chunk = keys.slice(i, i + chunkSize);
+        html += `
+          <div class="print-page" style="padding: 0 0.15in; box-sizing: border-box; font-family: monospace; width: 8.5in; margin: 0 auto;">
+            <div class="cutout-scissors-top" style="margin-bottom: 4px; font-size: 0.65rem;">✂--------------------- Cut along dashed line ---------------------✂</div>
+            ${simWarningHTML}
+            <h2 style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 4px; margin-top: 0; margin-bottom: 6px; font-size: 1.1rem;">
+              Vanity Key Backup (Keys ${i + 1} to ${i + chunk.length} of ${keys.length})
+            </h2>
+        `;
 
+        chunk.forEach(k => {
+          html += `
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; padding: 5px 0; align-items: center; page-break-inside: avoid; gap: 10px; width: 100%; box-sizing: border-box;">
+              
+              <!-- Address QR Wrapper -->
+              <div style="text-align: center; flex-shrink: 0; width: 60px;">
+                <div id="qr_v_nd_a_${k.index}" class="print-qr" style="width: 50px; height: 50px; margin: 0 auto;"></div>
+                <span style="font-size: 0.55rem; color: #666; font-weight: bold; letter-spacing: 0.5px; display: block; margin-top: 4px;">ADDRESS</span>
+              </div>
 
+              <!-- Text Content -->
+              <div style="flex: 1; min-width: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 5px; gap: 10px;">
+                <div style="text-align: left; flex: 1;">
+                  <div style="font-weight: bold; margin-bottom: 2px; font-size: 0.72rem;">#${k.index} - Vanity Address</div>
+                  <div style="font-size: 0.65rem; word-break: break-all; color: #047857; font-weight: bold; line-height: 1.2;">${k.address}</div>
+                </div>
+                <div style="text-align: right; flex: 1.2;">
+                  <div style="font-weight: bold; margin-bottom: 2px; font-size: 0.72rem; color: #dc2626;">Private Key (WIF)</div>
+                  <div style="font-size: 0.65rem; word-break: break-all; color: #000; line-height: 1.2;">${k.wif}</div>
+                </div>
+              </div>
 
+              <!-- Secret QR Wrapper -->
+              <div style="text-align: center; flex-shrink: 0; width: 60px;">
+                <div id="qr_v_nd_w_${k.index}" class="print-qr" style="width: 50px; height: 50px; margin: 0 auto;"></div>
+                <span style="font-size: 0.55rem; color: #dc2626; font-weight: bold; letter-spacing: 0.5px; display: block; margin-top: 4px;">SECRET</span>
+              </div>
+              
+            </div>
+          `;
+        });
 
+        html += `
+            <div class="cutout-scissors-bottom" style="margin-top: 4px; font-size: 0.65rem;">✂-------------------------------------------------------------✂</div>
+          </div>
+        `;
+      }
 
+      container.innerHTML = html;
 
+      // Draw high-res canvas (128x128) so it stays crisp when CSS scales it down to 50px
+      const qrOptions = { width: 128, height: 128, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M };
 
+      keys.forEach(k => {
+        new QRCode(document.getElementById(`qr_v_nd_a_${k.index}`), { ...qrOptions, text: k.address });
+        new QRCode(document.getElementById(`qr_v_nd_w_${k.index}`), { ...qrOptions, text: k.wif });
+      });
 
+      // INJECT CSS TO OVERRIDE THE GLOBAL !IMPORTANT QR SIZES
+      const style = document.createElement('style');
+      style.innerHTML = `
+        .print-qr canvas, .print-qr img { width: 100% !important; height: 100% !important; display: block; }
+        @media print {
+          body.print-mode-single #paperWalletPrint { 
+            display: block !important; 
+            padding-top: 0 !important; 
+          }
+          .print-page { 
+            page-break-after: always !important; 
+            page-break-inside: avoid !important; 
+          }
+        }
+      `;
+      container.appendChild(style);
 
+      document.body.classList.add('print-mode-single');
+      document.body.classList.remove('print-mode-seed');
+
+      window.print();
+    }
 
 
 
@@ -10671,6 +11105,29 @@ n2 = n2 ^ secureRandom[1];</div>
     </div>
   </div>
 
+
+
+  <!-- VANITY PAPER WALLET MODAL (Simplified for Minimalist Only) -->
+  <div class="modal-overlay" id="vanityPaperWalletModal" onclick="closeVanityPaperWalletModal(event)">
+    <div class="modal-card" style="max-width: 450px; text-align: left;" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="color: var(--btc-gold); margin: 0; font-size: 1.15rem;">🖨️ Create Paper Wallets</h3>
+        <button onclick="closeVanityPaperWalletModal()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--text-main); margin-bottom: 0.5rem; line-height: 1.5;">
+        The tool will generate a high-density minimalist printable backup for all <strong id="vanityModalKeyCount" style="color: var(--accent-green); font-size: 1rem;">0</strong> found vanity key(s).
+      </p>
+      <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        * Layout automatically fits 10 keys per printed page to maximize paper efficiency.
+      </p>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+        <button class="btn" onclick="closeVanityPaperWalletModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="printVanityWallets()" style="width: auto; padding: 0.6rem 1.5rem;">🖨️ Print Wallets</button>
+      </div>
+    </div>
+  </div>
 
   <!-- BIP-38 Unlock Modal -->
   <div class="modal-overlay" id="bip38UnlockModal" onclick="closeBip38Modal(event)">
