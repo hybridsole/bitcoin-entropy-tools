@@ -2384,6 +2384,33 @@
     }
 
 
+    /* Quantity Selection Buttons */
+    .qty-btn {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .qty-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(247, 147, 26, 0.4);
+    }
+
+    .qty-btn.active {
+      background: rgba(247, 147, 26, 0.12);
+      border-color: var(--btc-gold);
+      color: var(--btc-gold);
+      box-shadow: 0 0 10px rgba(247, 147, 26, 0.15);
+    }
+
     /* === STEGANOGRAPHY TOOL CSS === */
     .drop-zone { border: 2px dashed var(--card-border); border-radius: var(--radius); padding: 30px 20px; text-align: center; cursor: pointer; background-color: rgba(0, 0, 0, 0.2); transition: var(--transition); margin-bottom: 15px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100px; }
     .drop-zone:hover, .drop-zone.dragover { border-color: var(--btc-gold); background-color: rgba(247, 147, 26, 0.05); }
@@ -2603,7 +2630,7 @@
     <nav id="mainNav">
       <button class="nav-tab active" id="tabBtn-entropyTab" onclick="switchTab('entropyTab')">🎲 Entropy Generator</button>
       <button class="nav-tab" id="tabBtn-converterTab" onclick="switchTab('converterTab')">🧰 Wallet Tools</button>
-      <button class="nav-tab" id="tabBtn-aboutTab" onclick="switchTab('aboutTab')">🛡️ About</button>
+      <button class="nav-tab" id="tabBtn-aboutTab" onclick="switchTab('aboutTab')">🛡️ About & Security</button>
     </nav>
   </header>
 
@@ -3224,6 +3251,11 @@
           <span class="mobile-tool-title">Vanity Generator</span>
           <span class="mobile-tool-desc">Custom Prefixes</span>
         </div>
+        <div class="mobile-tool-card" onclick="selectMobileTool('toolCustomPaperWallet')">
+          <span class="mobile-tool-icon">🖨️</span>
+          <span class="mobile-tool-title">Custom Wallets</span>
+          <span class="mobile-tool-desc">Design & Print Bulk</span>
+        </div>
         <div class="mobile-tool-card" onclick="selectMobileTool('toolRestorer')">
           <span class="mobile-tool-icon">🌱</span>
           <span class="mobile-tool-title">Seed Restorer</span>
@@ -3290,6 +3322,8 @@
           <button class="sidebar-btn" id="btn-toolXpub" onclick="switchUtilityTool('toolXpub')"><span style="font-size: 1.1rem;">👁️</span> XPUB Viewer</button>
           <button class="sidebar-btn" id="btn-toolMultisig" onclick="switchUtilityTool('toolMultisig')"><span style="font-size: 1.1rem;">🤝</span> Multisig Generator</button>
           <button class="sidebar-btn" id="btn-toolVanity" onclick="switchUtilityTool('toolVanity')"><span style="font-size: 1.1rem;">💎</span> Vanity Generator</button>
+          <button class="sidebar-btn" id="btn-toolCustomPaperWallet" onclick="switchUtilityTool('toolCustomPaperWallet')"><span style="font-size: 1.1rem;">🖨️</span> Custom Paper Wallet</button>
+
 
           <div class="sidebar-category">🌱 Seeds & Backups</div>
           <button class="sidebar-btn" id="btn-toolRestorer" onclick="switchUtilityTool('toolRestorer')"><span style="font-size: 1.1rem;">🌱</span> BIP-39 Seed Restorer</button>
@@ -3336,6 +3370,7 @@
               <button class="mobile-drawer-btn" onclick="selectMobileTool('toolXpub')">👁️ XPUB Viewer</button>
               <button class="mobile-drawer-btn" onclick="selectMobileTool('toolMultisig')">🤝 Multisig</button>
               <button class="mobile-drawer-btn" onclick="selectMobileTool('toolVanity')">💎 Vanity Gen</button>
+              <button class="mobile-drawer-btn" onclick="selectMobileTool('toolCustomPaperWallet')">🖨️ Custom Wallets</button>
               <button class="mobile-drawer-btn" onclick="selectMobileTool('toolRestorer')">🌱 Restorer</button>
               <button class="mobile-drawer-btn" onclick="selectMobileTool('toolBip85')">🌳 BIP-85</button>
               <button class="mobile-drawer-btn" onclick="selectMobileTool('toolShamir')">🧩 Shamir SSS</button>
@@ -3530,10 +3565,14 @@
                   <label style="font-size: 0.8rem; color: var(--text-muted);">Starting Entropy (WIF or Hex)</label>
                   <span class="tooltip-icon" data-tooltip="Gather physical randomness on the Entropy Key Generator tab (dice rolls, coin flips, or mouse movements) and copy the 64-character 'SHA-256 Entropy Hex Key' or a generated WIF Private Key (starts with K, L, or 5). Leave blank to auto-generate a secure random starting point.">?</span>
                 </div>
-                <input type="text" id="vanityEntropyInput" placeholder="Leave blank for random start..." 
-                  style="width: 100%; padding: 0.8rem; background: rgba(15,23,42,0.8); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-family: monospace;">
+                <div style="display: flex; gap: 0.5rem; align-items: center; width: 100%;">
+                  <input type="text" id="vanityEntropyInput" placeholder="Leave blank for random start..." 
+                    style="flex: 1; padding: 0.8rem; background: rgba(15,23,42,0.8); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-family: monospace;">
+                  <button class="btn" type="button" onclick="openMouseEntropyModal('vanity')" style="white-space: nowrap; padding: 0.8rem 1rem; background: rgba(247, 147, 26, 0.15); border-color: var(--btc-gold); color: var(--btc-gold);">🖱️ Get Mouse Entropy</button>
+                </div>
               </div>
             </div>
+
 
             <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: flex-start;">
               <!-- Column 1: Address Type (Pinned to natural height) -->
@@ -3983,27 +4022,35 @@
                TOOL 10: WIF TYPO
                ============================== -->
           <div id="toolWifTypo" class="tool-section">
-            <h3 style="color: var(--text-main); margin-bottom: 0.25rem; font-size: 1.15rem;">🚑 WIF Typo Resolver & Auditor</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Recover a private key with a single mistyped character</p>
+            <h3 style="color: var(--text-main); margin-bottom: 0.25rem; font-size: 1.15rem;">🚑 Private Key Typo Resolver</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Recover a WIF private key with missing or mistyped characters</p>
             
             <p style="color: var(--text-muted); margin-bottom: 1rem;">
-              If you wrote down a Base58 WIF Private Key but it fails to import (e.g., confusing a '1' for an 'l' or 'U' for 'V'), this tool will mathematically brute-force the checksum to find the single mistaken character.
+              If you wrote down a Base58 Private Key but it fails to import, this tool will mathematically brute-force the checksum to find and restore up to 2 missing or incorrect characters.
             </p>
-            <div class="textarea-wrapper">
-              <input type="text" id="wifTypoInput" placeholder="Enter broken WIF string here..." 
-                style="width: 100%; padding: 0.8rem; background: rgba(15,23,42,0.8); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-family: monospace;">
+            
+            <div class="textarea-wrapper" style="margin-bottom: 0.5rem;">
+              <input type="text" id="wifTypoInput" placeholder="Enter broken private key here..." 
+                style="width: 100%; padding: 0.8rem; background: rgba(15,23,42,0.8); border: 1px solid var(--card-border); color: #fff; border-radius: 8px; font-family: monospace;" 
+                oninput="analyzeTypoInput()">
             </div>
+            
+            <!-- Real-time analysis box -->
+            <div id="typoInputAnalysis" style="font-size: 0.82rem; margin-bottom: 1.25rem; padding: 0.75rem; background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 6px; color: var(--text-main); display: none; line-height: 1.5;"></div>
+
             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-              <button class="btn btn-primary" onclick="resolveWifTypo()" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #085c40, #059669);">Analyze & Fix Typo</button>
+              <button class="btn btn-primary" id="btnResolveTypo" onclick="startTypoResolution()" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #085c40, #059669);">Analyze & Fix Key</button>
               <button class="btn btn-danger" onclick="resetWifTypoTool()" style="width: auto;">🗑️ Reset Tool</button>
             </div>
+            
             <div id="wifTypoStatus" class="input-status-msg" style="margin-top: 0.75rem;"></div>
+            
             <div id="wifTypoResults" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--card-border);">
               <div class="output-group">
-                <div class="output-header"><span class="output-title">Corrected WIF Private Key</span></div>
+                <div class="output-header"><span class="output-title">Corrected Private Key</span></div>
                 <div class="value-box" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
-                  <span id="outWifCorrected" style="font-family: monospace; font-size: 0.95rem; color: var(--text-main);">-</span>
-                  <button class="btn-icon" onclick="copyText('outWifCorrected')" title="Copy">📋</button>
+                  <span id="outWifCorrected" style="font-family: monospace; font-size: 0.95rem; color: var(--text-main); word-break: break-all;">-</span>
+                  <button class="btn-icon" onclick="copyString(document.getElementById('outWifCorrected').textContent)" title="Copy">📋</button>
                 </div>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;" id="wifTypoExplanation"></p>
               </div>
@@ -4252,12 +4299,232 @@
                 </div>
               </div>
             </details>
-
-            <!-- Shared Canvas hidden at the bottom -->
             <canvas id="stegCanvas" style="display:none;"></canvas>
-          </div>
+          </div> <!-- THIS CLOSES THE STEGANOGRAPHY TOOL -->
 
-        </div> <!-- END MAIN DISPLAY AREA -->
+
+
+
+
+          <!-- ==============================
+               TOOL 15: CUSTOM PAPER WALLETS
+               ============================== -->
+          <div id="toolCustomPaperWallet" class="tool-section" oninput="updateCustomWalletPreview()" onchange="updateCustomWalletPreview()">
+            <h3 style="color: var(--text-main); margin-bottom: 0.25rem; font-size: 1.15rem;">🖨️ Custom Paper Wallet Creator</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Generate, position, and print custom bulk paper wallets with a real-time live preview.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+              
+              <!-- LEFT COLUMN: CONTROLS -->
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                
+                <!-- General Settings -->
+                <div class="output-group">
+                  <div class="output-header"><span class="output-title">Page & Generation Settings</span></div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem;">
+
+                    <div style="grid-column: span 2;">
+                      <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Starting Entropy (WIF, Hex, or Custom Text)</label>
+                      <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="cpwEntropyInput" placeholder="Leave blank for random start..." style="flex: 1; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px; font-family: monospace;">
+                        <button class="btn" type="button" onclick="openMouseEntropyModal('cpw')" style="white-space: nowrap; padding: 0.6rem 0.8rem; font-size: 0.75rem; background: rgba(247, 147, 26, 0.15); border-color: var(--btc-gold); color: var(--btc-gold);">🖱️ Mouse</button>
+                      </div>
+                    </div>
+
+                    <div style="grid-column: span 2;">
+                      <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Address Type</label>
+                      <select id="cpwType" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
+                        <option value="legacy">Legacy (1...)</option>
+                        <option value="segwit" selected>Native SegWit (bc1q...)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Paper Size</label>
+                      <select id="cpwPageSize" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
+                        <option value="letter">US Letter</option>
+                        <option value="a4">A4</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Orientation</label>
+                      <select id="cpwOrientation" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
+                        <option value="portrait">Portrait</option>
+                        <option value="landscape">Landscape</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Wallets Per Page</label>
+                      <input type="number" id="cpwKeysPerPage" value="5" min="1" max="20" onchange="autoAdjustSizes()" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Total to Generate</label>
+                      <input type="number" id="cpwTotal" value="10" min="1" max="500" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Visibility & Sizing -->
+                <div class="output-group">
+                  <div class="output-header"><span class="output-title">Elements, Visibility & Sizing</span></div>
+                  <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="checkbox" id="cpwShowPubQr" checked style="width: 16px; height: 16px; accent-color: var(--accent-green);">
+                        <label for="cpwShowPubQr" style="font-size: 0.75rem; color: var(--text-main);">Address QR</label>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size (px):</label>
+                        <input type="number" id="cpwPubQrSize" value="100" min="20" max="500" style="width: 55px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="checkbox" id="cpwShowPubText" checked style="width: 16px; height: 16px; accent-color: var(--accent-green);">
+                        <label for="cpwShowPubText" style="font-size: 0.75rem; color: var(--text-main);">Address Text</label>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size (px):</label>
+                        <input type="number" id="cpwPubTextSize" value="12" min="6" max="36" style="width: 55px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="checkbox" id="cpwShowPrivQr" checked style="width: 16px; height: 16px; accent-color: var(--accent-red);">
+                        <label for="cpwShowPrivQr" style="font-size: 0.75rem; color: var(--text-main);">Private QR</label>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size (px):</label>
+                        <input type="number" id="cpwPrivQrSize" value="100" min="20" max="500" style="width: 55px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="checkbox" id="cpwShowPrivText" checked style="width: 16px; height: 16px; accent-color: var(--accent-red);">
+                        <label for="cpwShowPrivText" style="font-size: 0.75rem; color: var(--text-main);">Private Text</label>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size (px):</label>
+                        <input type="number" id="cpwPrivTextSize" value="10" min="6" max="36" style="width: 55px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="checkbox" id="cpwShowFirstbits" style="width: 16px; height: 16px; accent-color: var(--btc-gold);">
+                        <label for="cpwShowFirstbits" style="font-size: 0.75rem; color: var(--text-main);">Firstbits</label>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
+                        <input type="number" id="cpwFirstbitsSize" value="24" min="8" max="100" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;" title="Size in px">
+                        
+                        <label style="font-size: 0.7rem; color: var(--text-muted); margin-left: 0.2rem;">Chars:</label>
+                        <input type="number" id="cpwFirstbitsLen" value="8" min="1" max="20" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+
+
+
+                  </div>
+                </div>
+
+                <!-- Layout & Coordinates -->
+                <div class="output-group">
+                  <div class="output-header">
+                    <span class="output-title">Spacing & Layout Alignment</span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                    
+                    <div>
+                      <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Side Assignment</label>
+                      <select id="cpwLayout" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
+                        <option value="pubLeft">Address Left | Private Key Right</option>
+                        <option value="privLeft">Private Key Left | Address Right</option>
+                      </select>
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem;">
+                      <div style="flex: 1;">
+                        <label style="display: block; font-size: 0.7rem; color: var(--btc-gold); margin-bottom: 0.25rem;">Horizontal Spread (%)</label>
+                        <span style="font-size: 0.6rem; color: var(--text-dim); display: block; margin-bottom: 0.25rem;">Distance between elements</span>
+                        <input type="number" id="cpwSpread" value="60" min="10" max="90" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
+                      </div>
+                      <div style="flex: 1;">
+                        <label style="display: block; font-size: 0.7rem; color: var(--btc-gold); margin-bottom: 0.25rem;">Text Bounding Box (px)</label>
+                        <span style="font-size: 0.6rem; color: var(--text-dim); display: block; margin-bottom: 0.25rem;">Widen to prevent text wrap</span>
+                        <input type="number" id="cpwTextMaxWidth" value="400" min="100" max="1000" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
+                      </div>
+                    </div>
+
+                    <!-- Fine Tuning Offsets -->
+                    <div style="margin-top: 0.5rem;">
+                       <span style="display: block; font-size: 0.75rem; color: var(--text-main); font-weight: 600; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.25rem;">Fine-Tune Entire Blocks (QR + Text)</span>
+                       <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                          <div style="flex: 1;">
+                            <label style="display: block; font-size: 0.65rem; color: var(--accent-green); margin-bottom: 0.15rem;">Address Block X Offset</label>
+                            <input type="number" id="cpwPubX" value="0" style="width: 100%; padding: 0.4rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(16, 185, 129, 0.4); color: #fff; border-radius: 4px;">
+                          </div>
+                          <div style="flex: 1;">
+                            <label style="display: block; font-size: 0.65rem; color: var(--accent-green); margin-bottom: 0.15rem;">Address Block Y Offset</label>
+                            <input type="number" id="cpwPubY" value="0" style="width: 100%; padding: 0.4rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(16, 185, 129, 0.4); color: #fff; border-radius: 4px;">
+                          </div>
+                       </div>
+                       <div style="display: flex; gap: 0.5rem;">
+                          <div style="flex: 1;">
+                            <label style="display: block; font-size: 0.65rem; color: var(--accent-red); margin-bottom: 0.15rem;">Private Block X Offset</label>
+                            <input type="number" id="cpwPrivX" value="0" style="width: 100%; padding: 0.4rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(239, 68, 68, 0.4); color: #fff; border-radius: 4px;">
+                          </div>
+                          <div style="flex: 1;">
+                            <label style="display: block; font-size: 0.65rem; color: var(--accent-red); margin-bottom: 0.15rem;">Private Block Y Offset</label>
+                            <input type="number" id="cpwPrivY" value="0" style="width: 100%; padding: 0.4rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(239, 68, 68, 0.4); color: #fff; border-radius: 4px;">
+                          </div>
+                       </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="generateAndPrintCustomWallets()" style="width: 100%; padding: 1rem; font-size: 1.05rem;">
+                  ⚡ Generate Secure Keys & Print Custom Layout
+                </button>
+              </div>
+
+
+
+              <!-- RIGHT COLUMN: LIVE PREVIEW -->
+              <div class="output-group" style="position: sticky; top: 85px; align-self: start;">
+                <div class="output-header">
+                  <span class="output-title" style="color: var(--btc-gold);">Live Page Preview</span>
+                  <span class="output-tag" id="cpwPreviewLabel">US Letter - 5 Rows</span>
+                </div>
+                
+                <!-- The Preview Wrapper -->
+                <div id="cpwPreviewWrapper" style="width: 100%; background: #fff; border-radius: 4px; overflow: hidden; position: relative; margin-top: 0.5rem; box-shadow: inset 0 0 10px rgba(0,0,0,0.2);">
+                  
+                  <!-- The Actual Scaled Page -->
+                  <div id="cpwPreviewPage" style="position: absolute; top: 0; left: 0; transform-origin: top left; display: flex; flex-direction: column; background: #fff;">
+                    <!-- JS Injects preview rows here -->
+                  </div>
+
+                </div> <!-- THIS CLOSES THE WRAPPER -->
+
+                <!-- PAGE COUNT INDICATOR (Now safely outside the wrapper) -->
+                <div id="cpwPageCountIndicator" style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--accent-cyan); font-weight: 600; text-align: center; padding: 0.6rem; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 6px;">
+                  🖨️ Expected Print Job: 2 Pages (10 Wallets)
+                </div>
+
+              </div>
+
+
+            </div>
+          </div> <!-- END CUSTOM PAPER WALLET TOOL -->
+
+
+      </div> <!-- END MAIN DISPLAY AREA -->
       </div> <!-- END UTILITIES LAYOUT -->
     </div>
 
@@ -5420,6 +5687,7 @@ n2 = n2 ^ secureRandom[1];</div>
       'toolXpub': { icon: '👁️', name: 'XPUB Viewer' },
       'toolMultisig': { icon: '🤝', name: 'Multisig Generator' },
       'toolVanity': { icon: '💎', name: 'Vanity Generator' },
+      'toolCustomPaperWallet': { icon: '🖨️', name: 'Custom Paper Wallet' },
       'toolRestorer': { icon: '🌱', name: 'BIP-39 Seed Restorer' },
       'toolBip85': { icon: '🌳', name: 'BIP-85 Generator' },
       'toolShamir': { icon: '🧩', name: "Shamir's SSS" },
@@ -5508,6 +5776,8 @@ n2 = n2 ^ secureRandom[1];</div>
         'converter': 'toolConverter',
         'xpub': 'toolXpub',
         'multisig': 'toolMultisig',
+        'paperwallet': 'toolCustomPaperWallet', // Ensures hash matches ID
+        'custompaperwallet': 'toolCustomPaperWallet',
         'vanitygen': 'toolVanity',
         'vanity': 'toolVanity',
         'restorer': 'toolRestorer',
@@ -7651,40 +7921,76 @@ n2 = n2 ^ secureRandom[1];</div>
       STATE.singleWalletDesign = 'standard'; // 'standard' or 'trifold'
     }
 
+
+
+    // Initialize the default quantity in your state
+    STATE.singlePrintQuantity = 1;
+
+    function selectSinglePrintQuantity(val) {
+      STATE.singlePrintQuantity = val;
+      
+      // Update visual selection state
+      document.querySelectorAll('.qty-btn').forEach(btn => {
+        if (parseInt(btn.getAttribute('data-val'), 10) === val) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
     function selectSingleWalletDesign(designName) {
       STATE.singleWalletDesign = designName;
       
-      // Toggle visual active state in the modal
+      // Toggle visual active state on the design cards
       document.querySelectorAll('.design-picker-grid .design-card').forEach(card => card.classList.remove('active'));
       const activeCard = document.getElementById(`designCard-${designName}`);
       if (activeCard) activeCard.classList.add('active');
 
-      // Update dropdown options dynamically
-      const select = document.getElementById('singlePrintCount');
+      // Update quantity buttons dynamically
+      const container = document.getElementById('quantitySelectionContainer');
+      if (!container) return;
 
       const wifVal = document.getElementById('outWifComp') ? document.getElementById('outWifComp').textContent : '';
+      
+      // If BIP-38 Encrypted, restrict to 1 Key only
       if (wifVal.startsWith('6P')) {
-        select.innerHTML = `<option value="1" selected>1 Key</option>`;
+        container.innerHTML = `
+          <button class="qty-btn" data-val="1" onclick="selectSinglePrintQuantity(1)">1 Key (Encrypted Limit)</button>
+        `;
+        selectSinglePrintQuantity(1);
         return;
       }
 
+      let options = [];
       if (designName === 'nodesign') {
-        select.innerHTML = `
-          <option value="1" selected>1 Key</option>
-          <option value="10">10 Keys (1 Page)</option>
-          <option value="20">20 Keys (2 Pages)</option>
-          <option value="30">30 Keys (3 Pages)</option>
-          <option value="50">50 Keys (5 Pages)</option>
-          <option value="100">100 Keys (10 Pages)</option>
-        `;
+        options = [
+          { val: 1, label: '1 Key' },
+          { val: 10, label: '10 Keys (1 Page)' },
+          { val: 20, label: '20 Keys (2 Pages)' },
+          { val: 30, label: '30 Keys (3 Pages)' },
+          { val: 50, label: '50 Keys (5 Pages)' },
+          { val: 100, label: '100 Keys (10 Pages)' }
+        ];
       } else {
-        select.innerHTML = `
-          <option value="1 Key" selected>1 Key</option>
-          <option value="3">3 Keys (1 Page)</option>
-          <option value="9">9 Keys (3 Pages)</option>
-          <option value="21">21 Keys (7 Pages)</option>
-        `;
+        options = [
+          { val: 1, label: '1 Key' },
+          { val: 3, label: '3 Keys (1 Page)' },
+          { val: 9, label: '9 Keys (3 Pages)' },
+          { val: 21, label: '21 Keys (7 Pages)' }
+        ];
       }
+
+      container.innerHTML = options.map(opt => `
+        <button class="qty-btn" data-val="${opt.val}" onclick="selectSinglePrintQuantity(${opt.val})">${opt.label}</button>
+      `).join('');
+
+      // Ensure a valid quantity is selected (default to 1 if the previous selection is no longer available in the new design)
+      let currentVal = STATE.singlePrintQuantity || 1;
+      if (!options.find(o => o.val === currentVal)) {
+        currentVal = 1;
+      }
+      selectSinglePrintQuantity(currentVal);
     }
 
     function updatePrintWalletAddress(tabId) {
@@ -7789,10 +8095,10 @@ n2 = n2 ^ secureRandom[1];</div>
       }
     }
 
+
     async function printSingleWallet() {
       const design = STATE.singleWalletDesign || 'standard';
-      const quantityStr = document.getElementById('singlePrintCount').value;
-      const quantity = parseInt(quantityStr, 10);
+      const quantity = STATE.singlePrintQuantity || 1;
       
       const isLegacyActive = document.getElementById('btnTabLegacy').classList.contains('active');
       const isWifCompActive = document.getElementById('btnTabWifComp').classList.contains('active');
@@ -7879,7 +8185,7 @@ n2 = n2 ^ secureRandom[1];</div>
             html += `<div class="print-page" style="padding-top: 0; font-family: monospace; width: 8.5in; margin: 0 auto;">`;
             html += `<div class="cutout-scissors-top" style="margin-bottom: 4px; font-size: 0.65rem;">✂--------------------- Cut along dashed line ---------------------✂</div>`;
             html += simWarningHTML;
-            html += `<h2 style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 4px; margin-top: 0; margin-bottom: 6px; font-size: 1.1rem;">Printed Key Backup (Keys ${i+1} to ${i+chunk.length})</h2>`;
+            html += `<h2 style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 4px; margin-top: 0; margin-bottom: 6px; font-size: 1.1rem;">Minimalist Key Backup (Keys ${i+1} to ${i+chunk.length})</h2>`;
             
             chunk.forEach(k => {
                const wifTitle = k.isBip38 ? "BIP-38 Encrypted" : "Private Key";
@@ -8009,7 +8315,6 @@ n2 = n2 ^ secureRandom[1];</div>
                           <div style="position: absolute; top: 50%; left: calc(50% - 12px); transform: translate(-50%, -50%) rotate(90deg); width: 100px; display: flex; flex-direction: column; align-items: center;">
                             <div id="qr_tf_w_${k.index}" class="print-qr" style="width: 70px; height: 70px; margin-bottom: 6px;"></div>
 
-                            <!-- Dynamically check for BIP-38 status -->
                             <span style="font-size: 0.4rem; font-weight: bold; color: #dc2626; margin-bottom: 6px; text-align: center;">${k.isBip38 ? 'BIP-38 ENCRYPTED' : 'PRIVATE KEY'}</span>
 
                             <div style="font-family: monospace; font-size: 0.6rem; word-break: break-all; text-align: center; line-height: 1.2; width: 100%;">${k.wif}</div>
@@ -8017,7 +8322,7 @@ n2 = n2 ^ secureRandom[1];</div>
                           
                           <!-- Purple Ribbon -->
                           <div style="background: #a882b5; width: 25px; position: absolute; right: 0; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; border-radius: 0 6px 6px 0;">
-                            <span style="color: #fff; font-size: 0.8rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; writing-mode: vertical-rl;">Private</span>
+                            <span id="printTrifoldWifRibbon" style="color: #fff; font-size: 1.15rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; writing-mode: vertical-rl;">Private</span>
                           </div>
 
                         </div>
@@ -8039,12 +8344,11 @@ n2 = n2 ^ secureRandom[1];</div>
                       <!-- Bottom Mid -->
                       <div class="tf-cell" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 10px 3px 10px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; text-align: left;">
                         
-                        <!-- SVG Envelope Security Tint Pattern to obscure light -->
-                        <div style="flex: 1; width: 100%; min-height: 40px; margin-bottom: 4px; border-radius: 2px; opacity: 0.85; background-color: #f8fafc; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='35'%3E%3Cg stroke='%231e293b' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M2 5l8 8M15 2l5 10M28 5l-8 8M38 2l-5 10M2 18l10-5M15 25l8-8M25 15l10 5M38 25l-8-8M5 38l5-10M18 35l-8-8M25 38l5-10M35 35l-8-8M10 20v8M30 20v8M20 10h8M20 30h8' /%3E%3C/g%3E%3C/svg%3E&quot;); background-repeat: repeat;"></div>
+                        <div style="flex: 1; width: 100%; min-height: 40px; margin-bottom: 8px; border-radius: 2px; opacity: 0.85; background-color: #f8fafc; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='35'%3E%3Cg stroke='%231e293b' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M2 5l8 8M15 2l5 10M28 5l-8 8M38 2l-5 10M2 18l10-5M15 25l8-8M25 15l10 5M38 25l-8-8M5 38l5-10M18 35l-8-8M25 38l5-10M35 35l-8-8M10 20v8M30 20v8M20 10h8M20 30h8' /%3E%3C/g%3E%3C/svg%3E&quot;); background-repeat: repeat;"></div>
 
                         <!-- Folding Instructions -->
-                        <div style="width: 100%; border-top: 1px solid #cbd5e1; padding-top: 3px; font-size: 0.45rem; color: #475569; z-index: 2; background: #f8fafc; line-height: 1.1;">
-                          <strong style="color: #1e293b; display: block; margin-bottom: 1px;">FOLDING INSTRUCTIONS:</strong>
+                        <div style="width: 100%; border-top: 1px solid #cbd5e1; padding-top: 4px; z-index: 2; background: #f8fafc; font-size: 0.52rem; color: #475569; line-height: 1.35;">
+                          <strong style="color: #1e293b; display: block; margin-bottom: 2px;">FOLDING INSTRUCTIONS:</strong>
                           1. Fold lengthwise along red dashed line.<br>
                           2. Fold outer panels inward along green dashed lines.<br>
                           3. Tuck one side flap into the other to conceal and lock private key.
@@ -8056,15 +8360,15 @@ n2 = n2 ^ secureRandom[1];</div>
                          <div style="width: 90%; height: 90%; background: #fff; border-radius: 6px; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); position: relative; overflow: hidden;">
                           
                           <!-- Purple Ribbon -->
-                          <div style="background: #a882b5; width: 25px; position: absolute; left: 0; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; border-radius: 6px 0 0 6px;">
-                            <span style="color: #fff; font-size: 0.8rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg);">Public</span>
+                          <div style="background: #a882b5; width: 34px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px 0 0 6px;">
+                            <span style="color: #fff; font-size: 1.15rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; writing-mode: vertical-rl; transform: rotate(180deg);">Public</span>
                           </div>
-
-                          <!-- Rotated Content Container (Strict 120px width forces text wrapping) -->
+                          
+                          <!-- Content Container -->
                           <div style="position: absolute; top: 50%; left: calc(50% + 12px); transform: translate(-50%, -50%) rotate(-90deg); width: 100px; display: flex; flex-direction: column; align-items: center;">
                             <div id="qr_tf_a_${k.index}" class="print-qr" style="width: 70px; height: 70px; margin-bottom: 6px;"></div>
-                            <span style="font-size: 0.4rem; font-weight: bold; color: #4b5563; margin-bottom: 6px;">BITCOIN ADDRESS</span>
-                            <div style="font-family: monospace; font-size: 0.6rem; word-break: break-all; text-align: center; line-height: 1.2; width: 100%;">${k.addr}</div>
+                            <span style="font-size: 0.45rem; font-weight: bold; color: #4b5563; display: block; margin-bottom: 2px;">BITCOIN ADDRESS</span>
+                            <div style="font-family: monospace; font-size: 1.15rem; width: 100%; word-break: break-all; text-align: center; color: #333; line-height: 1.2; padding: 0;">${k.addr}</div>
                           </div>
 
                         </div>
@@ -8121,8 +8425,6 @@ n2 = n2 ^ secureRandom[1];</div>
       
       window.print();
     }
-
-
 
 
     function showPrintSeedPopup() {
@@ -8215,6 +8517,7 @@ n2 = n2 ^ secureRandom[1];</div>
         'toolXpub': 'xpub',
         'toolMultisig': 'multisig',
         'toolVanity': 'vanity',
+        'toolCustomPaperWallet': 'paperwallet',
         'toolRestorer': 'restorer',
         'toolBip85': 'bip85',
         'toolShamir': 'shamir',
@@ -10525,96 +10828,264 @@ n2 = n2 ^ secureRandom[1];</div>
        WIF TYPO RESOLVER
        ========================================================================== */
 
-    function isValidWifChecksum(candidateStr) {
-      try {
-        let x = 0n;
-        for (let i = 0; i < candidateStr.length; i++) {
-          const idx = B58_ALPHABET.indexOf(candidateStr[i]);
-          if (idx === -1) return false;
-          x = x * 58n + BigInt(idx);
-        }
-        let hex = x.toString(16);
-        if (hex.length % 2 !== 0) hex = '0' + hex;
-        let bytes = hexToBytes(hex);
-        let numZeros = 0;
-        while (numZeros < candidateStr.length && candidateStr[numZeros] === '1') numZeros++;
-        const res = new Uint8Array(numZeros + bytes.length);
-        res.set(bytes, numZeros);
+    STATE.typoResolverActive = false;
 
-        if (res.length !== 37 && res.length !== 38) return false;
-
-        const payload = res.slice(0, -4);
-        const checksum = res.slice(-4);
-        const hash = sha256(sha256(payload));
-
-        return (hash[0] === checksum[0] && hash[1] === checksum[1] && hash[2] === checksum[2] && hash[3] === checksum[3]);
-      } catch (e) {
-        return false;
-      }
-    }
-
-    function resolveWifTypo() {
-      const originalInput = document.getElementById('wifTypoInput').value.trim();
-      const statusEl = document.getElementById('wifTypoStatus');
-      const resultsEl = document.getElementById('wifTypoResults');
-
-      if (!originalInput) {
-        statusEl.className = 'input-status-msg';
-        resultsEl.style.display = 'none';
+    function analyzeTypoInput() {
+      const input = document.getElementById('wifTypoInput').value.trim();
+      const analysisEl = document.getElementById('typoInputAnalysis');
+      
+      if (!input) {
+        analysisEl.style.display = 'none';
         return;
       }
 
-      // Check if it's already valid
-      if (isValidWifChecksum(originalInput)) {
-        statusEl.textContent = "This WIF key is already mathematically valid! No typo found.";
-        statusEl.className = 'input-status-msg warning';
-        resultsEl.style.display = 'none';
-        return;
+      let type = "Unknown";
+      let expectedLen = 0;
+      let status = "";
+
+      const isHex = /^[0-9a-fA-F]+$/.test(input) && input.length >= 60 && input.length <= 66;
+      
+      if (isHex) {
+        type = "Hexadecimal Private Key";
+        expectedLen = 64;
+      } else if (input.startsWith('5')) {
+        type = "WIF Uncompressed";
+        expectedLen = 51;
+      } else if (input.startsWith('K') || input.startsWith('L')) {
+        type = "WIF Compressed";
+        expectedLen = 52;
+      } else {
+        type = "Unknown Format";
       }
 
-      statusEl.textContent = "Analyzing permutations... please wait.";
-      statusEl.className = 'input-status-msg warning';
-      resultsEl.style.display = 'none';
-
-      // Use a timeout to allow the browser to paint the status message before blocking the thread
-      setTimeout(() => {
-        let foundMatch = null;
-        let explanation = "";
-
-        // Brute-force 1-character replacements (52 characters * 58 alphabet chars = ~3016 checks)
-        for (let i = 0; i < originalInput.length; i++) {
-          const originalChar = originalInput[i];
-          for (let j = 0; j < B58_ALPHABET.length; j++) {
-            const testChar = B58_ALPHABET[j];
-            if (originalChar === testChar) continue;
-
-            const candidate = originalInput.substring(0, i) + testChar + originalInput.substring(i + 1);
-            if (isValidWifChecksum(candidate)) {
-              foundMatch = candidate;
-              explanation = `Found typo at position ${i + 1}: Changed '${originalChar}' to '${testChar}'.`;
-              break;
-            }
-          }
-          if (foundMatch) break;
-        }
-
-        if (foundMatch) {
-          document.getElementById('outWifCorrected').textContent = foundMatch;
-          document.getElementById('wifTypoExplanation').textContent = explanation;
-          statusEl.className = 'input-status-msg';
-          resultsEl.style.display = 'block';
+      if (expectedLen > 0) {
+        const diff = expectedLen - input.length;
+        if (diff === 0) {
+          status = "Length is correct. May contain mistyped characters.";
+        } else if (diff > 0) {
+          status = `Missing ${diff} character(s).`;
         } else {
-          statusEl.textContent = "Could not resolve typo. The key may have more than one incorrect character, or missing/extra characters.";
-          statusEl.className = 'input-status-msg error';
+          status = `Too long by ${Math.abs(diff)} character(s).`;
         }
-      }, 50);
+      } else {
+        status = "Invalid prefix. WIF keys must start with 5, K, or L.";
+      }
+
+      analysisEl.innerHTML = `<strong style="color: var(--accent-cyan);">Detected Format:</strong> ${type}<br><strong style="color: var(--accent-cyan);">Status:</strong> ${status}`;
+      analysisEl.style.display = 'block';
     }
 
     function resetWifTypoTool() {
+      STATE.typoResolverActive = false;
       document.getElementById('wifTypoInput').value = '';
+      document.getElementById('typoInputAnalysis').style.display = 'none';
       document.getElementById('wifTypoResults').style.display = 'none';
+      
       const statusEl = document.getElementById('wifTypoStatus');
-      if (statusEl) statusEl.className = 'input-status-msg';
+      statusEl.style.display = 'none';
+      statusEl.className = 'input-status-msg';
+
+      const btn = document.getElementById('btnResolveTypo');
+      btn.textContent = 'Analyze & Fix Key';
+      btn.disabled = false;
+    }
+
+    function testWIF(str) {
+      try {
+        const decoded = base58Decode(str);
+        if (decoded.length !== 37 && decoded.length !== 38) return false;
+        const payload = decoded.slice(0, -4);
+        const checksum = decoded.slice(-4);
+        const hash = sha256(sha256(payload));
+        return hash[0] === checksum[0] && hash[1] === checksum[1] && hash[2] === checksum[2] && hash[3] === checksum[3];
+      } catch (e) { 
+        return false; 
+      }
+    }
+
+    async function startTypoResolution() {
+      const input = document.getElementById('wifTypoInput').value.trim();
+      const statusEl = document.getElementById('wifTypoStatus');
+      const btn = document.getElementById('btnResolveTypo');
+
+      if (!input) return;
+
+      const isHex = /^[0-9a-fA-F]+$/.test(input) && input.length >= 60 && input.length <= 66;
+      if (isHex) {
+        statusEl.innerHTML = "<strong>Error:</strong> Hexadecimal keys do not contain a checksum. It is mathematically impossible to autocorrect a hex key without knowing the expected public address.";
+        statusEl.className = 'input-status-msg error';
+        statusEl.style.display = 'block';
+        return;
+      }
+
+      let expectedLen = 0;
+      if (input.startsWith('5')) expectedLen = 51;
+      else if (input.startsWith('K') || input.startsWith('L')) expectedLen = 52;
+      
+      if (expectedLen === 0) {
+        statusEl.textContent = "Invalid prefix. Base58 WIF keys must start with 5, K, or L.";
+        statusEl.className = 'input-status-msg error';
+        statusEl.style.display = 'block';
+        return;
+      }
+
+      const diff = expectedLen - input.length;
+      if (diff < 0 || diff > 2) {
+        statusEl.textContent = "This tool can only resolve up to 2 missing characters or 2 typos.";
+        statusEl.className = 'input-status-msg error';
+        statusEl.style.display = 'block';
+        return;
+      }
+
+      STATE.typoResolverActive = true;
+      btn.textContent = 'Searching...';
+      btn.disabled = true;
+      statusEl.className = 'input-status-msg warning';
+      statusEl.style.display = 'block';
+      document.getElementById('wifTypoResults').style.display = 'none';
+
+      // Yield thread to allow UI to paint the loading state
+      setTimeout(() => runTypoSearch(input, diff), 50);
+    }
+
+    async function runTypoSearch(input, diff) {
+      const statusEl = document.getElementById('wifTypoStatus');
+      let found = null;
+      let mode = "";
+
+      // Helper to yield thread so the browser doesn't freeze during heavy loops
+      const yieldThread = () => new Promise(r => setTimeout(r, 0));
+
+      if (diff === 0) {
+        // 1. Try 1 Typo
+        statusEl.textContent = "Checking for 1 mistyped character...";
+        await yieldThread();
+        for (let i = 0; i < input.length; i++) {
+          if (!STATE.typoResolverActive) return;
+          for (let char of B58_ALPHABET) {
+            if (input[i] === char) continue;
+            const candidate = input.slice(0, i) + char + input.slice(i + 1);
+            if (testWIF(candidate)) { found = candidate; mode = "1 incorrect character"; break; }
+          }
+          if (found) break;
+        }
+
+        // 2. Try 2 Typos (Deep Search)
+        if (!found) {
+          statusEl.textContent = "Initializing Deep Search for 2 mistyped characters... (This may take up to 20 seconds)";
+          await yieldThread();
+          let count = 0;
+          for (let i = 0; i < input.length; i++) {
+            if (!STATE.typoResolverActive) return;
+            for (let j = i + 1; j < input.length; j++) {
+              for (let c1 of B58_ALPHABET) {
+                if (input[i] === c1) continue;
+                for (let c2 of B58_ALPHABET) {
+                  if (input[j] === c2) continue;
+                  
+                  const candidate = input.slice(0, i) + c1 + input.slice(i + 1, j) + c2 + input.slice(j + 1);
+                  if (testWIF(candidate)) { found = candidate; mode = "2 incorrect characters"; break; }
+                  
+                  count++;
+                  if (count % 25000 === 0) {
+                    statusEl.textContent = `Deep Search (2 Typos): ${Math.min(99, Math.round((count / 4300000) * 100))}% complete...`;
+                    await yieldThread();
+                  }
+                }
+                if (found) break;
+              }
+              if (found) break;
+            }
+            if (found) break;
+          }
+        }
+      } 
+      else if (diff === 1) {
+        // 1. Try 1 Missing
+        statusEl.textContent = "Checking for 1 missing character...";
+        await yieldThread();
+        for (let i = 0; i <= input.length; i++) {
+          if (!STATE.typoResolverActive) return;
+          for (let char of B58_ALPHABET) {
+            const candidate = input.slice(0, i) + char + input.slice(i);
+            if (testWIF(candidate)) { found = candidate; mode = "1 missing character"; break; }
+          }
+          if (found) break;
+        }
+
+        // 2. Try 1 Missing + 1 Typo (Deep Search)
+        if (!found) {
+          statusEl.textContent = "Initializing Deep Search for 1 missing and 1 mistyped character... (This may take up to 30 seconds)";
+          await yieldThread();
+          let count = 0;
+          for (let i = 0; i <= input.length; i++) {
+            if (!STATE.typoResolverActive) return;
+            for (let j = 0; j < input.length + 1; j++) {
+              if (j === i) continue; // The typo position cannot be the missing char position
+              for (let charMissing of B58_ALPHABET) {
+                for (let charTypo of B58_ALPHABET) {
+                  const temp = input.slice(0, i) + charMissing + input.slice(i);
+                  if (temp[j] === charTypo) continue;
+                  
+                  const candidate = temp.slice(0, j) + charTypo + temp.slice(j + 1);
+                  if (testWIF(candidate)) { found = candidate; mode = "1 missing and 1 incorrect character"; break; }
+                  
+                  count++;
+                  if (count % 25000 === 0) {
+                    statusEl.textContent = `Deep Search (1 Missing + 1 Typo): ${Math.min(99, Math.round((count / 8500000) * 100))}% complete...`;
+                    await yieldThread();
+                  }
+                }
+                if (found) break;
+              }
+              if (found) break;
+            }
+            if (found) break;
+          }
+        }
+      }
+      else if (diff === 2) {
+        // 1. Try 2 Missing (Deep Search)
+        statusEl.textContent = "Initializing Deep Search for 2 missing characters... (This may take up to 20 seconds)";
+        await yieldThread();
+        let count = 0;
+        for (let i = 0; i <= input.length; i++) {
+          if (!STATE.typoResolverActive) return;
+          for (let j = i; j <= input.length + 1; j++) {
+            for (let c1 of B58_ALPHABET) {
+              for (let c2 of B58_ALPHABET) {
+                const temp = input.slice(0, i) + c1 + input.slice(i);
+                const candidate = temp.slice(0, j) + c2 + temp.slice(j);
+                if (testWIF(candidate)) { found = candidate; mode = "2 missing characters"; break; }
+                
+                count++;
+                if (count % 25000 === 0) {
+                  statusEl.textContent = `Deep Search (2 Missing): ${Math.min(99, Math.round((count / 4500000) * 100))}% complete...`;
+                  await yieldThread();
+                }
+              }
+              if (found) break;
+            }
+            if (found) break;
+          }
+          if (found) break;
+        }
+      }
+
+      STATE.typoResolverActive = false;
+      const btn = document.getElementById('btnResolveTypo');
+      btn.textContent = 'Analyze & Fix Key';
+      btn.disabled = false;
+
+      if (found) {
+        statusEl.style.display = 'none';
+        document.getElementById('wifTypoResults').style.display = 'block';
+        document.getElementById('outWifCorrected').textContent = found;
+        document.getElementById('wifTypoExplanation').innerHTML = `✅ Successfully recovered by resolving <strong>${mode}</strong>.`;
+      } else {
+        statusEl.textContent = "Failed to recover key. The key may contain more than 2 errors, or the format is fundamentally invalid.";
+        statusEl.className = 'input-status-msg error';
+      }
     }
 
 
@@ -11255,6 +11726,475 @@ n2 = n2 ^ secureRandom[1];</div>
 
 
 
+    // NEW: Auto-scale UI elements based on rows per page
+    function autoAdjustSizes() {
+      const keysPerPage = parseInt(document.getElementById('cpwKeysPerPage').value, 10) || 5;
+      
+      // Calculate a scale multiplier (5 rows is 1.0, 10 rows is 0.5, etc.)
+      const scale = keysPerPage <= 5 ? 1 : (5 / keysPerPage);
+
+      // Base sizes
+      const baseQr = 100;
+      const basePubText = 12;
+      const basePrivText = 10;
+      const baseFirstbitsText = 24;
+
+      // Apply the math and set minimum readable limits (6px for text, 30px for QR)
+      document.getElementById('cpwPubQrSize').value = Math.max(30, Math.round(baseQr * scale));
+      document.getElementById('cpwPrivQrSize').value = Math.max(30, Math.round(baseQr * scale));
+      document.getElementById('cpwPubTextSize').value = Math.max(6, Math.round(basePubText * scale));
+      document.getElementById('cpwPrivTextSize').value = Math.max(6, Math.round(basePrivText * scale));
+      document.getElementById('cpwFirstbitsSize').value = Math.max(8, Math.round(baseFirstbitsText * scale));
+
+      updateCustomWalletPreview();
+    }
+
+    function updateCustomWalletPreview() {
+      const wrapper = document.getElementById('cpwPreviewWrapper');
+      const page = document.getElementById('cpwPreviewPage');
+      const label = document.getElementById('cpwPreviewLabel');
+      const pageIndicator = document.getElementById('cpwPageCountIndicator');
+      if (!wrapper || !page) return;
+
+      // 1. Read Inputs
+      const total = parseInt(document.getElementById('cpwTotal').value, 10) || 10;
+      const pageSize = document.getElementById('cpwPageSize').value; 
+      const orientation = document.getElementById('cpwOrientation').value; 
+      const keysPerPage = parseInt(document.getElementById('cpwKeysPerPage').value, 10) || 5;
+      const isSegwit = document.getElementById('cpwType').value === 'segwit';
+      const layout = document.getElementById('cpwLayout').value; 
+      
+      const showPubQr = document.getElementById('cpwShowPubQr').checked;
+      const pubQrSize = parseInt(document.getElementById('cpwPubQrSize').value, 10) || 100;
+      const showPrivQr = document.getElementById('cpwShowPrivQr').checked;
+      const privQrSize = parseInt(document.getElementById('cpwPrivQrSize').value, 10) || 100;
+
+      const showPubText = document.getElementById('cpwShowPubText').checked;
+      const pubTextSize = parseInt(document.getElementById('cpwPubTextSize').value, 10) || 12;
+      const showPrivText = document.getElementById('cpwShowPrivText').checked;
+      const privTextSize = parseInt(document.getElementById('cpwPrivTextSize').value, 10) || 10;
+
+      const showFirstbits = document.getElementById('cpwShowFirstbits').checked;
+      const firstbitsSize = parseInt(document.getElementById('cpwFirstbitsSize').value, 10) || 24;
+      const firstbitsLen = parseInt(document.getElementById('cpwFirstbitsLen').value, 10) || 8;
+      
+      const spread = parseInt(document.getElementById('cpwSpread').value, 10) || 60;
+      const textMaxWidth = parseInt(document.getElementById('cpwTextMaxWidth').value, 10) || 400;
+
+      const pubX = parseInt(document.getElementById('cpwPubX').value, 10) || 0;
+      const pubY = parseInt(document.getElementById('cpwPubY').value, 10) || 0;
+      const privX = parseInt(document.getElementById('cpwPrivX').value, 10) || 0;
+      const privY = parseInt(document.getElementById('cpwPrivY').value, 10) || 0;
+
+      // Update Top Label
+      label.textContent = `${pageSize === 'letter' ? 'US Letter' : 'A4'} ${orientation === 'portrait' ? '(P)' : '(L)'} - ${keysPerPage} Rows`;
+
+      // NEW: Update Bottom Expected Page Count
+      if (pageIndicator) {
+        const totalPages = Math.ceil(total / keysPerPage);
+        pageIndicator.textContent = `🖨️ Expected Print Job: ${totalPages} Page${totalPages > 1 ? 's' : ''} (${total} Wallets)`;
+      }
+
+      // 2. Define Page Dimensions (in pixels, assuming 100dpi for scale math)
+      let pWidth = pageSize === 'letter' ? 850 : 827; 
+      let pHeight = pageSize === 'letter' ? 1100 : 1169; 
+      
+      if (orientation === 'landscape') {
+        const temp = pWidth;
+        pWidth = pHeight;
+        pHeight = temp;
+      }
+
+      // 3. Set Wrapper Aspect Ratio & Scale Page
+      wrapper.style.aspectRatio = `${pWidth} / ${pHeight}`;
+      page.style.width = `${pWidth}px`;
+      page.style.height = `${pHeight}px`;
+
+      const scale = wrapper.clientWidth / pWidth;
+      page.style.transform = `scale(${scale})`;
+
+      // 4. Generate the Dummy Rows
+      let pX = layout === 'pubLeft' ? (50 - (spread / 2)) : (50 + (spread / 2));
+      let sX = layout === 'pubLeft' ? (50 + (spread / 2)) : (50 - (spread / 2));
+
+      const dummyAddr = isSegwit ? "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" : "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
+      const dummyWif = "L4rK1yDtCWekvXuE6oXD9jCYfFNV2cWRpVuPLBcCU2z8TrisoyY1";
+
+      let html = '';
+      for (let i = 0; i < keysPerPage; i++) {
+        html += `
+          <div style="flex: 1; border-bottom: 1px dashed rgba(0,0,0,0.3); position: relative; width: 100%; box-sizing: border-box;">
+             
+             <!-- PUBLIC BLOCK -->
+             <div style="position: absolute; left: calc(${pX}% + ${pubX}px); top: calc(50% + ${pubY}px); transform: translate(-50%, -50%); text-align: center; display: flex; flex-direction: column; align-items: center;">
+                <span style="display: ${showPubText ? 'block' : 'none'}; font-size: ${Math.max(6, pubTextSize * 0.5)}px; color: #666; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">DEPOSIT ADDRESS</span>
+                
+                <div style="display: ${showPubQr ? 'flex' : 'none'}; width: ${pubQrSize}px; height: ${pubQrSize}px; background: #eee; border: 1px solid #ccc; align-items: center; justify-content: center; color: #999; font-size: ${pubQrSize/4}px;">QR</div>
+                
+                ${showFirstbits ? `<div style="font-family: monospace; font-size: ${firstbitsSize}px; font-weight: 900; margin-top: 8px; letter-spacing: 2px; color: #000;">${dummyAddr.substring(isSegwit ? 4 : 1, (isSegwit ? 4 : 1) + firstbitsLen)}</div>` : ''}
+                
+                <div style="display: ${showPubText ? 'block' : 'none'}; font-size: ${pubTextSize}px; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: #333;">${dummyAddr}</div>
+             </div>
+
+             <!-- PRIVATE BLOCK -->
+             <div style="position: absolute; left: calc(${sX}% + ${privX}px); top: calc(50% + ${privY}px); transform: translate(-50%, -50%); text-align: center; display: flex; flex-direction: column; align-items: center;">
+                <span style="display: ${showPrivText ? 'block' : 'none'}; font-size: ${Math.max(6, privTextSize * 0.5)}px; color: #dc2626; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">PRIVATE KEY</span>
+                
+                <div style="display: ${showPrivQr ? 'flex' : 'none'}; width: ${privQrSize}px; height: ${privQrSize}px; background: #fee2e2; border: 1px solid #fca5a5; align-items: center; justify-content: center; color: #f87171; font-size: ${privQrSize/4}px;">QR</div>
+                
+                <div style="display: ${showPrivText ? 'block' : 'none'}; font-size: ${privTextSize}px; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: #dc2626;">${dummyWif}</div>
+             </div>
+
+          </div>
+        `;
+      }
+      
+      page.innerHTML = html;
+    }
+
+
+    // Bind window resize so the preview stays perfectly scaled if the browser is stretched
+    window.addEventListener('resize', () => {
+      const page = document.getElementById('cpwPreviewPage');
+      if (page && page.innerHTML !== '') updateCustomWalletPreview();
+    });
+
+    // Auto-render the preview the moment the Custom Paper Wallet tool becomes visible
+    const previewObserver = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        if (entry.contentRect.width > 0) {
+          updateCustomWalletPreview();
+        }
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const wrapper = document.getElementById('cpwPreviewWrapper');
+      if (wrapper) previewObserver.observe(wrapper);
+    });
+
+    // UPDATED: Print Generator function utilizing the precise preview logic
+    async function generateAndPrintCustomWallets() {
+      // 1. Read Inputs
+      const total = parseInt(document.getElementById('cpwTotal').value, 10) || 10;
+      const pageSize = document.getElementById('cpwPageSize').value; 
+      const orientation = document.getElementById('cpwOrientation').value; 
+      const keysPerPage = parseInt(document.getElementById('cpwKeysPerPage').value, 10) || 5;
+      const isSegwit = document.getElementById('cpwType').value === 'segwit';
+      const layout = document.getElementById('cpwLayout').value; 
+      
+      const showPubQr = document.getElementById('cpwShowPubQr').checked;
+      const pubQrSize = parseInt(document.getElementById('cpwPubQrSize').value, 10) || 100;
+      const showPrivQr = document.getElementById('cpwShowPrivQr').checked;
+      const privQrSize = parseInt(document.getElementById('cpwPrivQrSize').value, 10) || 100;
+
+      const showPubText = document.getElementById('cpwShowPubText').checked;
+      const pubTextSize = parseInt(document.getElementById('cpwPubTextSize').value, 10) || 12;
+      const showPrivText = document.getElementById('cpwShowPrivText').checked;
+      const privTextSize = parseInt(document.getElementById('cpwPrivTextSize').value, 10) || 10;
+
+      const showFirstbits = document.getElementById('cpwShowFirstbits').checked;
+      const firstbitsSize = parseInt(document.getElementById('cpwFirstbitsSize').value, 10) || 24;
+      const firstbitsLen = parseInt(document.getElementById('cpwFirstbitsLen').value, 10) || 8;
+      
+      const spread = parseInt(document.getElementById('cpwSpread').value, 10) || 60;
+      const textMaxWidth = parseInt(document.getElementById('cpwTextMaxWidth').value, 10) || 400;
+
+      const pubX = parseInt(document.getElementById('cpwPubX').value, 10) || 0;
+      const pubY = parseInt(document.getElementById('cpwPubY').value, 10) || 0;
+      const privX = parseInt(document.getElementById('cpwPrivX').value, 10) || 0;
+      const privY = parseInt(document.getElementById('cpwPrivY').value, 10) || 0;
+
+
+      const customEntropyVal = document.getElementById('cpwEntropyInput').value.trim();
+      let physicalHash;
+      
+      if (customEntropyVal) {
+        if (customEntropyVal.length === 64 && /^[0-9a-fA-F]+$/.test(customEntropyVal)) {
+          physicalHash = hexToBytes(customEntropyVal);
+        } else {
+          physicalHash = sha256(new TextEncoder().encode(customEntropyVal));
+        }
+      } else {
+        const rawString = STATE.rolls ? STATE.rolls.join('') : '';
+        const baseEntropyBytes = new TextEncoder().encode(rawString || Date.now().toString());
+        physicalHash = sha256(baseEntropyBytes);
+      }
+
+
+      const keys = [];
+      for (let i = 0; i < total; i++) {
+        const prngBytes = new Uint8Array(32);
+        window.crypto.getRandomValues(prngBytes);
+        
+        const modifierPayload = new Uint8Array(physicalHash.length + 4);
+        modifierPayload.set(physicalHash, 0);
+        modifierPayload[32] = (i >>> 24) & 0xff;
+        modifierPayload[33] = (i >>> 16) & 0xff;
+        modifierPayload[34] = (i >>> 8) & 0xff;
+        modifierPayload[35] = i & 0xff;
+        const indexModifier = sha256(modifierPayload);
+        
+        const finalPrivBytes = new Uint8Array(32);
+        for (let j = 0; j < 32; j++) {
+          finalPrivBytes[j] = prngBytes[j] ^ indexModifier[j];
+        }
+        
+        const privKeyBigInt = BigInt('0x' + bytesToHex(finalPrivBytes)) % SECP256K1_N;
+        if (privKeyBigInt === 0n) continue;
+        
+        const pubPoint = Point.G.multiply(privKeyBigInt);
+        const xHex = pubPoint.x.toString(16).padStart(64, '0');
+        const pubCompPrefix = (pubPoint.y % 2n === 0n) ? '02' : '03';
+        const pubCompBytes = hexToBytes(pubCompPrefix + xHex);
+        const hashP2pkh = hash160(pubCompBytes);
+        
+        let addr;
+        if (isSegwit) {
+          addr = bech32Encode('bc', 0, Array.from(hashP2pkh), false);
+        } else {
+          const p2pkhPayload = new Uint8Array(21);
+          p2pkhPayload[0] = 0x00; 
+          p2pkhPayload.set(hashP2pkh, 1);
+          addr = base58CheckEncode(p2pkhPayload);
+        }
+        
+        const wifPayload = new Uint8Array(34);
+        wifPayload[0] = 0x80; 
+        wifPayload.set(finalPrivBytes, 1); 
+        wifPayload[33] = 0x01;
+        const wif = base58CheckEncode(wifPayload);
+        
+        keys.push({ index: i, addr: addr, wif: wif });
+      }
+
+      // 3. Build HTML Output
+      const container = document.getElementById('paperWalletPrint');
+      container.innerHTML = ''; 
+      let html = '';
+
+      for (let i = 0; i < keys.length; i += keysPerPage) {
+        const chunk = keys.slice(i, i + keysPerPage);
+        
+        html += `<div class="print-page custom-page" style="width: 100vw; height: 100vh; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden;">`;
+        
+        chunk.forEach(k => {
+          let pX = layout === 'pubLeft' ? (50 - (spread / 2)) : (50 + (spread / 2));
+          let sX = layout === 'pubLeft' ? (50 + (spread / 2)) : (50 - (spread / 2));
+
+          let finalPubX = `calc(${pX}% + ${pubX}px)`;
+          let finalPrivX = `calc(${sX}% + ${privX}px)`;
+          let finalPubY = `calc(50% + ${pubY}px)`;
+          let finalPrivY = `calc(50% + ${privY}px)`;
+
+          let displayAddr = k.addr;
+          let firstbitsHtml = '';
+          if (showFirstbits) {
+            let trimStart = isSegwit ? 4 : 1;
+            let fbStr = displayAddr.substring(trimStart, trimStart + firstbitsLen);
+
+            firstbitsHtml = `<div style="font-family: monospace; font-size: ${firstbitsSize}px; font-weight: 900; margin-top: 8px; letter-spacing: 2px; color: #000;">${fbStr}</div>`;
+          }
+
+          html += `
+            <div style="flex: 1; border-bottom: 1px dashed rgba(0,0,0,0.3); position: relative; width: 100%; box-sizing: border-box;">
+               
+                <!-- PUBLIC SIDE -->
+               <div style="position: absolute; left: ${finalPubX}; top: ${finalPubY}; transform: translate(-50%, -50%); text-align: center; display: flex; flex-direction: column; align-items: center;">
+                  <span style="display: ${showPubText ? 'block' : 'none'}; font-size: ${Math.max(6, parseInt(pubTextSize, 10) * 0.5)}px; color: #666; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">DEPOSIT ADDRESS</span>
+                  
+                  <div id="qr_cpw_a_${k.index}" class="print-qr" style="display: ${showPubQr ? 'block' : 'none'}; width: ${pubQrSize}px; height: ${pubQrSize}px; margin: 0 auto;"></div>
+                  
+                  ${firstbitsHtml}
+
+                  <div style="display: ${showPubText ? 'block' : 'none'}; font-size: ${pubTextSize}; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: #333;">${displayAddr}</div>
+               </div>
+
+               <!-- PRIVATE SIDE -->
+               <div style="position: absolute; left: ${finalPrivX}; top: ${finalPrivY}; transform: translate(-50%, -50%); text-align: center; display: flex; flex-direction: column; align-items: center;">
+                  <span style="display: ${showPrivText ? 'block' : 'none'}; font-size: ${Math.max(6, privTextSize * 0.5)}px; color: #dc2626; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">PRIVATE KEY</span>
+                  
+                  <div id="qr_cpw_w_${k.index}" class="print-qr" style="display: ${showPrivQr ? 'block' : 'none'}; width: ${privQrSize}px; height: ${privQrSize}px; margin: 0 auto;"></div>
+                  
+                  <div style="display: ${showPrivText ? 'block' : 'none'}; font-size: ${privTextSize}px; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: #dc2626;">${k.wif}</div>
+               </div>
+
+            </div>
+          `;
+        });
+        html += `</div>`;
+      }
+
+      container.innerHTML = html;
+
+      // 4. Render QRs (Only if toggled on)
+      const qrRes = Math.max(256, Math.max(pubQrSize, privQrSize) * 2); 
+      keys.forEach(k => {
+        if (showPubQr) new QRCode(document.getElementById(`qr_cpw_a_${k.index}`), { text: k.addr, width: qrRes, height: qrRes, correctLevel: QRCode.CorrectLevel.M });
+        if (showPrivQr) new QRCode(document.getElementById(`qr_cpw_w_${k.index}`), { text: k.wif, width: qrRes, height: qrRes, correctLevel: QRCode.CorrectLevel.M });
+      });
+
+      // 5. Inject Dynamic CSS
+      const style = document.createElement('style');
+      style.innerHTML = `
+        .print-qr canvas, .print-qr img { width: 100% !important; height: 100% !important; display: block; }
+        @media print {
+          @page { size: ${pageSize} ${orientation}; margin: 0; }
+          body.print-mode-single #paperWalletPrint { display: block !important; padding: 0 !important; }
+          .custom-page { page-break-after: always !important; page-break-inside: avoid !important; margin: 0 !important; padding: 0 !important; }
+        }
+      `;
+      container.appendChild(style);
+
+      // 6. Enter print mode and trigger print
+      document.body.classList.add('print-mode-single');
+      document.body.classList.remove('print-mode-seed');
+      window.print();
+    }
+
+
+
+
+
+    let modalTargetField = null;
+    let modalRolls = [];
+    let modalCapturing = false;
+    let modalLastX = null;
+    let modalLastY = null;
+    let modalLastTime = null;
+    let modalMoveCount = 0;
+
+    function openMouseEntropyModal(target) {
+      modalTargetField = target; // 'vanity' or 'cpw'
+      modalRolls = [];
+      modalCapturing = false;
+      modalLastX = null;
+      modalLastY = null;
+      modalMoveCount = 0;
+
+      updateModalProgressUI();
+      document.getElementById('mouseEntropyModal').classList.add('open');
+      
+      setTimeout(initModalCanvas, 100);
+    }
+
+    function closeMouseEntropyModal() {
+      document.getElementById('mouseEntropyModal').classList.remove('open');
+    }
+
+    function initModalCanvas() {
+      const canvas = document.getElementById('modalCanvas');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+      } else {
+        canvas.width = 440;
+        canvas.height = 180;
+      }
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function startModalCapture() {
+      modalCapturing = true;
+      const badge = document.getElementById('modalStatusBadge');
+      const sub = document.getElementById('modalStatusSubtext');
+      if (badge) {
+        badge.className = 'mouse-status-badge mouse-status-active';
+        badge.textContent = '⚡ Harvesting Active';
+      }
+      if (sub) sub.textContent = 'Keep moving inside box...';
+    }
+
+    function handleModalLeave() {
+      modalCapturing = false;
+      modalLastX = null;
+      modalLastY = null;
+      const badge = document.getElementById('modalStatusBadge');
+      const sub = document.getElementById('modalStatusSubtext');
+      if (badge) {
+        badge.className = 'mouse-status-badge mouse-status-paused';
+        badge.textContent = '⏸️ Tracking Paused';
+      }
+      if (sub) sub.textContent = 'Move back inside box to resume';
+    }
+
+    function handleModalMouseMove(e) {
+      if (!modalCapturing || modalRolls.length >= 128) return;
+      
+      const canvas = document.getElementById('modalCanvas');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const now = performance.now();
+
+      if (modalLastX !== null && modalLastY !== null) {
+        const dx = x - modalLastX;
+        const dy = y - modalLastY;
+        const dt = Math.round(now - modalLastTime);
+        const dist = Math.hypot(dx, dy);
+
+        if (dist >= 4) {
+          modalMoveCount++;
+          if (modalMoveCount % 3 === 0) {
+            const vectorToken = formatMouseVector(x, y, dist, dt, modalRolls.length);
+            modalRolls.push(vectorToken);
+            updateModalProgressUI();
+
+            // Check completion
+            if (modalRolls.length >= 128) {
+              finalizeModalEntropy();
+            }
+          }
+          modalLastX = x;
+          modalLastY = y;
+          modalLastTime = now;
+        }
+      } else {
+        modalLastX = x;
+        modalLastY = y;
+        modalLastTime = now;
+      }
+    }
+
+    function updateModalProgressUI() {
+      const count = modalRolls.length;
+      const pct = Math.min(100, Math.floor((count / 128) * 100));
+      
+      const fill = document.getElementById('modalProgressFill');
+      const txt = document.getElementById('modalProgressText');
+      const perc = document.getElementById('modalProgressPercent');
+
+      if (fill) fill.style.width = `${pct}%`;
+      if (txt) txt.textContent = `${count} / 128 Samples Captured`;
+      if (perc) perc.textContent = `${pct}%`;
+    }
+
+    function finalizeModalEntropy() {
+      const rawString = modalRolls.join('');
+      const entropyBytes = new TextEncoder().encode(rawString);
+      const digestBytes = sha256(entropyBytes);
+      const hexKey = bytesToHex(digestBytes);
+
+      // Populate the correct target input field
+      if (modalTargetField === 'vanity') {
+        const input = document.getElementById('vanityEntropyInput');
+        if (input) input.value = hexKey;
+      } else if (modalTargetField === 'cpw') {
+        const input = document.getElementById('cpwEntropyInput');
+        if (input) {
+          input.value = hexKey;
+          updateCustomWalletPreview();
+        }
+      }
+
+      closeMouseEntropyModal();
+    }
+
+
 
 
 
@@ -11295,70 +12235,47 @@ n2 = n2 ^ secureRandom[1];</div>
       </label>
       
       <!-- 3-Column Design Selection Grid -->
-      <div class="design-picker-grid" id="designPickerGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1.25rem;">
-        
-        <!-- Option 1: Standard Banknote -->
-        <div class="design-card active" id="designCard-standard" onclick="selectSingleWalletDesign('standard')">
-          <div class="design-thumb">
-            <svg viewBox="0 0 160 80" width="100%" height="100%">
-              <rect x="2" y="2" width="156" height="76" rx="4" fill="#1e293b" stroke="#f7931a" stroke-width="1.5"/>
-              <rect x="6" y="6" width="70" height="68" fill="#10b981" fill-opacity="0.15" rx="2"/>
-              <rect x="29" y="14" width="24" height="24" fill="#fff" rx="1"/>
-              <line x1="80" y1="2" x2="80" y2="78" stroke="#6b7280" stroke-dasharray="3 3"/>
-              <rect x="84" y="6" width="70" height="68" fill="#ef4444" fill-opacity="0.15" rx="2"/>
-              <rect x="107" y="14" width="24" height="24" fill="#fff" rx="1"/>
-            </svg>
+      <div class="design-picker-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1.25rem;">
+          
+          <!-- Standard Design -->
+          <div class="design-card active" id="designCard-standard" onclick="selectSingleWalletDesign('standard')">
+            <div class="design-thumb" style="background: #1e293b; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">💵</div>
+            <span class="design-title">Standard</span>
+            <span class="design-desc">Classic Banknote (3/page)</span>
+            <span style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 600; margin-top: 0.35rem; background: rgba(6, 182, 212, 0.1); padding: 0.15rem 0.4rem; border-radius: 4px; border: 1px solid rgba(6, 182, 212, 0.2);">Up to 21 keys</span>
           </div>
-          <span class="design-title" style="font-size: 0.75rem;">Standard</span>
+
+          <!-- Tri-Fold Design -->
+          <div class="design-card" id="designCard-trifold" onclick="selectSingleWalletDesign('trifold')">
+            <div class="design-thumb" style="background: #1e293b; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📑</div>
+            <span class="design-title">Tri-Fold</span>
+            <span class="design-desc">Foldable Pocket (3/page)</span>
+            <span style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 600; margin-top: 0.35rem; background: rgba(6, 182, 212, 0.1); padding: 0.15rem 0.4rem; border-radius: 4px; border: 1px solid rgba(6, 182, 212, 0.2);">Up to 21 keys</span>
+          </div>
+
+          <!-- No Design (Minimalist) -->
+          <div class="design-card" id="designCard-nodesign" onclick="selectSingleWalletDesign('nodesign')">
+            <div class="design-thumb" style="background: #1e293b; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">📄</div>
+            <span class="design-title">Minimalist</span>
+            <span class="design-desc">High Density (10/page)</span>
+            <span style="font-size: 0.65rem; color: var(--accent-green); font-weight: 600; margin-top: 0.35rem; background: rgba(16, 185, 129, 0.1); padding: 0.15rem 0.4rem; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.2);">Up to 100 keys</span>
+          </div>
+          
         </div>
 
-        <!-- Option 2: Tri-Fold Interlocking -->
-        <div class="design-card" id="designCard-trifold" onclick="selectSingleWalletDesign('trifold')">
-          <div class="design-thumb">
-            <svg viewBox="0 0 160 80" width="100%" height="100%">
-              <rect x="2" y="2" width="156" height="76" rx="4" fill="#1e293b" stroke="#06b6d4" stroke-width="1.5"/>
-              <line x1="2" y1="40" x2="158" y2="40" stroke="#ef4444" stroke-dasharray="3 2" stroke-width="1"/>
-              <line x1="54" y1="2" x2="54" y2="78" stroke="#10b981" stroke-dasharray="2 2" stroke-width="1"/>
-              <line x1="106" y1="2" x2="106" y2="78" stroke="#10b981" stroke-dasharray="2 2" stroke-width="1"/>
-              <rect x="62" y="8" width="18" height="18" fill="#fff" rx="1"/>
-              <rect x="128" y="48" width="18" height="18" fill="#fff" rx="1"/>
-            </svg>
-          </div>
-          <span class="design-title" style="font-size: 0.75rem;">Tri-Fold</span>
+        <!-- Bulk Settings -->
+        <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 600;">Select Quantity</label>
+        <div id="quantitySelectionContainer" style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem;">
+          <!-- Buttons injected dynamically by JS -->
         </div>
 
-        <!-- Option 3: No Design (Minimalist) -->
-        <div class="design-card" id="designCard-nodesign" onclick="selectSingleWalletDesign('nodesign')">
-          <div class="design-thumb">
-            <svg viewBox="0 0 160 80" width="100%" height="100%">
-              <rect x="2" y="2" width="156" height="76" rx="4" fill="#1e293b" stroke="#9ca3af" stroke-dasharray="4 4" stroke-width="1.5"/>
-              <rect x="12" y="20" width="40" height="40" fill="#fff" rx="1"/>
-              <rect x="108" y="20" width="40" height="40" fill="#fff" rx="1"/>
-              <line x1="80" y1="2" x2="80" y2="78" stroke="#6b7280" stroke-width="0.5"/>
-            </svg>
-          </div>
-          <span class="design-title" style="font-size: 0.75rem;">No Design</span>
+
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+          <button class="btn" onclick="closePrintSingleModal()" style="border-color: var(--card-border); color: var(--text-muted); background: transparent;">Cancel</button>
+          <button class="btn btn-primary" onclick="confirmAndPrintSingleWallet()" style="background: var(--btc-gold); border-color: var(--btc-gold); color: #fff;">Confirm & Create</button>
         </div>
-
-      </div>
-
-      <!-- Bulk Settings -->
-      <div style="margin-bottom: 1.25rem;">
-        <label style="display: block; font-size: 0.8rem; margin-bottom: 0.3rem; color: var(--text-main); font-weight: 600;">Quantity:</label>
-        <select id="singlePrintCount" style="width: 100%; padding: 0.5rem; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 6px; outline: none;">
-          <option value="1" selected>1 Key</option>
-          <option value="3">3 Keys (1 Page)</option>
-          <option value="9">9 Keys (3 Pages)</option>
-          <option value="21">21 Keys (7 Pages)</option>
-        </select>
-      </div>
-
-      <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
-        <button class="btn" onclick="closePrintSingleModal()" style="border-color: var(--card-border); color: var(--text-muted); background: transparent;">Cancel</button>
-        <button class="btn btn-primary" onclick="confirmAndPrintSingleWallet()" style="background: var(--btc-gold); border-color: var(--btc-gold); color: #fff;">Confirm & Create</button>
       </div>
     </div>
-  </div>
 
 
   <!-- Print Seed Modal -->
@@ -11575,6 +12492,47 @@ n2 = n2 ^ secureRandom[1];</div>
       <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
         <button class="btn" onclick="closeBip38Modal()" style="border-color: var(--card-border); color: var(--text-muted); background: transparent;">Cancel</button>
         <button class="btn btn-primary" id="btnDecryptBip38" onclick="processBip38Decryption()" style="background: var(--btc-gold); border-color: var(--btc-gold); color: #fff; width: auto; padding: 0.6rem 1.2rem;">Decrypt & Convert</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Mouse Entropy Modal Popup -->
+  <div class="modal-overlay" id="mouseEntropyModal" onclick="closeMouseEntropyModal(event)">
+    <div class="modal-card" style="max-width: 480px; text-align: left; position: relative;" onclick="event.stopPropagation()">
+      <button onclick="closeMouseEntropyModal()" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+
+      <h3 style="color: var(--btc-gold); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        🖱️ Harvest Mouse & Touch Entropy
+      </h3>
+      <p style="color: var(--text-muted); font-size: 0.82rem; line-height: 1.4; margin-bottom: 1rem;">
+        Move your cursor or drag your finger dynamically inside the box below until 128 secure vectors are harvested.
+      </p>
+
+      <!-- Interactive Capture Canvas -->
+      <div class="mouse-canvas-wrapper" id="modalCanvasWrapper" style="height: 180px; margin-bottom: 1rem;"
+           onmouseenter="startModalCapture()" onmouseleave="handleModalLeave()" 
+           onmousemove="handleModalMouseMove(event)" onpointermove="handleModalMouseMove(event)">
+        <canvas id="modalCanvas" class="mouse-canvas"></canvas>
+        <div class="mouse-overlay-text">
+          <span class="mouse-status-badge mouse-status-paused" id="modalStatusBadge">⏸️ Tracking Paused</span>
+          <span id="modalStatusSubtext">Move inside box to harvest</span>
+        </div>
+      </div>
+
+      <!-- Progress Tracking Bar -->
+      <div class="metrics-container" style="padding: 0.75rem; margin-bottom: 1rem;">
+        <div class="progress-bg" style="margin-bottom: 0.4rem;">
+          <div class="progress-fill" id="modalProgressFill" style="width: 0%;"></div>
+        </div>
+        <div class="security-status">
+          <span id="modalProgressText">0 / 128 Samples Captured</span>
+          <span id="modalProgressPercent">0%</span>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end;">
+        <button class="btn btn-danger" onclick="closeMouseEntropyModal()" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Cancel</button>
       </div>
     </div>
   </div>
