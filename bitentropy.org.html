@@ -4304,16 +4304,14 @@
 
 
 
-
-
           <!-- ==============================
                TOOL 15: CUSTOM PAPER WALLETS
                ============================== -->
           <div id="toolCustomPaperWallet" class="tool-section" oninput="updateCustomWalletPreview()" onchange="updateCustomWalletPreview()">
             <h3 style="color: var(--text-main); margin-bottom: 0.25rem; font-size: 1.15rem;">🖨️ Custom Paper Wallet Creator</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Generate, position, and print custom bulk paper wallets with a real-time live preview.</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Generate, position, and print custom bulk paper wallets with a real-time live preview. Click the preview to enlarge it.</p>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
               
               <!-- LEFT COLUMN: CONTROLS -->
               <div style="display: flex; flex-direction: column; gap: 1rem;">
@@ -4322,15 +4320,13 @@
                 <div class="output-group">
                   <div class="output-header"><span class="output-title">Page & Generation Settings</span></div>
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem;">
-
                     <div style="grid-column: span 2;">
-                      <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Starting Entropy (WIF, Hex, or Custom Text)</label>
+                      <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Starting Entropy</label>
                       <div style="display: flex; gap: 0.5rem;">
                         <input type="text" id="cpwEntropyInput" placeholder="Leave blank for random start..." style="flex: 1; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px; font-family: monospace;">
                         <button class="btn" type="button" onclick="openMouseEntropyModal('cpw')" style="white-space: nowrap; padding: 0.6rem 0.8rem; font-size: 0.75rem; background: rgba(247, 147, 26, 0.15); border-color: var(--btc-gold); color: var(--btc-gold);">🖱️ Mouse</button>
                       </div>
                     </div>
-
                     <div>
                       <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Address Type</label>
                       <select id="cpwType" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;" onchange="updateCustomWalletPreview()">
@@ -4338,7 +4334,6 @@
                         <option value="segwit">Native SegWit (bc1q...)</option>
                       </select>
                     </div>
-
                     <div>
                       <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Paper Size</label>
                       <select id="cpwPageSize" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
@@ -4353,7 +4348,6 @@
                         <option value="landscape">Landscape</option>
                       </select>
                     </div>
-
                     <div>
                       <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Columns Per Page</label>
                       <select id="cpwColumns" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;" onchange="autoAdjustSizes(); ensureMinimumTotal();">
@@ -4362,12 +4356,10 @@
                         <option value="3">3 Columns</option>
                       </select>
                     </div>
-
                     <div>
                       <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Wallets Per Column (Rows)</label>
                       <input type="number" id="cpwKeysPerPage" value="5" min="1" max="20" onchange="autoAdjustSizes(); ensureMinimumTotal();" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
                     </div>
-
                     <div>
                       <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Total to Generate</label>
                       <input type="number" id="cpwTotal" value="10" min="1" max="500" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
@@ -4375,134 +4367,276 @@
                   </div>
                 </div>
 
-                <!-- Visibility & Sizing -->
+                <!-- Category: QR Codes -->
                 <div class="output-group">
-                  <div class="output-header"><span class="output-title">Elements, Visibility & Sizing</span></div>
+                  <div class="output-header"><span class="output-title">QR Codes</span></div>
                   <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
-                    
                     <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
                       <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <input type="checkbox" id="cpwShowPubQr" checked style="width: 16px; height: 16px; accent-color: var(--accent-green);">
-                        <label for="cpwShowPubQr" style="font-size: 0.75rem; color: var(--text-main);">Address QR</label>
+                        <label style="font-size: 0.75rem; color: var(--text-main);">Address QR</label>
+                        <input type="color" id="cpwPubQrColor" value="#000000" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
                       </div>
                       <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size (px):</label>
+                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
                         <input type="number" id="cpwPubQrSize" value="100" min="10" max="500" style="width: 55px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
                       </div>
                     </div>
-
-
-
-
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
-                      <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <input type="checkbox" id="cpwShowPubText" checked style="width: 16px; height: 16px; accent-color: var(--accent-green);">
-                        <label for="cpwShowPubText" style="font-size: 0.75rem; color: var(--text-main);">Address Text</label>
-                        
-                        <input type="checkbox" id="cpwBendPubText" onchange="updateCustomWalletPreview()" style="margin-left: 0.5rem; width: 14px; height: 14px; accent-color: var(--btc-gold);">
-                        <label for="cpwBendPubText" style="font-size: 0.65rem; color: var(--btc-gold);">Bend</label>
-                      </div>
-                      <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size (px):</label>
-                        <input type="number" id="cpwPubTextSize" value="12" min="2" max="36" step="0.1" style="width: 55px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
-                      </div>
-                    </div>
-
                     <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
                       <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <input type="checkbox" id="cpwShowPrivQr" checked style="width: 16px; height: 16px; accent-color: var(--accent-red);">
-                        <label for="cpwShowPrivQr" style="font-size: 0.75rem; color: var(--text-main);">Private QR</label>
+                        <label style="font-size: 0.75rem; color: var(--text-main);">Private QR</label>
+                        <input type="color" id="cpwPrivQrColor" value="#000000" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
                       </div>
                       <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size (px):</label>
+                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
                         <input type="number" id="cpwPrivQrSize" value="100" min="10" max="500" style="width: 55px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
                       </div>
                     </div>
+                  </div>
+                </div>
 
+                <!-- Category: Address & Keys (Text) -->
+                <div class="output-group">
+                  <div class="output-header"><span class="output-title">Keys, Text & Labels</span></div>
+                  <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                    
+                    <!-- Address Text -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="checkbox" id="cpwShowPubText" checked style="width: 16px; height: 16px; accent-color: var(--accent-green);">
+                        <label style="font-size: 0.75rem; color: var(--text-main);">Address Txt</label>
+                        <input type="color" id="cpwPubTextColor" value="#333333" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
+                        <input type="checkbox" id="cpwBendPubText" onchange="updateCustomWalletPreview()" style="margin-left: 0.5rem; width: 14px; height: 14px; accent-color: var(--btc-gold);">
+                        <label style="font-size: 0.65rem; color: var(--btc-gold);">Bend</label>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
+                        <input type="number" id="cpwPubTextSize" value="12" min="2" max="36" step="0.1" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+
+                    <!-- Private Text -->
                     <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
                       <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <input type="checkbox" id="cpwShowPrivText" checked style="width: 16px; height: 16px; accent-color: var(--accent-red);">
-                        <label for="cpwShowPrivText" style="font-size: 0.75rem; color: var(--text-main);">Private Text</label>
-                        
+                        <label style="font-size: 0.75rem; color: var(--text-main);">Private Txt</label>
+                        <input type="color" id="cpwPrivTextColor" value="#dc2626" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
                         <input type="checkbox" id="cpwBendPrivText" onchange="updateCustomWalletPreview()" style="margin-left: 0.5rem; width: 14px; height: 14px; accent-color: var(--btc-gold);">
-                        <label for="cpwBendPrivText" style="font-size: 0.65rem; color: var(--btc-gold);">Bend</label>
-                      </div>
-                      <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size (px):</label>
-                        <input type="number" id="cpwPrivTextSize" value="10" min="2" max="36" step="0.1" style="width: 55px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
-                      </div>
-                    </div>
-
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
-                      <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <input type="checkbox" id="cpwShowPubLabel" checked style="width: 16px; height: 16px; accent-color: var(--accent-green);">
-                        <label for="cpwShowPubLabel" style="font-size: 0.75rem; color: var(--text-main);">Address Label ("Deposit Address")</label>
+                        <label style="font-size: 0.65rem; color: var(--btc-gold);">Bend</label>
                       </div>
                       <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
-                        <input type="number" id="cpwPubLabelSize" value="8" min="2" max="24" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;" title="Size in px">
+                        <input type="number" id="cpwPrivTextSize" value="10" min="2" max="36" step="0.1" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
                       </div>
                     </div>
 
+                    <!-- Labels -->
                     <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
                       <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <input type="checkbox" id="cpwShowPrivLabel" checked style="width: 16px; height: 16px; accent-color: var(--accent-red);">
-                        <label for="cpwShowPrivLabel" style="font-size: 0.75rem; color: var(--text-main);">Private Label ("Private Key")</label>
+                        <input type="checkbox" id="cpwShowPubLabel" checked style="width: 16px; height: 16px;">
+                        <label style="font-size: 0.75rem; color: var(--text-main);">Addr Label</label>
+                        <input type="color" id="cpwPubLabelColor" value="#666666" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
                       </div>
                       <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
-                        <input type="number" id="cpwPrivLabelSize" value="8" min="2" max="24" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;" title="Size in px">
+                        <input type="number" id="cpwPubLabelSize" value="8" min="2" max="24" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="checkbox" id="cpwShowPrivLabel" checked style="width: 16px; height: 16px;">
+                        <label style="font-size: 0.75rem; color: var(--text-main);">Priv Label</label>
+                        <input type="color" id="cpwPrivLabelColor" value="#dc2626" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
+                        <input type="number" id="cpwPrivLabelSize" value="8" min="2" max="24" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+
+                <!-- Category: Identifiers (Firstbits / Lastbits) -->
+                <div class="output-group">
+                  <div class="output-header"><span class="output-title">Identifiers (Firstbits / Lastbits)</span></div>
+                  <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                    
+                    <!-- Pub Firstbits -->
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                          <input type="checkbox" id="cpwShowFirstbits" style="width: 16px; height: 16px; accent-color: var(--accent-green);">
+                          <label style="font-size: 0.75rem; color: var(--text-main);">Pub Firstbits</label>
+                          <input type="color" id="cpwFirstbitsColor" value="#000000" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
+                          
+                          <input type="checkbox" id="cpwFirstbitsDropPrefix" checked style="width: 14px; height: 14px; margin-left: 0.25rem;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Drop Prefix</label>
+                          
+                          <input type="checkbox" id="cpwFirstbitsDots" style="width: 14px; height: 14px; margin-left: 0.25rem;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Add ".."</label>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                          <select id="cpwFirstbitsOrient" style="padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; font-size: 0.7rem;">
+                            <option value="horizontal" selected>Horiz</option>
+                            <option value="vertical90">Vert 90°</option>
+                            <option value="vertical-90">Vert -90°</option>
+                          </select>
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Size:</label>
+                          <input type="number" id="cpwFirstbitsSize" value="18" min="2" max="100" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Len:</label>
+                          <input type="number" id="cpwFirstbitsLen" value="8" min="1" max="20" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                        </div>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: flex-start;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">X Offset:</label>
+                          <input type="number" id="cpwFirstbitsX" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Y Offset:</label>
+                          <input type="number" id="cpwFirstbitsY" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+
+                    <!-- Pub Lastbits -->
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                          <input type="checkbox" id="cpwShowLastbits" style="width: 16px; height: 16px; accent-color: var(--accent-green);">
+                          <label style="font-size: 0.75rem; color: var(--text-main);">Pub Lastbits</label>
+                          <input type="color" id="cpwLastbitsColor" value="#000000" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
+                          <input type="checkbox" id="cpwLastbitsDots" style="width: 14px; height: 14px; margin-left: 0.5rem;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Add ".."</label>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                          <select id="cpwLastbitsOrient" style="padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; font-size: 0.7rem;">
+                            <option value="horizontal" selected>Horiz</option>
+                            <option value="vertical90">Vert 90°</option>
+                            <option value="vertical-90">Vert -90°</option>
+                          </select>
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Size:</label>
+                          <input type="number" id="cpwLastbitsSize" value="18" min="2" max="100" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Len:</label>
+                          <input type="number" id="cpwLastbitsLen" value="8" min="1" max="20" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                        </div>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: flex-start;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">X Offset:</label>
+                          <input type="number" id="cpwLastbitsX" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Y Offset:</label>
+                          <input type="number" id="cpwLastbitsY" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+
+                    <!-- Priv Firstbits -->
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                          <input type="checkbox" id="cpwShowPrivFirstbits" style="width: 16px; height: 16px; accent-color: var(--accent-red);">
+                          <label style="font-size: 0.75rem; color: var(--text-main);">Priv Firstbits</label>
+                          <input type="color" id="cpwPrivFirstbitsColor" value="#000000" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
+                          <input type="checkbox" id="cpwPrivFirstbitsDots" style="width: 14px; height: 14px; margin-left: 0.5rem;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Add ".."</label>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                          <select id="cpwPrivFirstbitsOrient" style="padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; font-size: 0.7rem;">
+                            <option value="horizontal" selected>Horiz</option>
+                            <option value="vertical90">Vert 90°</option>
+                            <option value="vertical-90">Vert -90°</option>
+                          </select>
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Size:</label>
+                          <input type="number" id="cpwPrivFirstbitsSize" value="18" min="2" max="100" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Len:</label>
+                          <input type="number" id="cpwPrivFirstbitsLen" value="8" min="1" max="20" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                        </div>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: flex-start;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">X Offset:</label>
+                          <input type="number" id="cpwPrivFirstbitsX" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Y Offset:</label>
+                          <input type="number" id="cpwPrivFirstbitsY" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+
+                    <!-- Priv Lastbits -->
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                          <input type="checkbox" id="cpwShowPrivLastbits" style="width: 16px; height: 16px; accent-color: var(--accent-red);">
+                          <label style="font-size: 0.75rem; color: var(--text-main);">Priv Lastbits</label>
+                          <input type="color" id="cpwPrivLastbitsColor" value="#000000" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
+                          <input type="checkbox" id="cpwPrivLastbitsDots" style="width: 14px; height: 14px; margin-left: 0.5rem;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Add ".."</label>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                          <select id="cpwPrivLastbitsOrient" style="padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; font-size: 0.7rem;">
+                            <option value="horizontal" selected>Horiz</option>
+                            <option value="vertical90">Vert 90°</option>
+                            <option value="vertical-90">Vert -90°</option>
+                          </select>
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Size:</label>
+                          <input type="number" id="cpwPrivLastbitsSize" value="18" min="2" max="100" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Len:</label>
+                          <input type="number" id="cpwPrivLastbitsLen" value="8" min="1" max="20" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                        </div>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: flex-start;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">X Offset:</label>
+                          <input type="number" id="cpwPrivLastbitsX" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Y Offset:</label>
+                          <input type="number" id="cpwPrivLastbitsY" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Category: Numbers & Dividers -->
+                <div class="output-group">
+                  <div class="output-header"><span class="output-title">Numbering & Dividers</span></div>
+                  <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                          <input type="checkbox" id="cpwShowNumber" checked style="width: 16px; height: 16px; accent-color: var(--btc-gold);">
+                          <label style="font-size: 0.75rem; color: var(--text-main);">Wallet #</label>
+                          <input type="color" id="cpwNumberColor" value="#555555" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
+                          <input type="text" id="cpwNumberStart" value="001" style="width: 60px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;" placeholder="Start #">
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                          <select id="cpwNumberPos" style="padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; font-size: 0.7rem;">
+                            <option value="topLeft" selected>Top Left</option>
+                            <option value="underPubQr">Under Pub QR</option>
+                            <option value="underPrivQr">Under Priv QR</option>
+                          </select>
+                          <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
+                          <input type="number" id="cpwNumberSize" value="10" min="2" max="36" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                        </div>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: flex-start;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">X Offset:</label>
+                          <input type="number" id="cpwNumberX" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Y Offset:</label>
+                          <input type="number" id="cpwNumberY" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
                       </div>
                     </div>
 
                     <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
                       <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <input type="checkbox" id="cpwShowDivider" checked style="width: 16px; height: 16px; accent-color: var(--btc-gold);">
-                        <label for="cpwShowDivider" style="font-size: 0.75rem; color: var(--text-main);">Show Row Divider Line</label>
+                        <label style="font-size: 0.75rem; color: var(--text-main);">Row Divider Line</label>
+                        <input type="color" id="cpwDividerColor" value="#000000" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
                       </div>
                     </div>
-
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border); flex-wrap: wrap; gap: 0.5rem;">
-                      <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <input type="checkbox" id="cpwShowNumber" checked style="width: 16px; height: 16px; accent-color: var(--btc-gold);">
-                        <label for="cpwShowNumber" style="font-size: 0.75rem; color: var(--text-main);">Wallet #</label>
-                        <input type="text" id="cpwNumberStart" value="001" style="width: 70px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;" placeholder="Start #">
-                      </div>
-                      <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <select id="cpwNumberPos" style="padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; font-size: 0.7rem;">
-                          <option value="topLeft" selected>Top Left</option>
-                          <option value="underQr">Under QR</option>
-                        </select>
-                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
-                        <input type="number" id="cpwNumberSize" value="10" min="2" max="36" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
-                      </div>
-                    </div>
-
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
-                      <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <input type="checkbox" id="cpwShowFirstbits" style="width: 16px; height: 16px; accent-color: var(--btc-gold);">
-                        <label for="cpwShowFirstbits" style="font-size: 0.75rem; color: var(--text-main);">Firstbits</label>
-                      </div>
-                      <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
-                        <input type="number" id="cpwFirstbitsSize" value="24" min="2" max="100" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
-                        
-                        <label style="font-size: 0.7rem; color: var(--text-muted); margin-left: 0.2rem;">Chars:</label>
-                        <input type="number" id="cpwFirstbitsLen" value="8" min="1" max="20" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
-                      </div>
-                    </div>
-
 
                   </div>
                 </div>
 
                 <!-- Layout & Coordinates -->
                 <div class="output-group">
-                  <div class="output-header">
-                    <span class="output-title">Spacing & Layout Alignment</span>
-                  </div>
+                  <div class="output-header"><span class="output-title">Spacing & Layout Alignment</span></div>
                   <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
-                    
                     <div>
                       <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Side Assignment</label>
                       <select id="cpwLayout" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
@@ -4510,25 +4644,16 @@
                         <option value="privLeft">Private Key Left | Address Right</option>
                       </select>
                     </div>
-
                     <div style="display: flex; gap: 0.5rem;">
                       <div style="flex: 1;">
-                        <label style="display: block; font-size: 0.7rem; color: var(--btc-gold); margin-bottom: 0.25rem;">
-                          Horizontal Spread (%)
-                          <span class="tooltip-icon" data-tooltip="Controls the distance between the Public and Private blocks. Lower values pull them closer together toward the center, while higher values push them toward the left and right edges.">?</span>
-                        </label>
+                        <label style="display: block; font-size: 0.7rem; color: var(--btc-gold); margin-bottom: 0.25rem;">Horizontal Spread (%)</label>
                         <input type="number" id="cpwSpread" value="60" min="10" max="90" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
                       </div>
                       <div style="flex: 1;">
-                        <label style="display: block; font-size: 0.7rem; color: var(--btc-gold); margin-bottom: 0.25rem;">
-                          Text Bounding Box (px)
-                          <span class="tooltip-icon" data-tooltip="Sets the maximum width of the text container before it wraps to a new line. For an 8.5&quot;x11&quot; page split into two columns, the maximum safe width per side is ~400px to 425px to prevent side collisions.">?</span>
-                        </label>
+                        <label style="display: block; font-size: 0.7rem; color: var(--btc-gold); margin-bottom: 0.25rem;">Text Bounding Box (px)</label>
                         <input type="number" id="cpwTextMaxWidth" value="400" min="100" max="1000" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
                       </div>
                     </div>
-
-                    <!-- Fine Tuning Offsets -->
                     <div style="margin-top: 0.5rem;">
                        <span style="display: block; font-size: 0.75rem; color: var(--text-main); font-weight: 600; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.25rem;">Fine-Tune Entire Blocks (QR + Text)</span>
                        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
@@ -4552,8 +4677,18 @@
                           </div>
                        </div>
                     </div>
-
                   </div>
+                </div>
+
+                <!-- Save & Restore Config -->
+                <div style="display: flex; gap: 0.75rem; margin-bottom: 0.5rem;">
+                  <button class="btn" type="button" onclick="saveCustomWalletConfig()" style="flex: 1; padding: 0.8rem; font-size: 0.9rem; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-main); transition: all 0.2s;">
+                    💾 Save Config
+                  </button>
+                  <button class="btn" type="button" onclick="document.getElementById('cpwConfigFile').click()" style="flex: 1; padding: 0.8rem; font-size: 0.9rem; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); color: var(--text-main); transition: all 0.2s;">
+                    📂 Restore Config
+                  </button>
+                  <input type="file" id="cpwConfigFile" accept=".json" style="display: none;" onchange="restoreCustomWalletConfig(event)">
                 </div>
 
                 <button class="btn btn-primary" onclick="generateAndPrintCustomWallets()" style="width: 100%; padding: 1rem; font-size: 1.05rem;">
@@ -4561,36 +4696,34 @@
                 </button>
               </div>
 
-
-
               <!-- RIGHT COLUMN: LIVE PREVIEW -->
-              <div class="output-group" style="position: sticky; top: 85px; align-self: start;">
+              <div class="output-group" style="position: sticky; top: 85px; align-self: start; display: flex; flex-direction: column;">
                 <div class="output-header">
                   <span class="output-title" style="color: var(--btc-gold);">Live Page Preview</span>
                   <span class="output-tag" id="cpwPreviewLabel">US Letter - 5 Rows</span>
                 </div>
                 
-                <!-- The Preview Wrapper -->
-                <div id="cpwPreviewWrapper" style="width: 100%; background: #fff; border-radius: 4px; overflow: hidden; position: relative; margin-top: 0.5rem; box-shadow: inset 0 0 10px rgba(0,0,0,0.2);">
-                  
-                  <!-- The Actual Scaled Page -->
-                  <div id="cpwPreviewPage" style="position: absolute; top: 0; left: 0; transform-origin: top left; display: flex; flex-direction: column; background: #fff;">
-                    <!-- JS Injects preview rows here -->
+                <!-- The Preview Container -->
+                <div id="cpwPreviewContainer" style="width: 100%;">
+                  <div id="cpwPreviewWrapper" onclick="toggleFullscreenPreview()" style="width: 100%; background: #fff; border-radius: 4px; overflow: hidden; position: relative; margin-top: 0.5rem; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); cursor: zoom-in; transition: all 0.3s ease;">
+                    <div id="cpwPreviewPage" style="position: absolute; top: 0; left: 0; transform-origin: top left; display: flex; flex-direction: column; background: #fff; pointer-events: none;">
+                      <!-- JS Injects preview rows here -->
+                    </div>
+                    
+                    <!-- Fullscreen Close Button (Hidden by default) -->
+                    <div id="cpwFullscreenClose" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 10000; background: #dc2626; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-family: sans-serif;">
+                      ❌ Close Preview
+                    </div>
                   </div>
+                </div>
 
-                </div> <!-- THIS CLOSES THE WRAPPER -->
-
-                <!-- PAGE COUNT INDICATOR (Now safely outside the wrapper) -->
                 <div id="cpwPageCountIndicator" style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--accent-cyan); font-weight: 600; text-align: center; padding: 0.6rem; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 6px;">
                   🖨️ Expected Print Job: 2 Pages (10 Wallets)
                 </div>
-
               </div>
-
 
             </div>
           </div> <!-- END CUSTOM PAPER WALLET TOOL -->
-
 
       </div> <!-- END MAIN DISPLAY AREA -->
       </div> <!-- END UTILITIES LAYOUT -->
@@ -7635,134 +7768,42 @@ n2 = n2 ^ secureRandom[1];</div>
       }, 300);
     }
 
-    async function loadMoreAddresses() {
-      const tbody = document.getElementById('hdAddressTableBody');
-      const start = STATE.currentDerivationIndex;
-      const end = start + 10;
-      const purpose = STATE.activeDerivationPurpose;
-
-      for (let i = start; i < end; i++) {
-        const derivationPath = `m/${purpose}'/0'/0'/0/${i}`;
-
-        // 1. Derive proper BIP-32 HD Private Key
-        const derived = await deriveBIP32(STATE.hdMasterSeed, derivationPath);
-        const privKeyBytes = derived.privKey;
-
-        // 2. Derive WIF Private Key
-        const wifPayload = new Uint8Array(34);
-        wifPayload[0] = 0x80;
-        wifPayload.set(privKeyBytes, 1);
-        wifPayload[33] = 0x01; // Compressed flag
-        const derivedWif = base58CheckEncode(wifPayload);
-
-        // 3. Derive Public Key via Elliptic Curve Point Multiplication (P = k * G)
-        const privKeyBigInt = BigInt('0x' + bytesToHex(privKeyBytes)) % SECP256K1_N;
-        const pubPoint = Point.G.multiply(privKeyBigInt);
-        const xHex = pubPoint.x.toString(16).padStart(64, '0');
-        const pubCompPrefix = (pubPoint.y % 2n === 0n) ? '02' : '03';
-        const pubCompBytes = hexToBytes(pubCompPrefix + xHex);
-        const hashP2pkh = hash160(pubCompBytes);
-
-        // 4. Encode Address based on User's Dropdown Selection
-        let derivedAddress = "";
-        if (purpose === 84) {
-          derivedAddress = bech32Encode('bc', 0, Array.from(hashP2pkh), false);
-        } else if (purpose === 44) {
-          const p2pkhPayload = new Uint8Array(21);
-          p2pkhPayload[0] = 0x00;
-          p2pkhPayload.set(hashP2pkh, 1);
-          derivedAddress = base58CheckEncode(p2pkhPayload);
-        } else if (purpose === 49) {
-          const redeemScript = new Uint8Array(22);
-          redeemScript[0] = 0x00;
-          redeemScript[1] = 0x14;
-          redeemScript.set(hashP2pkh, 2);
-          const scriptHash = hash160(redeemScript);
-          const p2shPayload = new Uint8Array(21);
-          p2shPayload[0] = 0x05;
-          p2shPayload.set(scriptHash, 1);
-          derivedAddress = base58CheckEncode(p2shPayload);
-        } else if (purpose === 86) {
-          derivedAddress = bech32Encode('bc', 1, Array.from(hexToBytes(xHex)), true);
-        }
-
-        // Display the full address without truncation
-        const displayAddress = derivedAddress;
-
-        // 5. Append to Table (Store the full address in data-full attribute)
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>#${i}</td>
-          <td><code style="color: var(--text-muted);">${derivationPath}</code></td>
-
-
-          <td style="font-family: monospace;" title="${derivedAddress}">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; width: 100%;">
-              <span data-full="${derivedAddress}">${displayAddress}</span>
-              <div style="display: flex; gap: 0; align-items: center;">
-                <button class="btn-icon" onclick="copyString('${derivedAddress}')" title="Copy Address">📋</button>
-                <button class="btn-icon" onclick="showQrModal('${derivedAddress}', 'Public Address')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">
-                  <svg viewBox="0 0 336 336" width="16" height="16" fill="currentColor">
-                    <path d="m 16,16 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 128,0 0,16 0,16 16,0 0,-16 16,0 0,-16 -16,0 -16,0 z m 32,16 0,16 16,0 0,-16 -16,0 z m 16,16 0,16 16,0 16,0 0,-16 0,-16 0,-16 -16,0 0,16 0,16 -16,0 z m 0,16 -16,0 -16,0 -16,0 0,16 16,0 16,0 0,16 -16,0 0,16 16,0 0,16 16,0 0,-16 16,0 0,16 -16,0 0,16 -16,0 0,16 16,0 16,0 0,16 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 0,-16 -16,0 0,-16 z m 16,112 -16,0 0,16 -16,0 0,16 0,16 16,0 0,16 0,16 -16,0 -16,0 0,-16 16,0 0,-16 -16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,16 16,0 0,-16 0,-16 -16,0 -16,0 0,-16 -16,0 -16,0 -16,0 0,16 -16,0 0,16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,16 0,16 0,16 16,0 0,-16 16,0 16,0 16,0 0,-16 16,0 0,-16 16,0 0,16 -16,0 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,16 0,16 0,16 16,0 0,16 16,0 16,0 16,0 0,16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 0,-16 -16,0 -16,0 0,-16 -16,0 0,-16 -16,0 0,16 -16,0 -16,0 0,16 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 16,0 0,-16 -16,0 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 -16,0 0,-16 z m 48,128 0,-16 -16,0 0,16 16,0 z m 32,16 16,0 16,0 0,-16 -16,0 -16,0 0,16 z m 32,-16 16,0 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 -16,0 0,16 0,16 16,0 0,-16 16,0 0,16 0,16 16,0 16,0 0,16 z m -48,-80 0,-16 -16,0 -16,0 0,16 16,0 16,0 z m 16,0 16,0 0,-16 0,-16 0,-16 16,0 0,16 16,0 0,16 16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,-16 -16,0 0,16 -16,0 0,16 16,0 0,16 0,16 0,16 z m -16,-48 -16,0 0,16 16,0 0,-16 z m 64,32 -16,0 0,16 16,0 0,-16 z m -224,0 0,-16 -16,0 0,16 16,0 z m -16,0 -16,0 -16,0 -16,0 0,16 16,0 16,0 16,0 0,-16 z m -64,0 -16,0 0,16 16,0 0,-16 z m 0,-48 0,-16 -16,0 0,16 16,0 z m 112,-16 16,0 0,-16 0,-16 -16,0 0,16 0,16 z m 96,-128 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m -208,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 224,0 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m -208,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 224,0 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m -32,96 0,16 16,0 0,-16 -16,0 z m -224,96 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 16,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 16,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 288,48 0,16 16,0 0,-16 -16,0 z"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </td>
-          
-
-          <td style="font-family: monospace;">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; width: 100%;">
-              <span data-full="${derivedWif}">${derivedWif}</span>
-              
-              <div style="display: flex; gap: 0; align-items: center;">
-                <button class="btn-icon" onclick="copyString('${derivedWif}')" title="Copy WIF" style="display: inline-flex; align-items: center; justify-content: center;">📋</button>
-
-                <button class="btn-icon" onclick="showQrModal('${derivedWif}', 'WIF Private Key')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">
-                  <svg viewBox="0 0 336 336" width="16" height="16" fill="currentColor">
-                    <path d="m 16,16 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 128,0 0,16 0,16 16,0 0,-16 16,0 0,-16 -16,0 -16,0 z m 32,16 0,16 16,0 0,-16 -16,0 z m 16,16 0,16 16,0 16,0 0,-16 0,-16 0,-16 -16,0 0,16 0,16 -16,0 z m 0,16 -16,0 -16,0 -16,0 0,16 16,0 16,0 0,16 -16,0 0,16 16,0 0,16 16,0 0,-16 16,0 0,16 -16,0 0,16 -16,0 0,16 16,0 16,0 0,16 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 0,-16 -16,0 0,-16 z m 16,112 -16,0 0,16 -16,0 0,16 0,16 16,0 0,16 0,16 -16,0 -16,0 0,-16 16,0 0,-16 -16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,16 16,0 0,-16 0,-16 -16,0 -16,0 0,-16 -16,0 -16,0 -16,0 0,16 -16,0 0,16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,16 0,16 0,16 16,0 0,-16 16,0 16,0 16,0 0,-16 16,0 0,-16 16,0 0,16 -16,0 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,16 0,16 0,16 16,0 0,16 16,0 16,0 16,0 0,16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 0,-16 -16,0 -16,0 0,-16 -16,0 0,-16 -16,0 0,16 -16,0 -16,0 0,16 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 16,0 0,-16 -16,0 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 -16,0 0,-16 z m 48,128 0,-16 -16,0 0,16 16,0 z m 32,16 16,0 16,0 0,-16 -16,0 -16,0 0,16 z m 32,-16 16,0 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 -16,0 0,16 0,16 16,0 0,-16 16,0 0,16 0,16 16,0 16,0 0,16 z m -48,-80 0,-16 -16,0 -16,0 0,16 16,0 16,0 z m 16,0 16,0 0,-16 0,-16 0,-16 16,0 0,16 16,0 0,16 16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,-16 -16,0 0,16 -16,0 0,16 16,0 0,16 0,16 0,16 z m -16,-48 -16,0 0,16 16,0 0,-16 z m 64,32 -16,0 0,16 16,0 0,-16 z m -224,0 0,-16 -16,0 0,16 16,0 z m -16,0 -16,0 -16,0 -16,0 0,16 16,0 16,0 16,0 0,-16 z m -64,0 -16,0 0,16 16,0 0,-16 z m 0,-48 0,-16 -16,0 0,16 16,0 z m 112,-16 16,0 0,-16 0,-16 -16,0 0,16 0,16 z m 96,-128 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m -208,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 224,0 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m -208,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 224,0 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m -32,96 0,16 16,0 0,-16 -16,0 z m -224,96 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 16,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 16,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 288,48 0,16 16,0 0,-16 -16,0 z"/>
-                  </svg>
-                </button>
-              </div>
-
-
-            </div>
-          </td>
-
-        `;
-        tbody.appendChild(row);
-      }
-      STATE.currentDerivationIndex = end;
-    }
-
 
     async function loadMoreAddresses() {
       const tbody = document.getElementById('hdAddressTableBody');
-      const start = STATE.currentDerivationIndex;
-      const end = start + 10;
       const purpose = STATE.activeDerivationPurpose;
 
-      // --- ADDED: Capture current generation ---
+      // 1. Capture current generation
       const currentGen = STATE.derivationGeneration;
 
+      // 2. Synchronously reserve indices so fast double-clicks don't overlap
+      const start = STATE.currentDerivationIndex;
+      const end = start + 10;
+      STATE.currentDerivationIndex = end;
+
       for (let i = start; i < end; i++) {
-        // --- ADDED: Abort loop if generation changed (user typed or clicked tab) ---
+        // Check before yielding
         if (currentGen !== STATE.derivationGeneration) return;
 
         const derivationPath = `m/${purpose}'/0'/0'/0/${i}`;
 
-        // 1. Derive proper BIP-32 HD Private Key
+        // Derive proper BIP-32 HD Private Key (This yields the thread!)
         const derived = await deriveBIP32(STATE.hdMasterSeed, derivationPath);
+        
+        // ---> CRITICAL FIX: Check again AFTER the await! <---
+        // If the user typed a new character while we were awaiting the crypto function, abort.
+        if (currentGen !== STATE.derivationGeneration) return;
+
         const privKeyBytes = derived.privKey;
 
-        // 2. Derive WIF Private Key
+        // Derive WIF Private Key
         const wifPayload = new Uint8Array(34);
         wifPayload[0] = 0x80;
         wifPayload.set(privKeyBytes, 1);
         wifPayload[33] = 0x01; // Compressed flag
         const derivedWif = base58CheckEncode(wifPayload);
 
-        // 3. Derive Public Key via Elliptic Curve Point Multiplication (P = k * G)
+        // Derive Public Key via Elliptic Curve Point Multiplication (P = k * G)
         const privKeyBigInt = BigInt('0x' + bytesToHex(privKeyBytes)) % SECP256K1_N;
         const pubPoint = Point.G.multiply(privKeyBigInt);
         const xHex = pubPoint.x.toString(16).padStart(64, '0');
@@ -7770,7 +7811,7 @@ n2 = n2 ^ secureRandom[1];</div>
         const pubCompBytes = hexToBytes(pubCompPrefix + xHex);
         const hashP2pkh = hash160(pubCompBytes);
 
-        // 4. Encode Address based on User's Dropdown Selection
+        // Encode Address based on User's Dropdown Selection
         let derivedAddress = "";
         if (purpose === 84) {
           derivedAddress = bech32Encode('bc', 0, Array.from(hashP2pkh), false);
@@ -7793,16 +7834,13 @@ n2 = n2 ^ secureRandom[1];</div>
           derivedAddress = bech32Encode('bc', 1, Array.from(hexToBytes(xHex)), true);
         }
 
-        // Display the full address without truncation
         const displayAddress = derivedAddress;
 
-        // 5. Append to Table (Store the full address in data-full attribute)
+        // Append to Table
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>#${i}</td>
           <td><code style="color: var(--text-muted);">${derivationPath}</code></td>
-
-
           <td style="font-family: monospace;" title="${derivedAddress}">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; width: 100%;">
               <span data-full="${derivedAddress}">${displayAddress}</span>
@@ -7816,30 +7854,22 @@ n2 = n2 ^ secureRandom[1];</div>
               </div>
             </div>
           </td>
-          
-
           <td style="font-family: monospace;">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; width: 100%;">
               <span data-full="${derivedWif}">${derivedWif}</span>
-              
               <div style="display: flex; gap: 0; align-items: center;">
                 <button class="btn-icon" onclick="copyString('${derivedWif}')" title="Copy WIF" style="display: inline-flex; align-items: center; justify-content: center;">📋</button>
-
                 <button class="btn-icon" onclick="showQrModal('${derivedWif}', 'WIF Private Key')" title="Show QR Code" style="display: inline-flex; align-items: center; justify-content: center;">
                   <svg viewBox="0 0 336 336" width="16" height="16" fill="currentColor">
                     <path d="m 16,16 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 128,0 0,16 0,16 16,0 0,-16 16,0 0,-16 -16,0 -16,0 z m 32,16 0,16 16,0 0,-16 -16,0 z m 16,16 0,16 16,0 16,0 0,-16 0,-16 0,-16 -16,0 0,16 0,16 -16,0 z m 0,16 -16,0 -16,0 -16,0 0,16 16,0 16,0 0,16 -16,0 0,16 16,0 0,16 16,0 0,-16 16,0 0,16 -16,0 0,16 -16,0 0,16 16,0 16,0 0,16 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 0,-16 -16,0 0,-16 z m 16,112 -16,0 0,16 -16,0 0,16 0,16 16,0 0,16 0,16 -16,0 -16,0 0,-16 16,0 0,-16 -16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,16 16,0 0,-16 0,-16 -16,0 -16,0 0,-16 -16,0 -16,0 -16,0 0,16 -16,0 0,16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,16 0,16 0,16 16,0 0,-16 16,0 16,0 16,0 0,-16 16,0 0,-16 16,0 0,16 -16,0 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,16 0,16 0,16 16,0 0,16 16,0 16,0 16,0 0,16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 0,16 16,0 0,16 -16,0 0,16 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 16,0 0,-16 16,0 0,16 16,0 16,0 16,0 0,-16 -16,0 -16,0 0,-16 -16,0 0,-16 -16,0 0,16 -16,0 -16,0 0,16 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 16,0 0,-16 -16,0 -16,0 0,-16 16,0 0,-16 0,-16 0,-16 -16,0 0,-16 z m 48,128 0,-16 -16,0 0,16 16,0 z m 32,16 16,0 16,0 0,-16 -16,0 -16,0 0,16 z m 32,-16 16,0 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 0,-16 -16,0 0,16 -16,0 0,16 0,16 16,0 0,-16 16,0 0,16 0,16 16,0 16,0 0,16 z m -48,-80 0,-16 -16,0 -16,0 0,16 16,0 16,0 z m 16,0 16,0 0,-16 0,-16 0,-16 16,0 0,16 16,0 0,16 16,0 0,-16 0,-16 -16,0 0,-16 16,0 0,-16 -16,0 -16,0 0,16 -16,0 0,-16 -16,0 0,16 -16,0 0,16 16,0 0,16 0,16 0,16 z m -16,-48 -16,0 0,16 16,0 0,-16 z m 64,32 -16,0 0,16 16,0 0,-16 z m -224,0 0,-16 -16,0 0,16 16,0 z m -16,0 -16,0 -16,0 -16,0 0,16 16,0 16,0 16,0 0,-16 z m -64,0 -16,0 0,16 16,0 0,-16 z m 0,-48 0,-16 -16,0 0,16 16,0 z m 112,-16 16,0 0,-16 0,-16 -16,0 0,16 0,16 z m 96,-128 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m -208,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 224,0 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m -208,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 224,0 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m -32,96 0,16 16,0 0,-16 -16,0 z m -224,96 0,16 0,16 0,16 0,16 0,16 0,16 0,16 16,0 16,0 16,0 16,0 16,0 16,0 16,0 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 -16,0 z m 16,16 16,0 16,0 16,0 16,0 16,0 0,16 0,16 0,16 0,16 0,16 -16,0 -16,0 -16,0 -16,0 -16,0 0,-16 0,-16 0,-16 0,-16 0,-16 z m 16,16 0,16 0,16 0,16 16,0 16,0 16,0 0,-16 0,-16 0,-16 -16,0 -16,0 -16,0 z m 288,48 0,16 16,0 0,-16 -16,0 z"/>
-                  </svg>
-                </button>
-              </div>
-
-
-            </div>
-          </td>
-
-        `;
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                `;
         tbody.appendChild(row);
       }
-      STATE.currentDerivationIndex = end;
     }
 
 
@@ -11794,7 +11824,57 @@ n2 = n2 ^ secureRandom[1];</div>
 
 
 
-    // NEW HELPER: Increments strings like "C000001" to "C000002" perfectly
+
+
+
+
+
+
+    /* ==========================================================================
+       TOOL 15: CUSTOM PAPER WALLET CREATOR JS
+       ========================================================================== */
+
+
+
+
+    function toggleFullscreenPreview() {
+      const wrapper = document.getElementById('cpwPreviewWrapper');
+      const closeBtn = document.getElementById('cpwFullscreenClose');
+      const isFullscreen = wrapper.classList.toggle('cpw-fullscreen-mode');
+      
+      if (isFullscreen) {
+        wrapper.style.position = 'fixed';
+        wrapper.style.top = '0';
+        wrapper.style.left = '0';
+        wrapper.style.width = '100vw';
+        wrapper.style.height = '100vh';
+        wrapper.style.zIndex = '9999';
+        wrapper.style.borderRadius = '0';
+        wrapper.style.cursor = 'default';
+        wrapper.style.boxShadow = 'none';
+        wrapper.style.background = '#222';
+        wrapper.style.display = 'flex';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.justifyContent = 'center';
+        closeBtn.style.display = 'block'; // Show close button
+      } else {
+        wrapper.style.position = 'relative';
+        wrapper.style.top = 'auto';
+        wrapper.style.left = 'auto';
+        wrapper.style.width = '100%';
+        wrapper.style.height = 'auto';
+        wrapper.style.zIndex = 'auto';
+        wrapper.style.borderRadius = '4px';
+        wrapper.style.cursor = 'zoom-in';
+        wrapper.style.boxShadow = 'inset 0 0 10px rgba(0,0,0,0.2)';
+        wrapper.style.background = '#fff';
+        wrapper.style.display = 'block';
+        closeBtn.style.display = 'none'; // Hide close button
+      }
+      
+      setTimeout(updateCustomWalletPreview, 50);
+    }
+
     function getIncrementedString(startStr, index) {
       const match = startStr.match(/^(.*?)(\d+)$/);
       if (match) {
@@ -11804,25 +11884,20 @@ n2 = n2 ^ secureRandom[1];</div>
         const newNum = parseInt(numStr, 10) + index;
         return prefix + String(newNum).padStart(numLen, '0');
       }
-      return startStr + (index === 0 ? '' : index); // Fallback if no trailing numbers
+      return startStr + (index === 0 ? '' : index); 
     }
 
-    // Auto-scale UI elements based on total items per row/column density
     function autoAdjustSizes() {
       const keysPerPage = parseInt(document.getElementById('cpwKeysPerPage').value, 10) || 5;
       const columns = parseInt(document.getElementById('cpwColumns').value, 10) || 1;
-      
-      // Scale down vertically if more than 5 rows, and horizontally based on columns
       const rowScale = keysPerPage <= 5 ? 1 : (5 / keysPerPage);
       const colScale = 1 / columns; 
-      
-      // Calculate final scale (with a 0.3 floor so things don't disappear entirely)
       const scale = Math.max(0.3, rowScale * colScale);
 
       const baseQr = 100;
       const basePubText = 12;
       const basePrivText = 10;
-      const baseFirstbitsText = 24;
+      const baseFirstbitsText = 18;
       const basePubLabel = 8;
       const basePrivLabel = 8;
 
@@ -11831,10 +11906,25 @@ n2 = n2 ^ secureRandom[1];</div>
       document.getElementById('cpwPubTextSize').value = Math.max(2, parseFloat((basePubText * scale).toFixed(1)));
       document.getElementById('cpwPrivTextSize').value = Math.max(2, parseFloat((basePrivText * scale).toFixed(1)));
       document.getElementById('cpwFirstbitsSize').value = Math.max(2, parseFloat((baseFirstbitsText * scale).toFixed(1)));
+      document.getElementById('cpwLastbitsSize').value = Math.max(2, parseFloat((baseFirstbitsText * scale).toFixed(1)));
+      document.getElementById('cpwPrivFirstbitsSize').value = Math.max(2, parseFloat((baseFirstbitsText * scale).toFixed(1)));
+      document.getElementById('cpwPrivLastbitsSize').value = Math.max(2, parseFloat((baseFirstbitsText * scale).toFixed(1)));
       document.getElementById('cpwPubLabelSize').value = Math.max(2, parseFloat((basePubLabel * scale).toFixed(1)));
       document.getElementById('cpwPrivLabelSize').value = Math.max(2, parseFloat((basePrivLabel * scale).toFixed(1)));
 
       updateCustomWalletPreview();
+    }
+
+    function getOrientationCSS(orientation, xOffset = 0, yOffset = 0) {
+      let transformStr = `translate(${xOffset}px, ${yOffset}px)`;
+      if (orientation === 'vertical90') transformStr += ' rotate(90deg)';
+      if (orientation === 'vertical-90') transformStr += ' rotate(-90deg)';
+      return `display: inline-block; transform: ${transformStr};`;
+    }
+
+    function hexToRgba(hex, alpha) {
+      var r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r},${g},${b},${alpha})`;
     }
 
     function updateCustomWalletPreview() {
@@ -11853,37 +11943,90 @@ n2 = n2 ^ secureRandom[1];</div>
       const isSegwit = document.getElementById('cpwType').value === 'segwit';
       const layout = document.getElementById('cpwLayout').value; 
       
+      // General QRs & Text
       const showPubQr = document.getElementById('cpwShowPubQr').checked;
       const pubQrSize = parseFloat(document.getElementById('cpwPubQrSize').value) || 100;
+      const pubQrColor = document.getElementById('cpwPubQrColor').value;
+      
       const showPrivQr = document.getElementById('cpwShowPrivQr').checked;
       const privQrSize = parseFloat(document.getElementById('cpwPrivQrSize').value) || 100;
+      const privQrColor = document.getElementById('cpwPrivQrColor').value;
 
       const showPubText = document.getElementById('cpwShowPubText').checked;
       const bendPubText = document.getElementById('cpwBendPubText').checked;
       const pubTextSize = parseFloat(document.getElementById('cpwPubTextSize').value) || 12;
+      const pubTextColor = document.getElementById('cpwPubTextColor').value;
       
       const showPrivText = document.getElementById('cpwShowPrivText').checked;
       const bendPrivText = document.getElementById('cpwBendPrivText').checked;
       const privTextSize = parseFloat(document.getElementById('cpwPrivTextSize').value) || 10;
+      const privTextColor = document.getElementById('cpwPrivTextColor').value;
 
+      // Labels
       const showPubLabel = document.getElementById('cpwShowPubLabel').checked;
       const pubLabelSize = parseFloat(document.getElementById('cpwPubLabelSize').value) || 8;
+      const pubLabelColor = document.getElementById('cpwPubLabelColor').value;
+      
       const showPrivLabel = document.getElementById('cpwShowPrivLabel').checked;
       const privLabelSize = parseFloat(document.getElementById('cpwPrivLabelSize').value) || 8;
+      const privLabelColor = document.getElementById('cpwPrivLabelColor').value;
 
+      // Numbers & Divider
       const showNumber = document.getElementById('cpwShowNumber').checked;
       const numberStart = document.getElementById('cpwNumberStart').value || '001';
       const numberPos = document.getElementById('cpwNumberPos').value || 'topLeft';
       const numberSize = parseFloat(document.getElementById('cpwNumberSize').value) || 10;
+      const numberColor = document.getElementById('cpwNumberColor').value;
+      const numberX = parseFloat(document.getElementById('cpwNumberX').value) || 0;
+      const numberY = parseFloat(document.getElementById('cpwNumberY').value) || 0;
 
+      const showDivider = document.getElementById('cpwShowDivider').checked;
+      const dividerColor = document.getElementById('cpwDividerColor').value;
+
+      // Pub Firstbits
       const showFirstbits = document.getElementById('cpwShowFirstbits').checked;
-      const firstbitsSize = parseFloat(document.getElementById('cpwFirstbitsSize').value) || 24;
+      const firstbitsSize = parseFloat(document.getElementById('cpwFirstbitsSize').value) || 18;
       const firstbitsLen = parseInt(document.getElementById('cpwFirstbitsLen').value, 10) || 8;
+      const firstbitsColor = document.getElementById('cpwFirstbitsColor').value;
+      const firstbitsOrient = document.getElementById('cpwFirstbitsOrient').value;
+      const firstbitsDropPrefix = document.getElementById('cpwFirstbitsDropPrefix').checked;
+      const firstbitsDots = document.getElementById('cpwFirstbitsDots').checked;
+      const firstbitsX = parseFloat(document.getElementById('cpwFirstbitsX').value) || 0;
+      const firstbitsY = parseFloat(document.getElementById('cpwFirstbitsY').value) || 0;
+
+      // Pub Lastbits
+      const showLastbits = document.getElementById('cpwShowLastbits').checked;
+      const lastbitsSize = parseFloat(document.getElementById('cpwLastbitsSize').value) || 18;
+      const lastbitsLen = parseInt(document.getElementById('cpwLastbitsLen').value, 10) || 8;
+      const lastbitsColor = document.getElementById('cpwLastbitsColor').value;
+      const lastbitsOrient = document.getElementById('cpwLastbitsOrient').value;
+      const lastbitsDots = document.getElementById('cpwLastbitsDots').checked;
+      const lastbitsX = parseFloat(document.getElementById('cpwLastbitsX').value) || 0;
+      const lastbitsY = parseFloat(document.getElementById('cpwLastbitsY').value) || 0;
+
+      // Priv Firstbits
+      const showPrivFirstbits = document.getElementById('cpwShowPrivFirstbits').checked;
+      const privFirstbitsSize = parseFloat(document.getElementById('cpwPrivFirstbitsSize').value) || 18;
+      const privFirstbitsLen = parseInt(document.getElementById('cpwPrivFirstbitsLen').value, 10) || 8;
+      const privFirstbitsColor = document.getElementById('cpwPrivFirstbitsColor').value;
+      const privFirstbitsOrient = document.getElementById('cpwPrivFirstbitsOrient').value;
+      const privFirstbitsDots = document.getElementById('cpwPrivFirstbitsDots').checked;
+      const privFirstbitsX = parseFloat(document.getElementById('cpwPrivFirstbitsX').value) || 0;
+      const privFirstbitsY = parseFloat(document.getElementById('cpwPrivFirstbitsY').value) || 0;
+
+      // Priv Lastbits
+      const showPrivLastbits = document.getElementById('cpwShowPrivLastbits').checked;
+      const privLastbitsSize = parseFloat(document.getElementById('cpwPrivLastbitsSize').value) || 18;
+      const privLastbitsLen = parseInt(document.getElementById('cpwPrivLastbitsLen').value, 10) || 8;
+      const privLastbitsColor = document.getElementById('cpwPrivLastbitsColor').value;
+      const privLastbitsOrient = document.getElementById('cpwPrivLastbitsOrient').value;
+      const privLastbitsDots = document.getElementById('cpwPrivLastbitsDots').checked;
+      const privLastbitsX = parseFloat(document.getElementById('cpwPrivLastbitsX').value) || 0;
+      const privLastbitsY = parseFloat(document.getElementById('cpwPrivLastbitsY').value) || 0;
       
       const spread = parseInt(document.getElementById('cpwSpread').value, 10) || 60;
       const textMaxWidth = parseInt(document.getElementById('cpwTextMaxWidth').value, 10) || 400;
-      const showDivider = document.getElementById('cpwShowDivider').checked;
-
+      
       const pubX = parseInt(document.getElementById('cpwPubX').value, 10) || 0;
       const pubY = parseInt(document.getElementById('cpwPubY').value, 10) || 0;
       const privX = parseInt(document.getElementById('cpwPrivX').value, 10) || 0;
@@ -11902,11 +12045,26 @@ n2 = n2 ^ secureRandom[1];</div>
         const temp = pWidth; pWidth = pHeight; pHeight = temp;
       }
 
-      wrapper.style.aspectRatio = `${pWidth} / ${pHeight}`;
+      const isFullscreen = wrapper.classList.contains('cpw-fullscreen-mode');
+      let scale;
+      if (isFullscreen) {
+        const viewportRatio = window.innerWidth / window.innerHeight;
+        const pageRatio = pWidth / pHeight;
+        if (viewportRatio > pageRatio) {
+          scale = (window.innerHeight - 40) / pHeight;
+        } else {
+          scale = (window.innerWidth - 40) / pWidth;
+        }
+        wrapper.style.aspectRatio = 'auto'; 
+        page.style.position = 'relative'; 
+      } else {
+        wrapper.style.aspectRatio = `${pWidth} / ${pHeight}`;
+        scale = wrapper.clientWidth / pWidth;
+        page.style.position = 'absolute'; 
+      }
+
       page.style.width = `${pWidth}px`;
       page.style.height = `${pHeight}px`;
-
-      const scale = wrapper.clientWidth / pWidth;
       page.style.transform = `scale(${scale})`;
 
       let pX = layout === 'pubLeft' ? (50 - (spread / 2)) : (50 + (spread / 2));
@@ -11915,94 +12073,109 @@ n2 = n2 ^ secureRandom[1];</div>
       const dummyAddr = isSegwit ? "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" : "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
       const dummyWif = "L4rK1yDtCWekvXuE6oXD9jCYfFNV2cWRpVuPLBcCU2z8TrisoyY1";
 
+
+      // Build Bits Strings
+      const prefixLen = isSegwit ? 4 : 1;
+      const pubOffset = firstbitsDropPrefix ? prefixLen : 0;
+      const fBitsStr = dummyAddr.substring(pubOffset, pubOffset + firstbitsLen) + (firstbitsDots ? ".." : "");
+      const lBitsStr = (lastbitsDots ? ".." : "") + dummyAddr.slice(-lastbitsLen);
+      
+      const privFBitsStr = dummyWif.substring(0, privFirstbitsLen) + (privFirstbitsDots ? ".." : "");
+      const privLBitsStr = (privLastbitsDots ? ".." : "") + dummyWif.slice(-privLastbitsLen);
+
+      const fbCss = getOrientationCSS(firstbitsOrient, firstbitsX, firstbitsY);
+      const lbCss = getOrientationCSS(lastbitsOrient, lastbitsX, lastbitsY);
+      const privFbCss = getOrientationCSS(privFirstbitsOrient, privFirstbitsX, privFirstbitsY);
+      const privLbCss = getOrientationCSS(privLastbitsOrient, privLastbitsX, privLastbitsY);
+
+      let firstbitsHtml = showFirstbits ? `<div style="${fbCss}; font-family: monospace; font-size: ${firstbitsSize}px; font-weight: 900; margin-top: 8px; letter-spacing: 2px; color: ${firstbitsColor};">${fBitsStr}</div>` : '';
+      let lastbitsHtml = showLastbits ? `<div style="${lbCss}; font-family: monospace; font-size: ${lastbitsSize}px; font-weight: 900; margin-top: 8px; letter-spacing: 2px; color: ${lastbitsColor};">${lBitsStr}</div>` : '';
+      let privFirstbitsHtml = showPrivFirstbits ? `<div style="${privFbCss}; font-family: monospace; font-size: ${privFirstbitsSize}px; font-weight: 900; margin-top: 8px; letter-spacing: 2px; color: ${privFirstbitsColor};">${privFBitsStr}</div>` : '';
+      let privLastbitsHtml = showPrivLastbits ? `<div style="${privLbCss}; font-family: monospace; font-size: ${privLastbitsSize}px; font-weight: 900; margin-top: 8px; letter-spacing: 2px; color: ${privLastbitsColor};">${privLBitsStr}</div>` : '';
+
+      const dashedLineCss = `1px dashed ${hexToRgba(dividerColor, 0.5)}`;
+
       let html = '';
       for (let r = 0; r < rowsPerPage; r++) {
         html += `<div style="flex: 1; display: flex; flex-direction: row; width: 100%; box-sizing: border-box;">`;
         for (let c = 0; c < columns; c++) {
           const cellIndex = r * columns + c;
-          const borderRight = (showDivider && c < columns - 1) ? '1px dashed rgba(0,0,0,0.3)' : 'none';
-          const borderBottom = (showDivider && r < rowsPerPage - 1) ? '1px dashed rgba(0,0,0,0.3)' : (showDivider ? '1px dashed rgba(0,0,0,0.3)' : 'none');
+          const borderRight = (showDivider && c < columns - 1) ? dashedLineCss : 'none';
+          const borderBottom = (showDivider && r < rowsPerPage - 1) ? dashedLineCss : (showDivider ? dashedLineCss : 'none');
 
           const currentNumStr = getIncrementedString(numberStart, cellIndex);
           let badgeHtml = '';
-          let underQrNumberHtml = '';
+          let numUnderPubHtml = '';
+          let numUnderPrivHtml = '';
 
           if (showNumber) {
+            const genNumHtml = `<div style="font-family: monospace; font-size: ${numberSize}px; font-weight: bold; margin-top: 2px; color: ${numberColor}; transform: translate(${numberX}px, ${numberY}px); display: inline-block;">${currentNumStr}</div>`;
             if (numberPos === 'topLeft') {
-              badgeHtml = `<div style="position: absolute; top: 4px; left: 6px; font-size: ${numberSize}px; font-weight: bold; color: #555; font-family: monospace;">${currentNumStr}</div>`;
-            } else {
-              underQrNumberHtml = `<div style="font-family: monospace; font-size: ${numberSize}px; font-weight: bold; margin-top: 2px; color: #555;">${currentNumStr}</div>`;
+              badgeHtml = `<div style="position: absolute; top: 4px; left: 6px; font-size: ${numberSize}px; font-weight: bold; color: ${numberColor}; font-family: monospace; transform: translate(${numberX}px, ${numberY}px);">${currentNumStr}</div>`;
+            } else if (numberPos === 'underPubQr') {
+              numUnderPubHtml = genNumHtml;
+            } else if (numberPos === 'underPrivQr') {
+              numUnderPrivHtml = genNumHtml;
             }
           }
 
-          let firstbitsHtml = showFirstbits ? `<div style="font-family: monospace; font-size: ${firstbitsSize}px; font-weight: 900; margin-top: 8px; letter-spacing: 2px; color: #000;">${dummyAddr.substring(isSegwit ? 4 : 1, (isSegwit ? 4 : 1) + firstbitsLen)}</div>` : '';
-          
           let pubContentHtml = '';
-
           if (bendPubText && showPubText) {
-            // 1. Radius to clear the corners of the square QR code
-            let minRadiusPubQR = (pubQrSize * 0.7071) + 4; 
-            // 2. Minimum radius to fit ~42 chars of text around the circle
-            let minRadiusPubText = (42 * (pubTextSize * 0.6)) / (2 * Math.PI);
-            
-            // 3. Use whichever radius is larger
-            let rPub = Math.ceil(Math.max(minRadiusPubQR, minRadiusPubText));
-            
+            let rPub = Math.ceil(Math.max((pubQrSize * 0.7071) + 4, (42 * (pubTextSize * 0.6)) / (2 * Math.PI)));
             let svgPubSize = rPub * 2 + pubTextSize * 2;
             let cxPub = svgPubSize / 2;
             let cyPub = svgPubSize / 2;
-
-
             pubContentHtml = `
               <div style="position: relative; width: ${svgPubSize}px; height: ${svgPubSize}px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
-                 <div style="display: ${showPubQr ? 'flex' : 'none'}; width: ${pubQrSize}px; height: ${pubQrSize}px; background: #eee; border: 1px solid #ccc; align-items: center; justify-content: center; color: #999; font-size: ${pubQrSize/4}px; position: absolute;">QR</div>
+                 <div style="display: ${showPubQr ? 'flex' : 'none'}; width: ${pubQrSize}px; height: ${pubQrSize}px; border: 1px solid ${hexToRgba(pubQrColor, 0.3)}; background: ${hexToRgba(pubQrColor, 0.05)}; align-items: center; justify-content: center; color: ${pubQrColor}; font-size: ${pubQrSize/4}px; position: absolute;">QR</div>
                  <svg width="${svgPubSize}" height="${svgPubSize}" style="position: absolute; pointer-events: none; overflow: visible;">
                      <defs><path id="path_pub_prev_${cellIndex}" d="M ${cxPub}, ${cyPub + rPub} A ${rPub},${rPub} 0 1,1 ${cxPub}, ${cyPub - rPub} A ${rPub},${rPub} 0 1,1 ${cxPub}, ${cyPub + rPub}" /></defs>
-                     <text font-family="monospace" font-size="${pubTextSize}px" font-weight="bold" fill="#333">
+                     <text font-family="monospace" font-size="${pubTextSize}px" font-weight="bold" fill="${pubTextColor}">
                          <textPath href="#path_pub_prev_${cellIndex}" startOffset="50%" text-anchor="middle">${dummyAddr}</textPath>
                      </text>
                  </svg>
               </div>
-              ${underQrNumberHtml}
+              ${numUnderPubHtml}
               ${firstbitsHtml}
+              ${lastbitsHtml}
             `;
           } else {
             pubContentHtml = `
-              <div style="display: ${showPubQr ? 'flex' : 'none'}; width: ${pubQrSize}px; height: ${pubQrSize}px; background: #eee; border: 1px solid #ccc; align-items: center; justify-content: center; color: #999; font-size: ${pubQrSize/4}px; margin: 0 auto;">QR</div>
-              ${underQrNumberHtml}
+              <div style="display: ${showPubQr ? 'flex' : 'none'}; width: ${pubQrSize}px; height: ${pubQrSize}px; border: 1px solid ${hexToRgba(pubQrColor, 0.3)}; background: ${hexToRgba(pubQrColor, 0.05)}; align-items: center; justify-content: center; color: ${pubQrColor}; font-size: ${pubQrSize/4}px; margin: 0 auto;">QR</div>
+              ${numUnderPubHtml}
               ${firstbitsHtml}
-              <div style="display: ${showPubText ? 'block' : 'none'}; font-size: ${pubTextSize}px; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: #333;">${dummyAddr}</div>
+              ${lastbitsHtml}
+              <div style="display: ${showPubText ? 'block' : 'none'}; font-size: ${pubTextSize}px; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: ${pubTextColor};">${dummyAddr}</div>
             `;
           }
 
           let privContentHtml = '';
           if (bendPrivText && showPrivText) {
-            // 1. Radius to clear the corners of the square QR code
-            let minRadiusPrivQR = (privQrSize * 0.7071) + 4; 
-            // 2. Minimum radius to fit ~52 chars of text (WIF) around the circle
-            let minRadiusPrivText = (52 * (privTextSize * 0.6)) / (2 * Math.PI);
-            
-            // 3. Use whichever radius is larger
-            let rPriv = Math.ceil(Math.max(minRadiusPrivQR, minRadiusPrivText));
-            
+            let rPriv = Math.ceil(Math.max((privQrSize * 0.7071) + 4, (52 * (privTextSize * 0.6)) / (2 * Math.PI)));
             let svgPrivSize = rPriv * 2 + privTextSize * 2;
             let cxPriv = svgPrivSize / 2;
             let cyPriv = svgPrivSize / 2;
             privContentHtml = `
               <div style="position: relative; width: ${svgPrivSize}px; height: ${svgPrivSize}px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
-                 <div style="display: ${showPrivQr ? 'flex' : 'none'}; width: ${privQrSize}px; height: ${privQrSize}px; background: #fee2e2; border: 1px solid #fca5a5; align-items: center; justify-content: center; color: #f87171; font-size: ${privQrSize/4}px; position: absolute;">QR</div>
+                 <div style="display: ${showPrivQr ? 'flex' : 'none'}; width: ${privQrSize}px; height: ${privQrSize}px; border: 1px solid ${hexToRgba(privQrColor, 0.3)}; background: ${hexToRgba(privQrColor, 0.05)}; align-items: center; justify-content: center; color: ${privQrColor}; font-size: ${privQrSize/4}px; position: absolute;">QR</div>
                  <svg width="${svgPrivSize}" height="${svgPrivSize}" style="position: absolute; pointer-events: none; overflow: visible;">
                      <defs><path id="path_priv_prev_${cellIndex}" d="M ${cxPriv}, ${cyPriv + rPriv} A ${rPriv},${rPriv} 0 1,1 ${cxPriv}, ${cyPriv - rPriv} A ${rPriv},${rPriv} 0 1,1 ${cxPriv}, ${cyPriv + rPriv}" /></defs>
-                     <text font-family="monospace" font-size="${privTextSize}px" font-weight="bold" fill="#dc2626">
+                     <text font-family="monospace" font-size="${privTextSize}px" font-weight="bold" fill="${privTextColor}">
                          <textPath href="#path_priv_prev_${cellIndex}" startOffset="50%" text-anchor="middle">${dummyWif}</textPath>
                      </text>
                  </svg>
               </div>
+              ${numUnderPrivHtml}
+              ${privFirstbitsHtml}
+              ${privLastbitsHtml}
             `;
           } else {
             privContentHtml = `
-              <div style="display: ${showPrivQr ? 'flex' : 'none'}; width: ${privQrSize}px; height: ${privQrSize}px; background: #fee2e2; border: 1px solid #fca5a5; align-items: center; justify-content: center; color: #f87171; font-size: ${privQrSize/4}px; margin: 0 auto;">QR</div>
-              <div style="display: ${showPrivText ? 'block' : 'none'}; font-size: ${privTextSize}px; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: #dc2626;">${dummyWif}</div>
+              <div style="display: ${showPrivQr ? 'flex' : 'none'}; width: ${privQrSize}px; height: ${privQrSize}px; border: 1px solid ${hexToRgba(privQrColor, 0.3)}; background: ${hexToRgba(privQrColor, 0.05)}; align-items: center; justify-content: center; color: ${privQrColor}; font-size: ${privQrSize/4}px; margin: 0 auto;">QR</div>
+              ${numUnderPrivHtml}
+              ${privFirstbitsHtml}
+              ${privLastbitsHtml}
+              <div style="display: ${showPrivText ? 'block' : 'none'}; font-size: ${privTextSize}px; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: ${privTextColor};">${dummyWif}</div>
             `;
           }
 
@@ -12010,11 +12183,11 @@ n2 = n2 ^ secureRandom[1];</div>
             <div style="flex: 1; border-right: ${borderRight}; border-bottom: ${borderBottom}; position: relative; box-sizing: border-box; overflow: hidden;">
                ${badgeHtml}
                <div style="position: absolute; left: calc(${pX}% + ${pubX}px); top: calc(50% + ${pubY}px); transform: translate(-50%, -53%); text-align: center; display: flex; flex-direction: column; align-items: center;">
-                  <span style="display: ${showPubLabel ? 'block' : 'none'}; font-size: ${pubLabelSize}px; color: #666; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">DEPOSIT ADDRESS</span>
+                  <span style="display: ${showPubLabel ? 'block' : 'none'}; font-size: ${pubLabelSize}px; color: ${pubLabelColor}; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">DEPOSIT ADDRESS</span>
                   ${pubContentHtml}
                </div>
                <div style="position: absolute; left: calc(${sX}% + ${privX}px); top: calc(50% + ${privY}px); transform: translate(-50%, -53%); text-align: center; display: flex; flex-direction: column; align-items: center;">
-                  <span style="display: ${showPrivLabel ? 'block' : 'none'}; font-size: ${privLabelSize}px; color: #dc2626; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">PRIVATE KEY</span>
+                  <span style="display: ${showPrivLabel ? 'block' : 'none'}; font-size: ${privLabelSize}px; color: ${privLabelColor}; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">PRIVATE KEY</span>
                   ${privContentHtml}
                </div>
             </div>
@@ -12037,35 +12210,81 @@ n2 = n2 ^ secureRandom[1];</div>
       
       const showPubQr = document.getElementById('cpwShowPubQr').checked;
       const pubQrSize = parseFloat(document.getElementById('cpwPubQrSize').value) || 100;
+      const pubQrColor = document.getElementById('cpwPubQrColor').value;
+      
       const showPrivQr = document.getElementById('cpwShowPrivQr').checked;
       const privQrSize = parseFloat(document.getElementById('cpwPrivQrSize').value) || 100;
+      const privQrColor = document.getElementById('cpwPrivQrColor').value;
 
       const showPubText = document.getElementById('cpwShowPubText').checked;
       const bendPubText = document.getElementById('cpwBendPubText').checked;
       const pubTextSize = parseFloat(document.getElementById('cpwPubTextSize').value) || 12;
+      const pubTextColor = document.getElementById('cpwPubTextColor').value;
       
       const showPrivText = document.getElementById('cpwShowPrivText').checked;
       const bendPrivText = document.getElementById('cpwBendPrivText').checked;
       const privTextSize = parseFloat(document.getElementById('cpwPrivTextSize').value) || 10;
+      const privTextColor = document.getElementById('cpwPrivTextColor').value;
 
       const showPubLabel = document.getElementById('cpwShowPubLabel').checked;
       const pubLabelSize = parseFloat(document.getElementById('cpwPubLabelSize').value) || 8;
+      const pubLabelColor = document.getElementById('cpwPubLabelColor').value;
+      
       const showPrivLabel = document.getElementById('cpwShowPrivLabel').checked;
       const privLabelSize = parseFloat(document.getElementById('cpwPrivLabelSize').value) || 8;
+      const privLabelColor = document.getElementById('cpwPrivLabelColor').value;
 
       const showNumber = document.getElementById('cpwShowNumber').checked;
       const numberStart = document.getElementById('cpwNumberStart').value || '001';
       const numberPos = document.getElementById('cpwNumberPos').value || 'topLeft';
       const numberSize = parseFloat(document.getElementById('cpwNumberSize').value) || 10;
+      const numberColor = document.getElementById('cpwNumberColor').value;
+      const numberX = parseFloat(document.getElementById('cpwNumberX').value) || 0;
+      const numberY = parseFloat(document.getElementById('cpwNumberY').value) || 0;
+      
+      const showDivider = document.getElementById('cpwShowDivider').checked;
+      const dividerColor = document.getElementById('cpwDividerColor').value;
 
       const showFirstbits = document.getElementById('cpwShowFirstbits').checked;
-      const firstbitsSize = parseFloat(document.getElementById('cpwFirstbitsSize').value) || 24;
+      const firstbitsSize = parseFloat(document.getElementById('cpwFirstbitsSize').value) || 18;
       const firstbitsLen = parseInt(document.getElementById('cpwFirstbitsLen').value, 10) || 8;
+      const firstbitsColor = document.getElementById('cpwFirstbitsColor').value;
+      const firstbitsOrient = document.getElementById('cpwFirstbitsOrient').value;
+      const firstbitsDropPrefix = document.getElementById('cpwFirstbitsDropPrefix').checked;
+      const firstbitsDots = document.getElementById('cpwFirstbitsDots').checked;
+      const firstbitsX = parseFloat(document.getElementById('cpwFirstbitsX').value) || 0;
+      const firstbitsY = parseFloat(document.getElementById('cpwFirstbitsY').value) || 0;
+
+      const showLastbits = document.getElementById('cpwShowLastbits').checked;
+      const lastbitsSize = parseFloat(document.getElementById('cpwLastbitsSize').value) || 18;
+      const lastbitsLen = parseInt(document.getElementById('cpwLastbitsLen').value, 10) || 8;
+      const lastbitsColor = document.getElementById('cpwLastbitsColor').value;
+      const lastbitsOrient = document.getElementById('cpwLastbitsOrient').value;
+      const lastbitsDots = document.getElementById('cpwLastbitsDots').checked;
+      const lastbitsX = parseFloat(document.getElementById('cpwLastbitsX').value) || 0;
+      const lastbitsY = parseFloat(document.getElementById('cpwLastbitsY').value) || 0;
+
+      const showPrivFirstbits = document.getElementById('cpwShowPrivFirstbits').checked;
+      const privFirstbitsSize = parseFloat(document.getElementById('cpwPrivFirstbitsSize').value) || 18;
+      const privFirstbitsLen = parseInt(document.getElementById('cpwPrivFirstbitsLen').value, 10) || 8;
+      const privFirstbitsColor = document.getElementById('cpwPrivFirstbitsColor').value;
+      const privFirstbitsOrient = document.getElementById('cpwPrivFirstbitsOrient').value;
+      const privFirstbitsDots = document.getElementById('cpwPrivFirstbitsDots').checked;
+      const privFirstbitsX = parseFloat(document.getElementById('cpwPrivFirstbitsX').value) || 0;
+      const privFirstbitsY = parseFloat(document.getElementById('cpwPrivFirstbitsY').value) || 0;
+
+      const showPrivLastbits = document.getElementById('cpwShowPrivLastbits').checked;
+      const privLastbitsSize = parseFloat(document.getElementById('cpwPrivLastbitsSize').value) || 18;
+      const privLastbitsLen = parseInt(document.getElementById('cpwPrivLastbitsLen').value, 10) || 8;
+      const privLastbitsColor = document.getElementById('cpwPrivLastbitsColor').value;
+      const privLastbitsOrient = document.getElementById('cpwPrivLastbitsOrient').value;
+      const privLastbitsDots = document.getElementById('cpwPrivLastbitsDots').checked;
+      const privLastbitsX = parseFloat(document.getElementById('cpwPrivLastbitsX').value) || 0;
+      const privLastbitsY = parseFloat(document.getElementById('cpwPrivLastbitsY').value) || 0;
       
       const spread = parseInt(document.getElementById('cpwSpread').value, 10) || 60;
       const textMaxWidth = parseInt(document.getElementById('cpwTextMaxWidth').value, 10) || 400;
-      const showDivider = document.getElementById('cpwShowDivider').checked;
-
+      
       const pubX = parseInt(document.getElementById('cpwPubX').value, 10) || 0;
       const pubY = parseInt(document.getElementById('cpwPubY').value, 10) || 0;
       const privX = parseInt(document.getElementById('cpwPrivX').value, 10) || 0;
@@ -12134,6 +12353,7 @@ n2 = n2 ^ secureRandom[1];</div>
       const container = document.getElementById('paperWalletPrint');
       container.innerHTML = ''; 
       let html = '';
+      const dashedLineCss = `1px dashed ${hexToRgba(dividerColor, 0.5)}`;
 
       for (let i = 0; i < keys.length; i += itemsPerPage) {
         const pageKeys = keys.slice(i, i + itemsPerPage);
@@ -12160,28 +12380,40 @@ n2 = n2 ^ secureRandom[1];</div>
             const currentNumStr = getIncrementedString(numberStart, k.index);
 
             let badgeHtml = '';
-            let underQrNumberHtml = '';
+            let numUnderPubHtml = '';
+            let numUnderPrivHtml = '';
 
             if (showNumber) {
+              const genNumHtml = `<div style="font-family: monospace; font-size: ${numberSize}px; font-weight: bold; margin-top: 2px; color: ${numberColor}; transform: translate(${numberX}px, ${numberY}px); display: inline-block;">${currentNumStr}</div>`;
               if (numberPos === 'topLeft') {
-                badgeHtml = `<div style="position: absolute; top: 4px; left: 6px; font-size: ${numberSize}px; font-weight: bold; color: #555; font-family: monospace;">${currentNumStr}</div>`;
-              } else {
-                underQrNumberHtml = `<div style="font-family: monospace; font-size: ${numberSize}px; font-weight: bold; margin-top: 2px; color: #555;">${currentNumStr}</div>`;
+                badgeHtml = `<div style="position: absolute; top: 4px; left: 6px; font-size: ${numberSize}px; font-weight: bold; color: ${numberColor}; font-family: monospace; transform: translate(${numberX}px, ${numberY}px);">${currentNumStr}</div>`;
+              } else if (numberPos === 'underPubQr') {
+                numUnderPubHtml = genNumHtml;
+              } else if (numberPos === 'underPrivQr') {
+                numUnderPrivHtml = genNumHtml;
               }
             }
 
-            let firstbitsHtml = showFirstbits ? `<div style="font-family: monospace; font-size: ${firstbitsSize}px; font-weight: 900; margin-top: 8px; letter-spacing: 2px; color: #000;">${displayAddr.substring(isSegwit ? 4 : 1, (isSegwit ? 4 : 1) + firstbitsLen)}</div>` : '';
+            const prefixLen = isSegwit ? 4 : 1;
+            const pubOffset = firstbitsDropPrefix ? prefixLen : 0;
+            const fBitsStr = displayAddr.substring(pubOffset, pubOffset + firstbitsLen) + (firstbitsDots ? ".." : "");
+            const lBitsStr = (lastbitsDots ? ".." : "") + displayAddr.slice(-lastbitsLen);
+            const privFBitsStr = k.wif.substring(0, privFirstbitsLen) + (privFirstbitsDots ? ".." : "");
+            const privLBitsStr = (privLastbitsDots ? ".." : "") + k.wif.slice(-privLastbitsLen);
+
+            const fbCss = getOrientationCSS(firstbitsOrient, firstbitsX, firstbitsY);
+            const lbCss = getOrientationCSS(lastbitsOrient, lastbitsX, lastbitsY);
+            const privFbCss = getOrientationCSS(privFirstbitsOrient, privFirstbitsX, privFirstbitsY);
+            const privLbCss = getOrientationCSS(privLastbitsOrient, privLastbitsX, privLastbitsY);
+
+            let firstbitsHtml = showFirstbits ? `<div style="${fbCss}; font-family: monospace; font-size: ${firstbitsSize}px; font-weight: 900; margin-top: 8px; letter-spacing: 2px; color: ${firstbitsColor};">${fBitsStr}</div>` : '';
+            let lastbitsHtml = showLastbits ? `<div style="${lbCss}; font-family: monospace; font-size: ${lastbitsSize}px; font-weight: 900; margin-top: 8px; letter-spacing: 2px; color: ${lastbitsColor};">${lBitsStr}</div>` : '';
+            let privFirstbitsHtml = showPrivFirstbits ? `<div style="${privFbCss}; font-family: monospace; font-size: ${privFirstbitsSize}px; font-weight: 900; margin-top: 8px; letter-spacing: 2px; color: ${privFirstbitsColor};">${privFBitsStr}</div>` : '';
+            let privLastbitsHtml = showPrivLastbits ? `<div style="${privLbCss}; font-family: monospace; font-size: ${privLastbitsSize}px; font-weight: 900; margin-top: 8px; letter-spacing: 2px; color: ${privLastbitsColor};">${privLBitsStr}</div>` : '';
 
             let pubContentHtml = '';
             if (bendPubText && showPubText) {
-              // 1. Radius to clear the corners of the square QR code
-              let minRadiusPubQR = (pubQrSize * 0.7071) + 4; 
-              // 2. Minimum radius to fit ~42 chars of text around the circle
-              let minRadiusPubText = (42 * (pubTextSize * 0.6)) / (2 * Math.PI);
-              
-              // 3. Use whichever radius is larger
-              let rPub = Math.ceil(Math.max(minRadiusPubQR, minRadiusPubText));
-              
+              let rPub = Math.ceil(Math.max((pubQrSize * 0.7071) + 4, (42 * (pubTextSize * 0.6)) / (2 * Math.PI)));
               let svgPubSize = rPub * 2 + pubTextSize * 2;
               let cxPub = svgPubSize / 2;
               let cyPub = svgPubSize / 2;
@@ -12190,33 +12422,28 @@ n2 = n2 ^ secureRandom[1];</div>
                    <div id="qr_cpw_a_${k.index}" class="print-qr" style="display: ${showPubQr ? 'block' : 'none'}; width: ${pubQrSize}px; height: ${pubQrSize}px; position: absolute;"></div>
                    <svg width="${svgPubSize}" height="${svgPubSize}" style="position: absolute; pointer-events: none; overflow: visible;">
                        <defs><path id="path_pub_${k.index}" d="M ${cxPub}, ${cyPub + rPub} A ${rPub},${rPub} 0 1,1 ${cxPub}, ${cyPub - rPub} A ${rPub},${rPub} 0 1,1 ${cxPub}, ${cyPub + rPub}" /></defs>
-                       <text font-family="monospace" font-size="${pubTextSize}px" font-weight="bold" fill="#333">
+                       <text font-family="monospace" font-size="${pubTextSize}px" font-weight="bold" fill="${pubTextColor}">
                            <textPath href="#path_pub_${k.index}" startOffset="50%" text-anchor="middle">${displayAddr}</textPath>
                        </text>
                    </svg>
                 </div>
-                ${underQrNumberHtml}
+                ${numUnderPubHtml}
                 ${firstbitsHtml}
+                ${lastbitsHtml}
               `;
             } else {
               pubContentHtml = `
                 <div id="qr_cpw_a_${k.index}" class="print-qr" style="display: ${showPubQr ? 'block' : 'none'}; width: ${pubQrSize}px; height: ${pubQrSize}px; margin: 0 auto;"></div>
-                ${underQrNumberHtml}
+                ${numUnderPubHtml}
                 ${firstbitsHtml}
-                <div style="display: ${showPubText ? 'block' : 'none'}; font-size: ${pubTextSize}px; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: #333;">${displayAddr}</div>
+                ${lastbitsHtml}
+                <div style="display: ${showPubText ? 'block' : 'none'}; font-size: ${pubTextSize}px; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: ${pubTextColor};">${displayAddr}</div>
               `;
             }
 
             let privContentHtml = '';
             if (bendPrivText && showPrivText) {
-              // 1. Radius to clear the corners of the square QR code
-              let minRadiusPrivQR = (privQrSize * 0.7071) + 4; 
-              // 2. Minimum radius to fit ~52 chars of text (WIF) around the circle
-              let minRadiusPrivText = (52 * (privTextSize * 0.6)) / (2 * Math.PI);
-              
-              // 3. Use whichever radius is larger
-              let rPriv = Math.ceil(Math.max(minRadiusPrivQR, minRadiusPrivText));
-              
+              let rPriv = Math.ceil(Math.max((privQrSize * 0.7071) + 4, (52 * (privTextSize * 0.6)) / (2 * Math.PI)));
               let svgPrivSize = rPriv * 2 + privTextSize * 2;
               let cxPriv = svgPrivSize / 2;
               let cyPriv = svgPrivSize / 2;
@@ -12225,31 +12452,37 @@ n2 = n2 ^ secureRandom[1];</div>
                    <div id="qr_cpw_w_${k.index}" class="print-qr" style="display: ${showPrivQr ? 'block' : 'none'}; width: ${privQrSize}px; height: ${privQrSize}px; position: absolute;"></div>
                    <svg width="${svgPrivSize}" height="${svgPrivSize}" style="position: absolute; pointer-events: none; overflow: visible;">
                        <defs><path id="path_priv_${k.index}" d="M ${cxPriv}, ${cyPriv + rPriv} A ${rPriv},${rPriv} 0 1,1 ${cxPriv}, ${cyPriv - rPriv} A ${rPriv},${rPriv} 0 1,1 ${cxPriv}, ${cyPriv + rPriv}" /></defs>
-                       <text font-family="monospace" font-size="${privTextSize}px" font-weight="bold" fill="#dc2626">
+                       <text font-family="monospace" font-size="${privTextSize}px" font-weight="bold" fill="${privTextColor}">
                            <textPath href="#path_priv_${k.index}" startOffset="50%" text-anchor="middle">${k.wif}</textPath>
                        </text>
                    </svg>
                 </div>
+                ${numUnderPrivHtml}
+                ${privFirstbitsHtml}
+                ${privLastbitsHtml}
               `;
             } else {
               privContentHtml = `
                 <div id="qr_cpw_w_${k.index}" class="print-qr" style="display: ${showPrivQr ? 'block' : 'none'}; width: ${privQrSize}px; height: ${privQrSize}px; margin: 0 auto;"></div>
-                <div style="display: ${showPrivText ? 'block' : 'none'}; font-size: ${privTextSize}px; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: #dc2626;">${k.wif}</div>
+                ${numUnderPrivHtml}
+                ${privFirstbitsHtml}
+                ${privLastbitsHtml}
+                <div style="display: ${showPrivText ? 'block' : 'none'}; font-size: ${privTextSize}px; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: ${privTextColor};">${k.wif}</div>
               `;
             }
 
-            const borderRight = (showDivider && c < columns - 1) ? '1px dashed rgba(0,0,0,0.3)' : 'none';
-            const borderBottom = (showDivider && r < rowsPerPage - 1) ? '1px dashed rgba(0,0,0,0.3)' : (showDivider ? '1px dashed rgba(0,0,0,0.3)' : 'none');
+            const borderRight = (showDivider && c < columns - 1) ? dashedLineCss : 'none';
+            const borderBottom = (showDivider && r < rowsPerPage - 1) ? dashedLineCss : (showDivider ? dashedLineCss : 'none');
 
             html += `
               <div style="flex: 1; border-right: ${borderRight}; border-bottom: ${borderBottom}; position: relative; box-sizing: border-box; overflow: hidden;">
                  ${badgeHtml}
                  <div style="position: absolute; left: ${finalPubX}; top: ${finalPubY}; transform: translate(-50%, -53%); text-align: center; display: flex; flex-direction: column; align-items: center;">
-                    <span style="display: ${showPubLabel ? 'block' : 'none'}; font-size: ${pubLabelSize}px; color: #666; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">DEPOSIT ADDRESS</span>
+                    <span style="display: ${showPubLabel ? 'block' : 'none'}; font-size: ${pubLabelSize}px; color: ${pubLabelColor}; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">DEPOSIT ADDRESS</span>
                     ${pubContentHtml}
                  </div>
                  <div style="position: absolute; left: ${finalPrivX}; top: ${finalPrivY}; transform: translate(-50%, -53%); text-align: center; display: flex; flex-direction: column; align-items: center;">
-                    <span style="display: ${showPrivLabel ? 'block' : 'none'}; font-size: ${privLabelSize}px; color: #dc2626; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">PRIVATE KEY</span>
+                    <span style="display: ${showPrivLabel ? 'block' : 'none'}; font-size: ${privLabelSize}px; color: ${privLabelColor}; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">PRIVATE KEY</span>
                     ${privContentHtml}
                  </div>
               </div>
@@ -12264,8 +12497,8 @@ n2 = n2 ^ secureRandom[1];</div>
 
       const qrRes = Math.max(256, Math.max(pubQrSize, privQrSize) * 2); 
       keys.forEach(k => {
-        if (showPubQr) new QRCode(document.getElementById(`qr_cpw_a_${k.index}`), { text: k.addr, width: qrRes, height: qrRes, correctLevel: QRCode.CorrectLevel.M });
-        if (showPrivQr) new QRCode(document.getElementById(`qr_cpw_w_${k.index}`), { text: k.wif, width: qrRes, height: qrRes, correctLevel: QRCode.CorrectLevel.M });
+        if (showPubQr) new QRCode(document.getElementById(`qr_cpw_a_${k.index}`), { text: k.addr, width: qrRes, height: qrRes, colorDark: pubQrColor, colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+        if (showPrivQr) new QRCode(document.getElementById(`qr_cpw_w_${k.index}`), { text: k.wif, width: qrRes, height: qrRes, colorDark: privQrColor, colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
       });
 
       const style = document.createElement('style');
@@ -12284,30 +12517,23 @@ n2 = n2 ^ secureRandom[1];</div>
       window.print();
     }
 
-
     function ensureMinimumTotal() {
       const keysPerPageInput = document.getElementById('cpwKeysPerPage');
       const columnsInput = document.getElementById('cpwColumns');
       const totalInput = document.getElementById('cpwTotal');
-      
       if (!keysPerPageInput || !columnsInput || !totalInput) return;
-
       const rows = parseInt(keysPerPageInput.value, 10) || 1;
       const cols = parseInt(columnsInput.value, 10) || 1;
       const itemsPerPage = rows * cols;
-
-      // Automatically set the total to Rows x Columns whenever the layout changes
       totalInput.value = itemsPerPage;
       updateCustomWalletPreview();
     }
 
-    // Bind window resize so the preview stays perfectly scaled if the browser is stretched
     window.addEventListener('resize', () => {
       const page = document.getElementById('cpwPreviewPage');
       if (page && page.innerHTML !== '') updateCustomWalletPreview();
     });
 
-    // Auto-render the preview the moment the Custom Paper Wallet tool becomes visible
     const previewObserver = new ResizeObserver(entries => {
       for (let entry of entries) {
         if (entry.contentRect.width > 0) {
@@ -12320,6 +12546,88 @@ n2 = n2 ^ secureRandom[1];</div>
       const wrapper = document.getElementById('cpwPreviewWrapper');
       if (wrapper) previewObserver.observe(wrapper);
     });
+
+
+    function saveCustomWalletConfig() {
+      const config = {};
+      // Dynamically grab all configuration inputs starting with 'cpw'
+      const elements = document.querySelectorAll('input[id^="cpw"], select[id^="cpw"]');
+      
+      elements.forEach(el => {
+        if (el.type === 'file') return; // Skip the hidden file uploader
+        
+        if (el.type === 'checkbox') {
+          config[el.id] = el.checked;
+        } else {
+          config[el.id] = el.value;
+        }
+      });
+
+      // Create a downloadable JSON blob
+      const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'paper-wallet-config.json';
+      document.body.appendChild(a);
+      a.click();
+      
+      // Cleanup
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function restoreCustomWalletConfig(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const config = JSON.parse(e.target.result);
+          
+          // Re-apply values to the DOM
+          for (const [id, value] of Object.entries(config)) {
+            const el = document.getElementById(id);
+            if (el) {
+              if (el.type === 'checkbox') {
+                el.checked = value;
+              } else {
+                el.value = value;
+              }
+            }
+          }
+          
+          // Force the live preview to re-render with the new loaded values
+          updateCustomWalletPreview();
+          
+        } catch (err) {
+          alert("Error parsing configuration file. Ensure it is a valid JSON config.");
+          console.error(err);
+        } finally {
+          // Clear the file input so the same file can be selected again later if needed
+          event.target.value = '';
+        }
+      };
+      
+      reader.readAsText(file);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -12461,6 +12769,13 @@ n2 = n2 ^ secureRandom[1];</div>
 
       closeMouseEntropyModal();
     }
+
+
+
+
+
+
+
 
 
 
