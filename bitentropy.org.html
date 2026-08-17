@@ -4354,7 +4354,7 @@
                     </div>
                     <div>
                       <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Wallets Per Page</label>
-                      <input type="number" id="cpwKeysPerPage" value="5" min="1" max="20" onchange="autoAdjustSizes()" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
+                      <input type="number" id="cpwKeysPerPage" value="5" min="1" max="20" onchange="autoAdjustSizes(); ensureMinimumTotal();" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
                     </div>
                     <div>
                       <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Total to Generate</label>
@@ -4412,6 +4412,34 @@
                       </div>
                     </div>
 
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="checkbox" id="cpwShowPubLabel" checked style="width: 16px; height: 16px; accent-color: var(--accent-green);">
+                        <label for="cpwShowPubLabel" style="font-size: 0.75rem; color: var(--text-main);">Address Label ("Deposit Address")</label>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
+                        <input type="number" id="cpwPubLabelSize" value="8" min="6" max="24" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;" title="Size in px">
+                      </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="checkbox" id="cpwShowPrivLabel" checked style="width: 16px; height: 16px; accent-color: var(--accent-red);">
+                        <label for="cpwShowPrivLabel" style="font-size: 0.75rem; color: var(--text-main);">Private Label ("Private Key")</label>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
+                        <input type="number" id="cpwPrivLabelSize" value="8" min="6" max="24" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;" title="Size in px">
+                      </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="checkbox" id="cpwShowDivider" checked style="width: 16px; height: 16px; accent-color: var(--btc-gold);">
+                        <label for="cpwShowDivider" style="font-size: 0.75rem; color: var(--text-main);">Show Row Divider Line</label>
+                      </div>
+                    </div>
 
                     <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
                       <div style="display: flex; gap: 0.5rem; align-items: center;">
@@ -4426,7 +4454,6 @@
                         <input type="number" id="cpwFirstbitsLen" value="8" min="1" max="20" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
                       </div>
                     </div>
-
 
 
                   </div>
@@ -4449,13 +4476,17 @@
 
                     <div style="display: flex; gap: 0.5rem;">
                       <div style="flex: 1;">
-                        <label style="display: block; font-size: 0.7rem; color: var(--btc-gold); margin-bottom: 0.25rem;">Horizontal Spread (%)</label>
-                        <span style="font-size: 0.6rem; color: var(--text-dim); display: block; margin-bottom: 0.25rem;">Distance between elements</span>
+                        <label style="display: block; font-size: 0.7rem; color: var(--btc-gold); margin-bottom: 0.25rem;">
+                          Horizontal Spread (%)
+                          <span class="tooltip-icon" data-tooltip="Controls the distance between the Public and Private blocks. Lower values pull them closer together toward the center, while higher values push them toward the left and right edges.">?</span>
+                        </label>
                         <input type="number" id="cpwSpread" value="60" min="10" max="90" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
                       </div>
                       <div style="flex: 1;">
-                        <label style="display: block; font-size: 0.7rem; color: var(--btc-gold); margin-bottom: 0.25rem;">Text Bounding Box (px)</label>
-                        <span style="font-size: 0.6rem; color: var(--text-dim); display: block; margin-bottom: 0.25rem;">Widen to prevent text wrap</span>
+                        <label style="display: block; font-size: 0.7rem; color: var(--btc-gold); margin-bottom: 0.25rem;">
+                          Text Bounding Box (px)
+                          <span class="tooltip-icon" data-tooltip="Sets the maximum width of the text container before it wraps to a new line. For an 8.5&quot;x11&quot; page split into two columns, the maximum safe width per side is ~400px to 425px to prevent side collisions.">?</span>
+                        </label>
                         <input type="number" id="cpwTextMaxWidth" value="400" min="100" max="1000" style="width: 100%; padding: 0.6rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 6px;">
                       </div>
                     </div>
@@ -4489,7 +4520,7 @@
                 </div>
 
                 <button class="btn btn-primary" onclick="generateAndPrintCustomWallets()" style="width: 100%; padding: 1rem; font-size: 1.05rem;">
-                  ⚡ Generate Secure Keys & Print Custom Layout
+                  ⚡ Generate Keys & Create Wallets
                 </button>
               </div>
 
@@ -11729,8 +11760,6 @@ n2 = n2 ^ secureRandom[1];</div>
     // NEW: Auto-scale UI elements based on rows per page
     function autoAdjustSizes() {
       const keysPerPage = parseInt(document.getElementById('cpwKeysPerPage').value, 10) || 5;
-      
-      // Calculate a scale multiplier (5 rows is 1.0, 10 rows is 0.5, etc.)
       const scale = keysPerPage <= 5 ? 1 : (5 / keysPerPage);
 
       // Base sizes
@@ -11738,13 +11767,17 @@ n2 = n2 ^ secureRandom[1];</div>
       const basePubText = 12;
       const basePrivText = 10;
       const baseFirstbitsText = 24;
+      const basePubLabel = 8;
+      const basePrivLabel = 8;
 
-      // Apply the math and set minimum readable limits (6px for text, 30px for QR)
+      // Apply math
       document.getElementById('cpwPubQrSize').value = Math.max(30, Math.round(baseQr * scale));
       document.getElementById('cpwPrivQrSize').value = Math.max(30, Math.round(baseQr * scale));
       document.getElementById('cpwPubTextSize').value = Math.max(6, Math.round(basePubText * scale));
       document.getElementById('cpwPrivTextSize').value = Math.max(6, Math.round(basePrivText * scale));
       document.getElementById('cpwFirstbitsSize').value = Math.max(8, Math.round(baseFirstbitsText * scale));
+      document.getElementById('cpwPubLabelSize').value = Math.max(6, Math.round(basePubLabel * scale));
+      document.getElementById('cpwPrivLabelSize').value = Math.max(6, Math.round(basePrivLabel * scale));
 
       updateCustomWalletPreview();
     }
@@ -11774,10 +11807,17 @@ n2 = n2 ^ secureRandom[1];</div>
       const showPrivText = document.getElementById('cpwShowPrivText').checked;
       const privTextSize = parseInt(document.getElementById('cpwPrivTextSize').value, 10) || 10;
 
+      const showPubLabel = document.getElementById('cpwShowPubLabel').checked;
+      const pubLabelSize = parseInt(document.getElementById('cpwPubLabelSize').value, 10) || 8;
+      const showPrivLabel = document.getElementById('cpwShowPrivLabel').checked;
+      const privLabelSize = parseInt(document.getElementById('cpwPrivLabelSize').value, 10) || 8;
+
       const showFirstbits = document.getElementById('cpwShowFirstbits').checked;
       const firstbitsSize = parseInt(document.getElementById('cpwFirstbitsSize').value, 10) || 24;
       const firstbitsLen = parseInt(document.getElementById('cpwFirstbitsLen').value, 10) || 8;
       
+      const showDivider = document.getElementById('cpwShowDivider').checked;
+
       const spread = parseInt(document.getElementById('cpwSpread').value, 10) || 60;
       const textMaxWidth = parseInt(document.getElementById('cpwTextMaxWidth').value, 10) || 400;
 
@@ -11823,11 +11863,12 @@ n2 = n2 ^ secureRandom[1];</div>
       let html = '';
       for (let i = 0; i < keysPerPage; i++) {
         html += `
-          <div style="flex: 1; border-bottom: 1px dashed rgba(0,0,0,0.3); position: relative; width: 100%; box-sizing: border-box;">
-             
+          <div style="flex: 1; border-bottom: ${showDivider ? '1px dashed rgba(0,0,0,0.3)' : 'none'}; position: relative; width: 100%; box-sizing: border-box;">
+
+
              <!-- PUBLIC BLOCK -->
-             <div style="position: absolute; left: calc(${pX}% + ${pubX}px); top: calc(50% + ${pubY}px); transform: translate(-50%, -50%); text-align: center; display: flex; flex-direction: column; align-items: center;">
-                <span style="display: ${showPubText ? 'block' : 'none'}; font-size: ${Math.max(6, pubTextSize * 0.5)}px; color: #666; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">DEPOSIT ADDRESS</span>
+             <div style="position: absolute; left: calc(${pX}% + ${pubX}px); top: calc(50% + ${pubY}px); transform: translate(-50%, -53%); text-align: center; display: flex; flex-direction: column; align-items: center;">
+                <span style="display: ${showPubLabel ? 'block' : 'none'}; font-size: ${pubLabelSize}px; color: #666; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">DEPOSIT ADDRESS</span>
                 
                 <div style="display: ${showPubQr ? 'flex' : 'none'}; width: ${pubQrSize}px; height: ${pubQrSize}px; background: #eee; border: 1px solid #ccc; align-items: center; justify-content: center; color: #999; font-size: ${pubQrSize/4}px;">QR</div>
                 
@@ -11837,8 +11878,8 @@ n2 = n2 ^ secureRandom[1];</div>
              </div>
 
              <!-- PRIVATE BLOCK -->
-             <div style="position: absolute; left: calc(${sX}% + ${privX}px); top: calc(50% + ${privY}px); transform: translate(-50%, -50%); text-align: center; display: flex; flex-direction: column; align-items: center;">
-                <span style="display: ${showPrivText ? 'block' : 'none'}; font-size: ${Math.max(6, privTextSize * 0.5)}px; color: #dc2626; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">PRIVATE KEY</span>
+             <div style="position: absolute; left: calc(${sX}% + ${privX}px); top: calc(50% + ${privY}px); transform: translate(-50%, -53%); text-align: center; display: flex; flex-direction: column; align-items: center;">
+                <span style="display: ${showPrivLabel ? 'block' : 'none'}; font-size: ${privLabelSize}px; color: #dc2626; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">PRIVATE KEY</span>
                 
                 <div style="display: ${showPrivQr ? 'flex' : 'none'}; width: ${privQrSize}px; height: ${privQrSize}px; background: #fee2e2; border: 1px solid #fca5a5; align-items: center; justify-content: center; color: #f87171; font-size: ${privQrSize/4}px;">QR</div>
                 
@@ -11852,6 +11893,21 @@ n2 = n2 ^ secureRandom[1];</div>
       page.innerHTML = html;
     }
 
+
+    function ensureMinimumTotal() {
+      const keysPerPageInput = document.getElementById('cpwKeysPerPage');
+      const totalInput = document.getElementById('cpwTotal');
+      if (!keysPerPageInput || !totalInput) return;
+
+      const keysPerPage = parseInt(keysPerPageInput.value, 10) || 1;
+      const currentTotal = parseInt(totalInput.value, 10) || 1;
+
+      if (currentTotal < keysPerPage) {
+        totalInput.value = keysPerPage;
+        // Trigger preview update to reflect the new total and page count
+        updateCustomWalletPreview();
+      }
+    }
 
     // Bind window resize so the preview stays perfectly scaled if the browser is stretched
     window.addEventListener('resize', () => {
@@ -11893,10 +11949,18 @@ n2 = n2 ^ secureRandom[1];</div>
       const showPrivText = document.getElementById('cpwShowPrivText').checked;
       const privTextSize = parseInt(document.getElementById('cpwPrivTextSize').value, 10) || 10;
 
+
+      const showPubLabel = document.getElementById('cpwShowPubLabel').checked;
+      const pubLabelSize = parseInt(document.getElementById('cpwPubLabelSize').value, 10) || 8;
+      const showPrivLabel = document.getElementById('cpwShowPrivLabel').checked;
+      const privLabelSize = parseInt(document.getElementById('cpwPrivLabelSize').value, 10) || 8;
+
       const showFirstbits = document.getElementById('cpwShowFirstbits').checked;
       const firstbitsSize = parseInt(document.getElementById('cpwFirstbitsSize').value, 10) || 24;
       const firstbitsLen = parseInt(document.getElementById('cpwFirstbitsLen').value, 10) || 8;
-      
+
+      const showDivider = document.getElementById('cpwShowDivider').checked;
+
       const spread = parseInt(document.getElementById('cpwSpread').value, 10) || 60;
       const textMaxWidth = parseInt(document.getElementById('cpwTextMaxWidth').value, 10) || 400;
 
@@ -11997,22 +12061,21 @@ n2 = n2 ^ secureRandom[1];</div>
           }
 
           html += `
-            <div style="flex: 1; border-bottom: 1px dashed rgba(0,0,0,0.3); position: relative; width: 100%; box-sizing: border-box;">
-               
-                <!-- PUBLIC SIDE -->
-               <div style="position: absolute; left: ${finalPubX}; top: ${finalPubY}; transform: translate(-50%, -50%); text-align: center; display: flex; flex-direction: column; align-items: center;">
-                  <span style="display: ${showPubText ? 'block' : 'none'}; font-size: ${Math.max(6, parseInt(pubTextSize, 10) * 0.5)}px; color: #666; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">DEPOSIT ADDRESS</span>
+            <div style="flex: 1; border-bottom: ${showDivider ? '1px dashed rgba(0,0,0,0.3)' : 'none'}; position: relative; width: 100%; box-sizing: border-box;">
+               <!-- PUBLIC SIDE -->
+               <div style="position: absolute; left: ${finalPubX}; top: ${finalPubY}; transform: translate(-50%, -53%); text-align: center; display: flex; flex-direction: column; align-items: center;">
+                  <span style="display: ${showPubLabel ? 'block' : 'none'}; font-size: ${pubLabelSize}px; color: #666; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">DEPOSIT ADDRESS</span>
                   
                   <div id="qr_cpw_a_${k.index}" class="print-qr" style="display: ${showPubQr ? 'block' : 'none'}; width: ${pubQrSize}px; height: ${pubQrSize}px; margin: 0 auto;"></div>
                   
                   ${firstbitsHtml}
 
-                  <div style="display: ${showPubText ? 'block' : 'none'}; font-size: ${pubTextSize}; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: #333;">${displayAddr}</div>
+                  <div style="display: ${showPubText ? 'block' : 'none'}; font-size: ${pubTextSize}px; font-family: monospace; font-weight: bold; margin-top: 8px; word-break: break-all; max-width: ${textMaxWidth}px; color: #333;">${displayAddr}</div>
                </div>
 
                <!-- PRIVATE SIDE -->
-               <div style="position: absolute; left: ${finalPrivX}; top: ${finalPrivY}; transform: translate(-50%, -50%); text-align: center; display: flex; flex-direction: column; align-items: center;">
-                  <span style="display: ${showPrivText ? 'block' : 'none'}; font-size: ${Math.max(6, privTextSize * 0.5)}px; color: #dc2626; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">PRIVATE KEY</span>
+               <div style="position: absolute; left: ${finalPrivX}; top: ${finalPrivY}; transform: translate(-50%, -53%); text-align: center; display: flex; flex-direction: column; align-items: center;">
+                  <span style="display: ${showPrivLabel ? 'block' : 'none'}; font-size: ${privLabelSize}px; color: #dc2626; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px;">PRIVATE KEY</span>
                   
                   <div id="qr_cpw_w_${k.index}" class="print-qr" style="display: ${showPrivQr ? 'block' : 'none'}; width: ${privQrSize}px; height: ${privQrSize}px; margin: 0 auto;"></div>
                   
@@ -12021,6 +12084,7 @@ n2 = n2 ^ secureRandom[1];</div>
 
             </div>
           `;
+
         });
         html += `</div>`;
       }
