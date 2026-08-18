@@ -12931,13 +12931,18 @@ n2 = n2 ^ secureRandom[1];</div>
       let currentWif = null;
       let currentAddr = null;
 
-      // Basic format validation
-      const isWif = (str) => (str.length >= 50 && str.length <= 52 && (str.startsWith('5') || str.startsWith('K') || str.startsWith('L')));
+      // Validate Standard WIFs (starts with 5, K, L) OR BIP-38 Encrypted Keys (starts with 6P)
+      const isPrivKey = (str) => {
+        const isStandardWif = (str.length >= 50 && str.length <= 52 && (str.startsWith('5') || str.startsWith('K') || str.startsWith('L')));
+        const isBip38 = (str.length === 58 && str.startsWith('6P'));
+        return isStandardWif || isBip38;
+      };
+      
       const isAddress = (str) => ((str.length >= 25 && str.length <= 35 && (str.startsWith('1') || str.startsWith('3'))) || (str.length >= 40 && str.length <= 90 && str.startsWith('bc1')));
 
       // Look for pairs by extracting valid tokens
       for (const token of tokens) {
-        if (isWif(token)) currentWif = token;
+        if (isPrivKey(token)) currentWif = token;
         else if (isAddress(token)) currentAddr = token;
 
         if (currentWif && currentAddr) {
@@ -12956,7 +12961,11 @@ n2 = n2 ^ secureRandom[1];</div>
         parsedImportKeysTemp.forEach((pair) => {
           const div = document.createElement('div');
           div.style.cssText = "background: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 4px; font-family: monospace; font-size: 0.75rem; color: var(--text-main);";
-          div.innerHTML = `<span style="color: var(--accent-green)">Address:</span> ${pair.addr}<br><span style="color: var(--accent-red)">PrivKey:</span> ${pair.wif}`;
+          
+          // Add a small tag if it detects a BIP-38 key
+          const keyTypeLabel = pair.wif.startsWith('6P') ? '<span style="color: var(--accent-yellow); font-size: 0.65rem; padding: 0.1rem 0.3rem; border: 1px solid var(--accent-yellow); border-radius: 3px; margin-left: 0.5rem;">BIP-38</span>' : '';
+          
+          div.innerHTML = `<span style="color: var(--accent-green)">Address:</span> ${pair.addr}<br><span style="color: var(--accent-red)">PrivKey:</span> ${pair.wif} ${keyTypeLabel}`;
           previewArea.appendChild(div);
         });
         previewArea.style.display = 'flex';
