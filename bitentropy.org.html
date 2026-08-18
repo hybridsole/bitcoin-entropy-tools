@@ -2560,6 +2560,12 @@
       background: rgba(247, 147, 26, 0.1);
     }
 
+    main:has(#toolCustomPaperWallet.active) {
+      max-width: 1600px;
+      transition: max-width 0.3s ease;
+    }
+
+
     /* Mobile Breakpoint Adjustments (<= 850px) */
     @media (max-width: 850px) {
       /* Hide the desktop sidebar on mobile */
@@ -4308,14 +4314,13 @@
                TOOL 15: CUSTOM PAPER WALLETS
                ============================== -->
           <div id="toolCustomPaperWallet" class="tool-section" oninput="updateCustomWalletPreview()" onchange="updateCustomWalletPreview()">
+
             <h3 style="color: var(--text-main); margin-bottom: 0.25rem; font-size: 1.15rem;">🖨️ Custom Paper Wallet Creator</h3>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Generate, position, and print custom bulk paper wallets with a real-time live preview. Click the preview to enlarge it.</p>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
               
+            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.5rem; align-items: flex-start;">
               <!-- LEFT COLUMN: CONTROLS -->
-              <div style="display: flex; flex-direction: column; gap: 1rem;">
-                
+              <div style="flex: 0 0 380px; display: flex; flex-direction: column; gap: 1rem;">
                 <!-- General Settings -->
                 <div class="output-group">
                   <div class="output-header"><span class="output-title">Page & Generation Settings</span></div>
@@ -4458,6 +4463,49 @@
                   </div>
                 </div>
 
+                <!-- Category: Numbers & Dividers -->
+                <div class="output-group">
+                  <div class="output-header"><span class="output-title">Numbering & Dividers</span></div>
+                  <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                          <input type="checkbox" id="cpwShowNumber" checked style="width: 16px; height: 16px; accent-color: var(--btc-gold);">
+                          <label style="font-size: 0.75rem; color: var(--text-main);">Wallet #</label>
+                          <input type="color" id="cpwNumberColor" value="#555555" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
+                          <input type="text" id="cpwNumberStart" value="001" style="width: 60px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;" placeholder="Start #">
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                          <select id="cpwNumberPos" style="padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; font-size: 0.7rem;">
+                            <option value="topLeft" selected>Top Left</option>
+                            <option value="underPubQr">Under Pub QR</option>
+                            <option value="underPrivQr">Under Priv QR</option>
+                          </select>
+                          <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
+                          <input type="number" id="cpwNumberSize" value="10" min="2" max="36" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                        </div>
+                      </div>
+                      <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: flex-start;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">X Offset:</label>
+                          <input type="number" id="cpwNumberX" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                          <label style="font-size: 0.65rem; color: var(--text-muted);">Y Offset:</label>
+                          <input type="number" id="cpwNumberY" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
+                      </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
+                      <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="checkbox" id="cpwShowDivider" checked style="width: 16px; height: 16px; accent-color: var(--btc-gold);">
+                        <label style="font-size: 0.75rem; color: var(--text-main);">Row Divider Line</label>
+                        <input type="color" id="cpwDividerColor" value="#000000" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+
 
                 <!-- Category: Identifiers (Firstbits / Lastbits) -->
                 <div class="output-group">
@@ -4591,48 +4639,6 @@
                   </div>
                 </div>
 
-                <!-- Category: Numbers & Dividers -->
-                <div class="output-group">
-                  <div class="output-header"><span class="output-title">Numbering & Dividers</span></div>
-                  <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
-                    
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
-                      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-                        <div style="display: flex; gap: 0.5rem; align-items: center;">
-                          <input type="checkbox" id="cpwShowNumber" checked style="width: 16px; height: 16px; accent-color: var(--btc-gold);">
-                          <label style="font-size: 0.75rem; color: var(--text-main);">Wallet #</label>
-                          <input type="color" id="cpwNumberColor" value="#555555" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
-                          <input type="text" id="cpwNumberStart" value="001" style="width: 60px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;" placeholder="Start #">
-                        </div>
-                        <div style="display: flex; gap: 0.5rem; align-items: center;">
-                          <select id="cpwNumberPos" style="padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; font-size: 0.7rem;">
-                            <option value="topLeft" selected>Top Left</option>
-                            <option value="underPubQr">Under Pub QR</option>
-                            <option value="underPrivQr">Under Priv QR</option>
-                          </select>
-                          <label style="font-size: 0.7rem; color: var(--text-muted);">Size:</label>
-                          <input type="number" id="cpwNumberSize" value="10" min="2" max="36" step="0.1" style="width: 45px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
-                        </div>
-                      </div>
-                      <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: flex-start;">
-                          <label style="font-size: 0.65rem; color: var(--text-muted);">X Offset:</label>
-                          <input type="number" id="cpwNumberX" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
-                          <label style="font-size: 0.65rem; color: var(--text-muted);">Y Offset:</label>
-                          <input type="number" id="cpwNumberY" value="0" style="width: 50px; padding: 0.2rem; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); color: #fff; border-radius: 4px; text-align: center;">
-                      </div>
-                    </div>
-
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; border: 1px solid var(--card-border);">
-                      <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <input type="checkbox" id="cpwShowDivider" checked style="width: 16px; height: 16px; accent-color: var(--btc-gold);">
-                        <label style="font-size: 0.75rem; color: var(--text-main);">Row Divider Line</label>
-                        <input type="color" id="cpwDividerColor" value="#000000" style="width: 24px; height: 24px; padding: 0; border: none; cursor: pointer;">
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-
                 <!-- Layout & Coordinates -->
                 <div class="output-group">
                   <div class="output-header"><span class="output-title">Spacing & Layout Alignment</span></div>
@@ -4697,7 +4703,7 @@
               </div>
 
               <!-- RIGHT COLUMN: LIVE PREVIEW -->
-              <div class="output-group" style="position: sticky; top: 85px; align-self: start; display: flex; flex-direction: column;">
+              <div class="output-group" style="flex: 1 1 auto; position: sticky; top: 85px; align-self: start; display: flex; flex-direction: column; min-width: 0;">
                 <div class="output-header">
                   <span class="output-title" style="color: var(--btc-gold);">Live Page Preview</span>
                   <span class="output-tag" id="cpwPreviewLabel">US Letter - 5 Rows</span>
